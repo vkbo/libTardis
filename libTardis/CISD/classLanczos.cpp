@@ -141,7 +141,7 @@ double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda) {
 			}
 			if(iBasisDim > 100 && i%10 == 9) {
 				fflush(stdout);
-				cout << "\r                                ";
+				//cout << "\r                                ";
 				cout << "\rCalculating SD: " << i+1;
 			}
 		}
