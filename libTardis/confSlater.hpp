@@ -1,2 +1,2 @@
 /* Configuration file for classSlater */
-#define SLATER_WORD 256
+#define SLATER_WORD 384
