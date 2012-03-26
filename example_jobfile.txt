@@ -1,0 +1,13 @@
+# Example job file
+
+# Type of job: QDOT2D, QDOT3D
+System : QDOT2D
+Solver : Lanczos
+
+# Configuration
+Shells    : 12
+Particles : 4
+TotalM    : 2
+TotalSpin : 4
+Lambda    : 6
+Omega     : 0
