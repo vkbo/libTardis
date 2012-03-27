@@ -21,6 +21,7 @@ class Lanczos
 
     // Public Functions
     double Run(int, int, double dOmega = 1.0, double dLambda = 0.0);
+    double RunPar(int, int, double dOmega = 1.0, double dLambda = 0.0);
 
     // Getters, Setters and Output
 
