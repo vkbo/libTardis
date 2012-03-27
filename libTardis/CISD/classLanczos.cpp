@@ -16,15 +16,15 @@ using namespace tardis;
 
 Lanczos::Lanczos(System *oSys, Basis *oBas) {
 
-	oSystem = oSys;
-	oBasis  = oBas;
+    oSystem = oSys;
+    oBasis  = oBas;
 
-	iStates    = oSystem->GetStates();
-	iParticles = oSystem->GetParticles();
+    iStates    = oSystem->GetStates();
+    iParticles = oSystem->GetParticles();
 
-	iBasisDim  = oBasis->GetSize();
+    iBasisDim  = oBasis->GetSize();
 
-	return;
+    return;
 }
 
 /*
@@ -33,171 +33,171 @@ Lanczos::Lanczos(System *oSys, Basis *oBas) {
 
 double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda) {
 
-	double d1PFac, d2PFac;
+    double d1PFac, d2PFac;
 
-	if(dOmega != 0.0) {
-		d1PFac = dOmega;
-		d2PFac = sqrt(dOmega);
-	} else {
-		if(dLambda != 0.0) {
-			d1PFac = 1.0;
-			d2PFac = dLambda;
-		} else {
-			d1PFac = 1.0;
-			d2PFac = 0.0;
-		}
-	}
+    if(dOmega != 0.0) {
+        d1PFac = dOmega;
+        d2PFac = sqrt(dOmega);
+    } else {
+        if(dLambda != 0.0) {
+            d1PFac = 1.0;
+            d2PFac = dLambda;
+        } else {
+            d1PFac = 1.0;
+            d2PFac = 0.0;
+        }
+    }
 
-	iM  = abs(iM);  // iM  = -iM
-	iMs = abs(iMs); // iMs = -iMs
+    iM  = abs(iM);  // iM  = -iM
+    iMs = abs(iMs); // iMs = -iMs
 
-	if(iBasisDim == 0) {
-		cout << "Basis has dimension 0 ..." << endl;
-		return -1.0;
-	}
+    if(iBasisDim == 0) {
+        cout << "Basis has dimension 0 ..." << endl;
+        return -1.0;
+    }
 
-	if(iStates > SLATER_WORD) {
-		cout << "Error: SLATER_WORD in libTardis.hpp too small, must be at least " << (ceil(iStates/64.0)*64) << " ..." << endl;
-		return -1.0;
-	}
+    if(iStates > SLATER_WORD) {
+        cout << "Error: SLATER_WORD in libTardis.hpp too small, must be at least " << (ceil(iStates/64.0)*64) << " ..." << endl;
+        return -1.0;
+    }
 
-	cout << "Dimension of basis: " << iBasisDim << endl << endl;
+    cout << "Dimension of basis: " << iBasisDim << endl << endl;
 
-	/*
-	** Initializing
-	*/
+    /*
+    ** Initializing
+    */
 
-	// Lanczos vectors
-	Col<double> mV;
-	Col<double> mW;
-	mV.zeros(iBasisDim);
-	mW.randu(iBasisDim);
-	mW = mW/norm(mW,2);
+    // Lanczos vectors
+    Col<double> mV;
+    Col<double> mW;
+    mV.zeros(iBasisDim);
+    mW.randu(iBasisDim);
+    mW = mW/norm(mW,2);
 
-	// Runtime variables
-	int    i, k, p, q, r, s;
-	int    iS1, iS2, iS3, iS4, iL=0;
-	long   lCCount = 0;
-	double dTemp, dV, dO;
-	Slater sdPhiPQRS, sdPhiQRS, sdPhiSR, sdPhiR;
-	Row<double> mA;
-	Row<double> mB;
-	Row<double> mE;
-	mA.ones(1);
-	mB.ones(1);
-	mE.zeros(1);
-	k = 0;
+    // Runtime variables
+    int    i, k, p, q, r, s;
+    int    iS1, iS2, iS3, iS4, iL=0;
+    long   lCCount = 0;
+    double dTemp, dV, dO;
+    Slater sdPhiPQRS, sdPhiQRS, sdPhiSR, sdPhiR;
+    Row<double> mA;
+    Row<double> mB;
+    Row<double> mE;
+    mA.ones(1);
+    mB.ones(1);
+    mE.zeros(1);
+    k = 0;
 
-	// Eigenvector variables
-	Mat<double>    mTemp;
-	Mat<double>    mHDiag;
-	Col<double>    mEnergy;
-	Col<cx_double> mHEigVal;
-	Mat<cx_double> mHEigVec;
+    // Eigenvector variables
+    Mat<double>    mTemp;
+    Mat<double>    mHDiag;
+    Col<double>    mEnergy;
+    Col<cx_double> mHEigVal;
+    Mat<cx_double> mHEigVec;
 
-	/*
-	** The Lanczos algorithm
-	** Source: Golub/Van Loan - Matrix Computations Third Edition, Page 480
-	*/
+    /*
+    ** The Lanczos algorithm
+    ** Source: Golub/Van Loan - Matrix Computations Third Edition, Page 480
+    */
 
-	while(abs(mB(k)) > 1e-9 && k < iBasisDim && k < 200) {
-		if(k > 0) {
-			for(i=0; i<iBasisDim; i++) {
-				dTemp = mW(i);
-				mW(i) = mV(i)/mB(k);
-				mV(i) = -mB(k)*dTemp;
-			}
-		}
+    while(abs(mB(k)) > 1e-9 && k < iBasisDim && k < 200) {
+        if(k > 0) {
+            for(i=0; i<iBasisDim; i++) {
+                dTemp = mW(i);
+                mW(i) = mV(i)/mB(k);
+                mV(i) = -mB(k)*dTemp;
+            }
+        }
 
-		// Applying the Hamiltonian
-		for(i=0; i<iBasisDim; i++) {
-			for(r=0; r<iStates; r++) {
-				sdPhiR = oBasis->GetSlater(i);
-				iS1 = sdPhiR.Annihilate(r);
-				if(iS1 == 0) continue;
-				for(s=r+1; s<iStates; s++) {
-					sdPhiSR = sdPhiR;
-					iS2 = sdPhiSR.Annihilate(s);
-					if(iS2 == 0) continue;
-					for(q=0; q<iStates; q++) {
-						sdPhiQRS = sdPhiSR;
-						iS3 = sdPhiQRS.Create(q);
-						if(iS3 == 0) continue;
-						for(p=0; p<q; p++) {
-							sdPhiPQRS = sdPhiQRS;
-							iS4 = sdPhiPQRS.Create(p);
-							if(iS4 == 0) continue;
-							iL = oBasis->FindSlater(sdPhiPQRS,p,q);
-							if(iL > -1) {
-								dV = 0.0;
-								if(p == r && q == s) dV += oSystem->Get1PElement(p,s)*d1PFac; // 1-particle interaction
-								dV += oSystem->Get2PElement(p,q,r,s)*d2PFac;                  // 2-particle interaction
-								mV(iL) += iS1*iS2*iS3*iS4*dV*mW(i);
-								lCCount++;
-							}
-						}
-					}
-				}
-			}
-			if(iBasisDim > 100 && i%10 == 9) {
-				fflush(stdout);
-				//cout << "\r                                ";
-				cout << "\rCalculating SD: " << i+1;
-			}
-		}
+        // Applying the Hamiltonian
+        for(i=0; i<iBasisDim; i++) {
+            for(r=0; r<iStates; r++) {
+                sdPhiR = oBasis->GetSlater(i);
+                iS1 = sdPhiR.Annihilate(r);
+                if(iS1 == 0) continue;
+                for(s=r+1; s<iStates; s++) {
+                    sdPhiSR = sdPhiR;
+                    iS2 = sdPhiSR.Annihilate(s);
+                    if(iS2 == 0) continue;
+                    for(q=0; q<iStates; q++) {
+                        sdPhiQRS = sdPhiSR;
+                        iS3 = sdPhiQRS.Create(q);
+                        if(iS3 == 0) continue;
+                        for(p=0; p<q; p++) {
+                            sdPhiPQRS = sdPhiQRS;
+                            iS4 = sdPhiPQRS.Create(p);
+                            if(iS4 == 0) continue;
+                            iL = oBasis->FindSlater(sdPhiPQRS,p,q);
+                            if(iL > -1) {
+                                dV = 0.0;
+                                if(p == r && q == s) dV += oSystem->Get1PElement(p,s)*d1PFac; // 1-particle interaction
+                                dV += oSystem->Get2PElement(p,q,r,s)*d2PFac;                  // 2-particle interaction
+                                mV(iL) += iS1*iS2*iS3*iS4*dV*mW(i);
+                                lCCount++;
+                            }
+                        }
+                    }
+                }
+            }
+            if(iBasisDim > 100 && i%10 == 9) {
+                fflush(stdout);
+                //cout << "\r                                ";
+                cout << "\rCalculating SD: " << i+1;
+            }
+        }
 
-		// Prepere next iteration
-		k++;
-		mA.insert_cols(k,1);
-		mB.insert_cols(k,1);
-		mE.insert_cols(k,1);
-		mA(k) = dot(mW,mV);
-		mV   -= mA(k)*mW;
-		mB(k) = norm(mV,2);
+        // Prepere next iteration
+        k++;
+        mA.insert_cols(k,1);
+        mB.insert_cols(k,1);
+        mE.insert_cols(k,1);
+        mA(k) = dot(mW,mV);
+        mV   -= mA(k)*mW;
+        mB(k) = norm(mV,2);
 
-		// Ortonomalization of the Lanczos vectors
-		dO = dot(mV,mW);
-		if(abs(dO) > 1e-12) {
-			mV -= (dO/dot(mW,mW))*mW;
-			mV/norm(mV,2);
-			mW/norm(mW,2);
-		}
+        // Ortonomalization of the Lanczos vectors
+        dO = dot(mV,mW);
+        if(abs(dO) > 1e-12) {
+            mV -= (dO/dot(mW,mW))*mW;
+            mV/norm(mV,2);
+            mW/norm(mW,2);
+        }
 
-		// Building the tri-diagonal matrix
-		mTemp.zeros(k,k);
-		for(i=0; i<k; i++) {
-			mTemp(i,i) = mA(i+1);
-			if(i<k-1) {
-				mTemp(i,i+1) = mB(i+1);
-				mTemp(i+1,i) = mB(i+1);
-			}
-		}
+        // Building the tri-diagonal matrix
+        mTemp.zeros(k,k);
+        for(i=0; i<k; i++) {
+            mTemp(i,i) = mA(i+1);
+            if(i<k-1) {
+                mTemp(i,i+1) = mB(i+1);
+                mTemp(i+1,i) = mB(i+1);
+            }
+        }
 
-		// Calculating eigenvalues
-		eig_gen(mHEigVal, mHEigVec, mTemp);
-		mHDiag  = real(inv(mHEigVec)*mTemp*mHEigVec);
-		mEnergy = sort(mHDiag.diag());
-		mE(k) = mEnergy(0);
+        // Calculating eigenvalues
+        eig_gen(mHEigVal, mHEigVec, mTemp);
+        mHDiag  = real(inv(mHEigVec)*mTemp*mHEigVec);
+        mEnergy = sort(mHDiag.diag());
+        mE(k) = mEnergy(0);
 
-		// Checking for energy convergence
-		if(abs(mE(k-1) - mE(k)) < LANCZOS_CONVERGE) break;
+        // Checking for energy convergence
+        if(abs(mE(k-1) - mE(k)) < LANCZOS_CONVERGE) break;
 
-		fflush(stdout);
-		cout << "\r                         ";
-		cout << "\rLanczos Iteration " << setw(2) << k << " : Energy = " << setprecision(10) << mE(k) << endl;;
-	}
-	cout << "\r                         ";
-	cout << "\rLanczos Iteration " << setw(2) << k << " : Energy = " << setprecision(10) << mE(k) << endl;;
+        fflush(stdout);
+        cout << "\r                         ";
+        cout << "\rLanczos Iteration " << setw(2) << k << " : Energy = " << setprecision(10) << mE(k) << endl;;
+    }
+    cout << "\r                         ";
+    cout << "\rLanczos Iteration " << setw(2) << k << " : Energy = " << setprecision(10) << mE(k) << endl;;
 
-	cout << endl;
+    cout << endl;
 
-	cout << "Coulomb calculations: " << lCCount << endl;
-	cout << endl;
-	cout << "Eigenvalues:" << endl;
-	cout << mEnergy << endl;
-	//cout << "CPS: " << CLOCKS_PER_SEC << endl;
+    cout << "Coulomb calculations: " << lCCount << endl;
+    cout << endl;
+    cout << "Eigenvalues:" << endl;
+    cout << mEnergy << endl;
+    //cout << "CPS: " << CLOCKS_PER_SEC << endl;
 
-	return mEnergy(0);
+    return mEnergy(0);
 }
 
 /*

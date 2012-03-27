@@ -13,25 +13,25 @@
 #include <vector>
 
 #ifndef SLATER_WORD
-	#define SLATER_WORD 64
+    #define SLATER_WORD 64
 #endif
 
 namespace tardis {
 
 class Slater
 {
-	public:
-	std::bitset<SLATER_WORD> Word;
-	Slater() {};
-	~Slater() {};
+    public:
+    std::bitset<SLATER_WORD> Word;
+    Slater() {};
+    ~Slater() {};
 
-	int  Create(int);
-	int  Annihilate(int);
-	bool Compare(Slater);
-	int  Count();
-	int  CountOdd();
-	int  CountEven();
-	void Output(int);
+    int  Create(int);
+    int  Annihilate(int);
+    bool Compare(Slater);
+    int  Count();
+    int  CountOdd();
+    int  CountEven();
+    void Output(int);
 };
 
 } // End namespace tardis

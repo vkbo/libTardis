@@ -31,15 +31,15 @@
 
 // Classes
 #ifndef CLASS_LANCZOS_HPP
-	#include "CISD/classLanczos.hpp"
+    #include "CISD/classLanczos.hpp"
 #endif
 
 #ifndef CLASS_BASIS_HPP
-	#include "System/classBasis.hpp"
+    #include "System/classBasis.hpp"
 #endif
 
 #ifndef CLASS_SYSTEM_HPP
-	#include "System/classSystem.hpp"
+    #include "System/classSystem.hpp"
 #endif
 
 #ifndef CLASS_QDOT2D_HPP

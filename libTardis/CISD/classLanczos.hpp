@@ -13,30 +13,30 @@ namespace tardis {
 
 class Lanczos
 {
-	public:
+    public:
 
-	// Constructor and Destructor
-	Lanczos(tardis::System*, tardis::Basis*);
-	~Lanczos() {};
+    // Constructor and Destructor
+    Lanczos(tardis::System*, tardis::Basis*);
+    ~Lanczos() {};
 
-	// Public Functions
-	double Run(int, int, double dOmega = 1.0, double dLambda = 0.0);
+    // Public Functions
+    double Run(int, int, double dOmega = 1.0, double dLambda = 0.0);
 
-	// Getters, Setters and Output
+    // Getters, Setters and Output
 
 
-	private:
+    private:
 
-	// Variables
-	int iStates;
-	int iParticles;
-	int iBasisDim;
+    // Variables
+    int iStates;
+    int iParticles;
+    int iBasisDim;
 
-	// Objects
-	tardis::System *oSystem;
-	tardis::Basis  *oBasis;
+    // Objects
+    tardis::System *oSystem;
+    tardis::Basis  *oBasis;
 
-	// Functions
+    // Functions
 
 };
 

@@ -24,54 +24,54 @@ namespace tardis {
 */
 class QDot2D
 {
-	public:
+    public:
 
-	int Shells;  // Number of shells
-	int PartInt; // Number of particle interactions
-	int States;  // Number of states
-	int Cores;   // Number of CPU cores to split the job across
-	int Core;    // Current CPU core
+    int Shells;  // Number of shells
+    int PartInt; // Number of particle interactions
+    int States;  // Number of states
+    int Cores;   // Number of CPU cores to split the job across
+    int Core;    // Current CPU core
 
-	arma::Mat<int>    QN;          // List of Quantum Numbers
-	arma::Mat<double> Hamiltonian; // Hamiltonian
+    arma::Mat<int>    QN;          // List of Quantum Numbers
+    arma::Mat<double> Hamiltonian; // Hamiltonian
 
-	QDot2D(int, int);
-	~QDot2D() {};
-	void   GenerateAll();
-	double GetEnergyLanczos(int, int, double dOmega = 1.0, double dLambda = 0.0);
-	double GetEnergyMMS(int, int, double);
-	void   ListEnergiesMMS(double);
+    QDot2D(int, int);
+    ~QDot2D() {};
+    void   GenerateAll();
+    double GetEnergyLanczos(int, int, double dOmega = 1.0, double dLambda = 0.0);
+    double GetEnergyMMS(int, int, double);
+    void   ListEnergiesMMS(double);
 
-	private:
+    private:
 
-	int   iConfigDim; // Size of configuration matrix mConfig
-	int   iBasisDim;  // Size of Basis
+    int   iConfigDim; // Size of configuration matrix mConfig
+    int   iBasisDim;  // Size of Basis
 
-	//arma::Col<double> mLogFac;
-	//arma::Col<double> mLGamma;
-	std::vector<double> vLogFac;
-	std::vector<double> vLGamma;
-	arma::Mat<int>      mConfig; // Table of configurations. Even cols = a, odd cols = b
-	arma::Row<int>      mStates; // List of states (basis)
+    //arma::Col<double> mLogFac;
+    //arma::Col<double> mLGamma;
+    std::vector<double> vLogFac;
+    std::vector<double> vLGamma;
+    arma::Mat<int>      mConfig; // Table of configurations. Even cols = a, odd cols = b
+    arma::Row<int>      mStates; // List of states (basis)
 
-	std::vector<tardis::Slater> sdBasis;     // Slater determinant basis
-	std::vector<int>            sdTemp;      // Temp vector for building slater determinants
-	arma::Cube<int>             mBasisIndex; // Lookup index of sdBasis
+    std::vector<tardis::Slater> sdBasis;     // Slater determinant basis
+    std::vector<int>            sdTemp;      // Temp vector for building slater determinants
+    arma::Cube<int>             mBasisIndex; // Lookup index of sdBasis
 
-	bool              bCoulomb;
-	arma::Mat<int>    mBraKet;
-	arma::Mat<double> mCoulomb;
-	
-	void   fGenMPConfig(int, int, int iP=0);
-	void   fIndexMPConfig();
-	void   fGen2PConfig();
+    bool              bCoulomb;
+    arma::Mat<int>    mBraKet;
+    arma::Mat<double> mCoulomb;
 
-	double fCalcElement(int, int, int, int);
-	double fCoulomb2D(int, int, int, int, int, int, int, int);
-	double fLGamma(double);
+    void   fGenMPConfig(int, int, int iP=0);
+    void   fIndexMPConfig();
+    void   fGen2PConfig();
 
-	int    fGetMMsIndex(int, int);
-	double fHOscEnergy(int, int, int, int);
+    double fCalcElement(int, int, int, int);
+    double fCoulomb2D(int, int, int, int, int, int, int, int);
+    double fLGamma(double);
+
+    int    fGetMMsIndex(int, int);
+    double fHOscEnergy(int, int, int, int);
 
 };
 
