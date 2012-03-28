@@ -8,6 +8,8 @@
 
 #define CLASS_LANCZOS_HPP
 #include "../libTardis.hpp"
+#include <iostream>
+#include <fstream>
 
 namespace tardis {
 
@@ -20,7 +22,7 @@ class Lanczos
     ~Lanczos() {};
 
     // Public Functions
-    double Run(int, int, double dOmega = 1.0, double dLambda = 0.0);
+    double Run(int, int, double dOmega = 1.0, double dLambda = 0.0, const char* = "");
     double RunPar(int, int, double dOmega = 1.0, double dLambda = 0.0);
 
     // Getters, Setters and Output

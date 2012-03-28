@@ -31,8 +31,16 @@ Lanczos::Lanczos(System *oSys, Basis *oBas) {
 ** Public :: Functions
 */
 
-double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda) {
+double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda, const char* sOutput) {
 
+    // Log file
+    ofstream oLog;
+    bool     bLog = false;
+
+    if(strlen(sOutput) > 0) bLog = true;
+    if(bLog) oLog.open(sOutput, ios::app);
+
+    // Lambda or Omega values
     double d1PFac, d2PFac;
 
     if(dOmega != 0.0) {
@@ -52,22 +60,26 @@ double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda) {
     iMs = abs(iMs); // iMs = -iMs
 
     if(iBasisDim == 0) {
-        cout << "Basis has dimension 0 ..." << endl;
+        cout          << "Basis has dimension 0 ..." << endl;
+        if(bLog) oLog << "Basis has dimension 0 ..." << endl;
         return -1.0;
     }
 
     if(iStates > SLATER_WORD) {
-        cout << "Error: SLATER_WORD in libTardis.hpp too small, must be at least " << (ceil(iStates/64.0)*64) << " ..." << endl;
+        cout          << "Error: SLATER_WORD in libTardis.hpp too small, must be at least " << (ceil(iStates/64.0)*64) << " ..." << endl;
+        if(bLog) oLog << "Error: SLATER_WORD in libTardis.hpp too small, must be at least " << (ceil(iStates/64.0)*64) << " ..." << endl;
         return -1.0;
     }
 
-    cout << "Dimension of basis: " << iBasisDim << endl << endl;
+    cout          << "Dimension of basis: " << iBasisDim << endl << endl;
+    if(bLog) oLog << "Dimension of basis: " << iBasisDim << endl << endl;
 
     /*
     ** Initializing
     */
 
     // Lanczos vectors
+    srand(time(NULL));
     Col<double> mV;
     Col<double> mW;
     mV.zeros(iBasisDim);
@@ -157,10 +169,13 @@ double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda) {
 
         // Ortonomalization of the Lanczos vectors
         dO = dot(mV,mW);
-        if(abs(dO) > 1e-12) {
+        if(abs(dO) > 2e-13) {
             mV -= (dO/dot(mW,mW))*mW;
             mV/norm(mV,2);
             mW/norm(mW,2);
+            cout          << "\r                         ";
+            cout          << "\rRe-ortonormalizating. V·W = " << setprecision(3) << dO << endl;
+            if(bLog) oLog <<   "Re-ortonormalizating. V·W = " << setprecision(3) << dO << endl;
         }
 
         // Building the tri-diagonal matrix
@@ -183,19 +198,23 @@ double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda) {
         if(abs(mE(k-1) - mE(k)) < LANCZOS_CONVERGE) break;
 
         fflush(stdout);
-        cout << "\r                         ";
-        cout << "\rLanczos Iteration " << setw(2) << k << " : Energy = " << setprecision(10) << mE(k) << endl;;
+        cout          << "\r                         ";
+        cout          << "\rLanczos Iteration " << setw(2) << k << " : Energy = " << setprecision(10) << mE(k) << endl;
+        if(bLog) oLog <<   "Lanczos Iteration " << setw(2) << k << " : Energy = " << setprecision(10) << mE(k) << endl;
     }
-    cout << "\r                         ";
-    cout << "\rLanczos Iteration " << setw(2) << k << " : Energy = " << setprecision(10) << mE(k) << endl;;
 
-    cout << endl;
+    cout          << "\r                         ";
+    cout          << "\rLanczos Iteration " << setw(2) << k << " : Energy = " << setprecision(10) << mE(k) << endl << endl;
+    if(bLog) oLog <<   "Lanczos Iteration " << setw(2) << k << " : Energy = " << setprecision(10) << mE(k) << endl << endl;
 
-    cout << "Coulomb calculations: " << lCCount << endl;
-    cout << endl;
-    cout << "Eigenvalues:" << endl;
-    cout << mEnergy << endl;
-    //cout << "CPS: " << CLOCKS_PER_SEC << endl;
+    cout          << "Coulomb calculations: " << lCCount << endl << endl;
+    if(bLog) oLog << "Coulomb calculations: " << lCCount << endl << endl;
+    cout          << "Eigenvalues:" << endl;
+    if(bLog) oLog << "Eigenvalues:" << endl;
+    cout          << mEnergy << endl;
+    if(bLog) oLog << mEnergy << endl;
+
+    if(bLog) oLog.close();
 
     return mEnergy(0);
 }

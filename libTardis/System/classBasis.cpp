@@ -37,9 +37,9 @@ int Basis::BuildBasis(int iM, int iMs) {
     vector<int> vTemp(iParticles,0);
 
     vBasis.clear();
-    cout << endl;
+    //cout << endl;
     fGenConfig(vTemp, iM, iMs, 0);
-    cout << endl;
+    //cout << endl;
 
     Slater sdTest;
     int    iBasisDim = vBasis.size();
@@ -120,9 +120,9 @@ void Basis::fGenConfig(vector<int> &vTemp, int iM, int iMs, int iP) {
         }
         if(sdNew.CountOdd()-sdNew.CountEven() == iMs && iTM == iM) {
             vBasis.push_back(sdNew);
-            cout << "\r                                ";
-            cout << "\rDimension of basis: " << vBasis.size();
-            fflush(stdout);
+            //cout << "\r                                ";
+            //cout << "\rDimension of basis: " << vBasis.size();
+            //fflush(stdout);
         }
     }
 

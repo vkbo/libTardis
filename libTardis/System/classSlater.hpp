@@ -8,7 +8,6 @@
 
 #define CLASS_SLATER_HPP
 #include "../libTardis.hpp"
-#include "../confSlater.hpp"
 #include <bitset>
 #include <vector>
 

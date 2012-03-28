@@ -10,3 +10,6 @@
 // QDot2D Lanczos
 #define LANCZOS_ZERO     1e-9
 #define LANCZOS_CONVERGE 1e-6
+
+// Size of Slater Determinant
+#define SLATER_WORD 256
