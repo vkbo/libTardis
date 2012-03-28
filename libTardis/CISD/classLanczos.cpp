@@ -174,8 +174,8 @@ double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda, const char* 
             mV/norm(mV,2);
             mW/norm(mW,2);
             cout          << "\r                         ";
-            cout          << "\rRe-ortonormalizating. V·W = " << setprecision(3) << dO << endl;
-            if(bLog) oLog <<   "Re-ortonormalizating. V·W = " << setprecision(3) << dO << endl;
+            cout          << "\rRe-ortonormalizing. V·W = " << setprecision(3) << dO << endl;
+            if(bLog) oLog <<   "Re-ortonormalizing. V·W = " << setprecision(3) << dO << endl;
         }
 
         // Building the tri-diagonal matrix
