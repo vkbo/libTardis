@@ -79,7 +79,7 @@ double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda, const char* 
     */
 
     // Lanczos vectors
-    srand(time(NULL));
+    if(USE_RAND_SEED) srand(time(NULL));
     Col<double> mV;
     Col<double> mW;
     mV.zeros(iBasisDim);
@@ -89,7 +89,7 @@ double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda, const char* 
     // Runtime variables
     int    i, k, p, q, r, s;
     int    iS1, iS2, iS3, iS4, iL=0;
-    long   lCCount = 0;
+    //long   lCCount = 0;
     double dTemp, dV, dO;
     Slater sdPhiPQRS, sdPhiQRS, sdPhiSR, sdPhiR;
     Row<double> mA;
@@ -122,6 +122,12 @@ double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda, const char* 
         }
 
         // Applying the Hamiltonian
+        #pragma omp parallel for private(p,q,r,s) \
+                                 private(iS1,iS2,iS3,iS4) \
+                                 private(sdPhiPQRS,sdPhiQRS,sdPhiSR,sdPhiR) \
+                                 private(iL,dV) \
+                                 schedule(dynamic,1)
+
         for(i=0; i<iBasisDim; i++) {
             for(r=0; r<iStates; r++) {
                 sdPhiR = oBasis->GetSlater(i);
@@ -144,17 +150,20 @@ double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda, const char* 
                                 dV = 0.0;
                                 if(p == r && q == s) dV += oSystem->Get1PElement(p,s)*d1PFac; // 1-particle interaction
                                 dV += oSystem->Get2PElement(p,q,r,s)*d2PFac;                  // 2-particle interaction
+                                #pragma omp critical
                                 mV(iL) += iS1*iS2*iS3*iS4*dV*mW(i);
-                                lCCount++;
                             }
                         }
                     }
                 }
             }
-            if(iBasisDim > 100 && i%10 == 9) {
-                fflush(stdout);
-                cout << "\r                                ";
-                cout << "\rCalculating SD: " << i+1;
+
+            if(omp_get_thread_num() == 0) {
+                if(iBasisDim > 100 && i%10 == 9) {
+                    fflush(stdout);
+                    cout << "\r                                ";
+                    cout << "\rCalculating SD: " << i+1;
+                }
             }
         }
 
@@ -207,8 +216,6 @@ double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda, const char* 
     cout          << "\rLanczos Iteration " << setw(2) << k << " : Energy = " << setprecision(10) << mE(k) << endl << endl;
     if(bLog) oLog <<   "Lanczos Iteration " << setw(2) << k << " : Energy = " << setprecision(10) << mE(k) << endl << endl;
 
-    cout          << "Coulomb calculations: " << lCCount << endl << endl;
-    if(bLog) oLog << "Coulomb calculations: " << lCCount << endl << endl;
     cout          << "Eigenvalues:" << endl;
     if(bLog) oLog << "Eigenvalues:" << endl;
     cout          << mEnergy << endl;

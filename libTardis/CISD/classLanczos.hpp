@@ -10,6 +10,7 @@
 #include "../libTardis.hpp"
 #include <iostream>
 #include <fstream>
+#include "omp.h"
 
 namespace tardis {
 
@@ -23,7 +24,7 @@ class Lanczos
 
     // Public Functions
     double Run(int, int, double dOmega = 1.0, double dLambda = 0.0, const char* = "");
-    double RunPar(int, int, double dOmega = 1.0, double dLambda = 0.0);
+    //double RunMaster(int, int, double dOmega = 1.0, double dLambda = 0.0, const char* = "");
 
     // Getters, Setters and Output
 

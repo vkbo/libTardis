@@ -25,6 +25,13 @@ Basis::Basis(System *oSys) {
         cout << endl;
     }
 
+    double dX = 1.0;
+    for(double i=0.0; i<iParticles; i++) {
+        dX *= (iStates-i)/(iParticles-i);
+    }
+    iConfMax   = (int)dX;
+    iConfCount = 0;
+
     return;
 }
 
@@ -35,17 +42,39 @@ Basis::Basis(System *oSys) {
 int Basis::BuildBasis(int iM, int iMs) {
 
     vector<int> vTemp(iParticles,0);
-
     vBasis.clear();
-    //cout << endl;
+
+    cout << showpoint;
+    cout << setw(5);
+    cout << setprecision(3);
+
+    #ifndef PROGRESS
+        cout << "Building Basis ... ";
+    #endif
+    fflush(stdout);
+
     fGenConfig(vTemp, iM, iMs, 0);
-    //cout << endl;
+
+    #ifdef PROGRESS
+        cout << "\rBuilding Basis: 100.0%" << endl;
+    #else
+        cout << "Done" << endl;
+    #endif
+    fflush(stdout);
 
     Slater sdTest;
-    int    iBasisDim = vBasis.size();
+    int iBasisDim = vBasis.size();
+    int iDim      = iStates*iStates;
+    #ifdef PROGRESS
+        int iCount = 0;
+    #endif
 
-    vIndex.resize(iStates*iStates);
+    vIndex.resize(iDim);
 
+    #ifndef PROGRESS
+        cout << "Indexing Basis ... ";
+        fflush(stdout);
+    #endif
     for(int p=0; p<iStates; p++) {
         for(int q=0; q<iStates; q++) {
             for(int i=0; i<iBasisDim; i++) {
@@ -56,8 +85,26 @@ int Basis::BuildBasis(int iM, int iMs) {
                     }
                 }
             }
+
+            #ifdef PROGRESS
+                iCount++;
+                if(iDim > 1000) {
+                    if(iCount%(iDim/1000) == 0) {
+                        cout << "\r                           ";
+                        cout << "\rIndexing Basis: " << OUTPUTF(3) << (iCount/double(iDim)*100) << "%";
+                        fflush(stdout);
+                    }
+                }
+            #endif
         }
     }
+    #ifdef PROGRESS
+        cout << "\rIndexing Basis: 100.0%" << endl;
+    #else
+        cout << "Done" << endl;
+    #endif
+    cout << endl;
+    fflush(stdout);
 
     return iBasisDim;
 }
@@ -114,16 +161,26 @@ void Basis::fGenConfig(vector<int> &vTemp, int iM, int iMs, int iP) {
     } else {
         Slater sdNew;
         int iTM = 0;
+
         for(int i=0; i<iParticles; i++) {
             sdNew.Create(vTemp[i]);
             iTM += oSystem->GetState(vTemp[i],1);
         }
+
         if(sdNew.CountOdd()-sdNew.CountEven() == iMs && iTM == iM) {
             vBasis.push_back(sdNew);
-            //cout << "\r                                ";
-            //cout << "\rDimension of basis: " << vBasis.size();
-            //fflush(stdout);
         }
+
+        #ifdef PROGRESS
+        iConfCount++;
+        if(iConfMax > 10000) {
+            if(iConfCount%(iConfMax/1000) == 0) {
+                cout << "\r                           ";
+                cout << "\rBuilding Basis: " << OUTPUTF(3) << (iConfCount/double(iConfMax)*100) << "%";
+                fflush(stdout);
+            }
+        }
+        #endif
     }
 
     return;

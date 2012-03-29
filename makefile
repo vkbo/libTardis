@@ -1,6 +1,6 @@
 CC          = g++
 DEBUG       = -g
-LIBFLAGS    = -llapack -lblas -larmadillo
+LIBFLAGS    = -llapack -lblas -larmadillo -fopenmp
 CFLAGS      = -Wall $(LIBFLAGS) -O2 -c $(DEBUG)
 LFLAGS      = -Wall $(LIBFLAGS) $(DEBUG)
 

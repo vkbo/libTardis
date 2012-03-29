@@ -34,9 +34,13 @@ class Basis
     // Variables
     int iParticles;
     int iStates;
+    int iConfMax;
+    int iConfCount;
 
     // Objects
     tardis::System                 *oSystem;
+
+    // Vectors
     std::vector<tardis::Slater>     vBasis;
     std::vector<std::vector<int> >  vIndex;
 

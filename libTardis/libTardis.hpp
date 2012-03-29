@@ -29,6 +29,10 @@
 #define NUCLEUS  3
 #define HNUCLEUS 4
 
+// Other
+#define OUTPUTF(p) showpoint << setw((p+2)) << setprecision((p))
+#define OUTPUTN(p) noshowpoint << setw((p+2)) << setprecision((p))
+
 // Classes
 #ifndef CLASS_LANCZOS_HPP
     #include "CISD/classLanczos.hpp"
