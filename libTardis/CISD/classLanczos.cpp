@@ -14,15 +14,19 @@ using namespace tardis;
 ** Public :: Constructor and Destructor
 */
 
-Lanczos::Lanczos(System *oSys, Basis *oBas) {
+Lanczos::Lanczos(System *oSys, Basis *oBas, const char* sOut) {
 
     oSystem = oSys;
     oBasis  = oBas;
 
     iStates    = oSystem->GetStates();
     iParticles = oSystem->GetParticles();
-
     iBasisDim  = oBasis->GetSize();
+
+    // Log file
+    bLog    = false;
+    sOutput = sOut;
+    if(strlen(sOutput) > 0) bLog = true;
 
     return;
 }
@@ -31,14 +35,23 @@ Lanczos::Lanczos(System *oSys, Basis *oBas) {
 ** Public :: Functions
 */
 
-double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda, const char* sOutput) {
+double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda) {
 
-    // Log file
-    ofstream oLog;
-    bool     bLog = false;
+    stringstream ssOut;
 
-    if(strlen(sOutput) > 0) bLog = true;
-    if(bLog) oLog.open(sOutput, ios::app);
+    // Check for illegal values
+
+    if(iBasisDim == 0) {
+        ssOut << "Basis has dimension 0 ..." << endl;
+        fOutput(&ssOut);
+        return -1.0;
+    }
+
+    if(iStates > SLATER_WORD) {
+        ssOut << "Error: SLATER_WORD in libTardis.hpp too small, must be at least " << (ceil(iStates/64.0)*64) << " ..." << endl;
+        fOutput(&ssOut);
+        return -1.0;
+    }
 
     // Lambda or Omega values
     double d1PFac, d2PFac;
@@ -59,24 +72,12 @@ double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda, const char* 
     iM  = abs(iM);  // iM  = -iM
     iMs = abs(iMs); // iMs = -iMs
 
-    if(iBasisDim == 0) {
-        cout          << "Basis has dimension 0 ..." << endl;
-        if(bLog) oLog << "Basis has dimension 0 ..." << endl;
-        return -1.0;
-    }
-
-    if(iStates > SLATER_WORD) {
-        cout          << "Error: SLATER_WORD in libTardis.hpp too small, must be at least " << (ceil(iStates/64.0)*64) << " ..." << endl;
-        if(bLog) oLog << "Error: SLATER_WORD in libTardis.hpp too small, must be at least " << (ceil(iStates/64.0)*64) << " ..." << endl;
-        return -1.0;
-    }
-
-    cout          << "Dimension of basis: " << iBasisDim << endl << endl;
-    if(bLog) oLog << "Dimension of basis: " << iBasisDim << endl << endl;
-
     /*
     ** Initializing
     */
+
+    ssOut << "Dimension of basis: " << iBasisDim << endl;
+    fOutput(&ssOut);
 
     // Lanczos vectors
     if(USE_RAND_SEED) srand(time(NULL));
@@ -89,8 +90,7 @@ double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda, const char* 
     // Runtime variables
     int    i, k, p, q, r, s;
     int    iS1, iS2, iS3, iS4, iL=0;
-    //long   lCCount = 0;
-    double dTemp, dV, dO;
+    double dTemp, dV, dO, dConv;
     Slater sdPhiPQRS, sdPhiQRS, sdPhiSR, sdPhiR;
     Row<double> mA;
     Row<double> mB;
@@ -113,6 +113,7 @@ double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda, const char* 
     */
 
     while(abs(mB(k)) > 1e-9 && k < iBasisDim && k < 200) {
+
         if(k > 0) {
             for(i=0; i<iBasisDim; i++) {
                 dTemp = mW(i);
@@ -176,15 +177,15 @@ double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda, const char* 
         mV   -= mA(k)*mW;
         mB(k) = norm(mV,2);
 
-        // Ortonomalization of the Lanczos vectors
+        // Re-ortonomalization of the Lanczos vectors
         dO = dot(mV,mW);
         if(abs(dO) > 2e-13) {
             mV -= (dO/dot(mW,mW))*mW;
             mV/norm(mV,2);
             mW/norm(mW,2);
-            cout          << "\r                         ";
-            cout          << "\rRe-ortonormalizing. V·W = " << setprecision(3) << dO << endl;
-            if(bLog) oLog <<   "Re-ortonormalizing. V·W = " << setprecision(3) << dO << endl;
+            cout  << "\r                         \r";
+            ssOut << "Re-ortonormalizing. V·W = " << setprecision(3) << dO << endl;
+            fOutput(&ssOut);
         }
 
         // Building the tri-diagonal matrix
@@ -204,24 +205,25 @@ double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda, const char* 
         mE(k) = mEnergy(0);
 
         // Checking for energy convergence
-        if(abs(mE(k-1) - mE(k)) < LANCZOS_CONVERGE) break;
+        dConv = abs(abs(mE(k-1)/mE(k))-1);
 
         fflush(stdout);
-        cout          << "\r                         ";
-        cout          << "\rLanczos Iteration " << setw(2) << k << " : Energy = " << setprecision(10) << mE(k) << endl;
-        if(bLog) oLog <<   "Lanczos Iteration " << setw(2) << k << " : Energy = " << setprecision(10) << mE(k) << endl;
+        cout  << "\r                              \r";
+        ssOut << "Lanczos Iteration " << setw(2) << k;
+        ssOut << " : Energy = " << setw(11) << setprecision(10) << mE(k);
+        ssOut << " : Converge = " << setprecision(3) << dConv << endl;
+        fOutput(&ssOut);
+
+        if(dConv < LANCZOS_CONVERGE) break;
     }
 
-    cout          << "\r                         ";
-    cout          << "\rLanczos Iteration " << setw(2) << k << " : Energy = " << setprecision(10) << mE(k) << endl << endl;
-    if(bLog) oLog <<   "Lanczos Iteration " << setw(2) << k << " : Energy = " << setprecision(10) << mE(k) << endl << endl;
+    ssOut << endl;
+    fOutput(&ssOut);
 
-    cout          << "Eigenvalues:" << endl;
-    if(bLog) oLog << "Eigenvalues:" << endl;
-    cout          << mEnergy << endl;
-    if(bLog) oLog << mEnergy << endl;
-
-    if(bLog) oLog.close();
+    ssOut << "Eigenvalues:" << endl;
+    fOutput(&ssOut);
+    ssOut << mEnergy << endl;
+    fOutput(&ssOut);
 
     return mEnergy(0);
 }
@@ -233,3 +235,19 @@ double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda, const char* 
 /*
 ** Private :: Functions
 */
+
+void Lanczos::fOutput(stringstream* ssText) {
+
+    cout << ssText->str();
+
+    if(bLog) {
+        ofstream oLog;
+        oLog.open(sOutput, ios::app);
+        oLog << ssText->str();
+        oLog.close();
+    }
+
+    ssText->str(string());
+
+    return;
+}

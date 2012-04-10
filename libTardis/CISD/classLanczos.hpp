@@ -19,11 +19,11 @@ class Lanczos
     public:
 
     // Constructor and Destructor
-    Lanczos(tardis::System*, tardis::Basis*);
+    Lanczos(tardis::System*, tardis::Basis*, const char* = "");
     ~Lanczos() {};
 
     // Public Functions
-    double Run(int, int, double dOmega = 1.0, double dLambda = 0.0, const char* = "");
+    double Run(int, int, double dOmega = 1.0, double dLambda = 0.0);
     //double RunMaster(int, int, double dOmega = 1.0, double dLambda = 0.0, const char* = "");
 
     // Getters, Setters and Output
@@ -32,15 +32,19 @@ class Lanczos
     private:
 
     // Variables
-    int iStates;
-    int iParticles;
-    int iBasisDim;
+    int           iStates;
+    int           iParticles;
+    int           iBasisDim;
+    const char*   sOutput;
+    bool          bLog;
+
 
     // Objects
     tardis::System *oSystem;
     tardis::Basis  *oBasis;
 
     // Functions
+    void fOutput(std::stringstream*);
 
 };
 
