@@ -236,6 +236,10 @@ double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda) {
 ** Private :: Functions
 */
 
+/*
+** Output to stdout and logfile
+*/
+
 void Lanczos::fOutput(stringstream* ssText) {
 
     cout << ssText->str();
