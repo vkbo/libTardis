@@ -81,6 +81,7 @@ double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda) {
 
     // Lanczos vectors
     if(USE_RAND_SEED) srand(time(NULL));
+    Col<double> mT;
     Col<double> mV;
     Col<double> mW;
     mV.zeros(iBasisDim);
@@ -88,17 +89,14 @@ double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda) {
     mW = mW/norm(mW,2);
 
     // Runtime variables
-    int    i, k, p, q, r, s;
-    int    iS1, iS2, iS3, iS4, iL=0;
-    double dTemp, dV, dO, dConv;
-    Slater sdPhiPQRS, sdPhiQRS, sdPhiSR, sdPhiR;
+    int    i, k=0;
+    double dTemp, dO, dConv;
     Row<double> mA;
     Row<double> mB;
     Row<double> mE;
     mA.ones(1);
     mB.ones(1);
     mE.zeros(1);
-    k = 0;
 
     // Eigenvector variables
     Mat<double>    mTemp;
@@ -123,50 +121,9 @@ double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda) {
         }
 
         // Applying the Hamiltonian
-        #pragma omp parallel for private(p,q,r,s) \
-                                 private(iS1,iS2,iS3,iS4) \
-                                 private(sdPhiPQRS,sdPhiQRS,sdPhiSR,sdPhiR) \
-                                 private(iL,dV) \
-                                 schedule(dynamic,1)
-
-        for(i=0; i<iBasisDim; i++) {
-            for(r=0; r<iStates; r++) {
-                sdPhiR = oBasis->GetSlater(i);
-                iS1 = sdPhiR.Annihilate(r);
-                if(iS1 == 0) continue;
-                for(s=r+1; s<iStates; s++) {
-                    sdPhiSR = sdPhiR;
-                    iS2 = sdPhiSR.Annihilate(s);
-                    if(iS2 == 0) continue;
-                    for(q=0; q<iStates; q++) {
-                        sdPhiQRS = sdPhiSR;
-                        iS3 = sdPhiQRS.Create(q);
-                        if(iS3 == 0) continue;
-                        for(p=0; p<q; p++) {
-                            sdPhiPQRS = sdPhiQRS;
-                            iS4 = sdPhiPQRS.Create(p);
-                            if(iS4 == 0) continue;
-                            iL = oBasis->FindSlater(sdPhiPQRS,p,q);
-                            if(iL > -1) {
-                                dV = 0.0;
-                                if(p == r && q == s) dV += oSystem->Get1PElement(p,s)*d1PFac; // 1-particle interaction
-                                dV += oSystem->Get2PElement(p,q,r,s)*d2PFac;                  // 2-particle interaction
-                                #pragma omp critical
-                                mV(iL) += iS1*iS2*iS3*iS4*dV*mW(i);
-                            }
-                        }
-                    }
-                }
-            }
-
-            if(omp_get_thread_num() == 0) {
-                if(iBasisDim > 100 && i%10 == 9) {
-                    fflush(stdout);
-                    cout << "\r                                ";
-                    cout << "\rCalculating SD: " << i+1;
-                }
-            }
-        }
+        mT.zeros(iBasisDim);
+        fMatrixVector(mW,mT,d1PFac,d2PFac);
+        mV += mT;
 
         // Prepere next iteration
         k++;
@@ -229,12 +186,72 @@ double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda) {
 }
 
 /*
-** Public :: Getters, Setters and Output
+** Private :: Functions
 */
 
 /*
-** Private :: Functions
+** Matrix-Vector multiplication section of the Lanczos algorithm
 */
+
+void Lanczos::fMatrixVector(Col<double> &mInput, Col<double> &mReturn, double d1PFac, double d2PFac) {
+
+    int    i, p, q, r, s;
+    int    iS1, iS2, iS3, iS4, iL=0;
+    double dV;
+    Slater sdPhiPQRS, sdPhiQRS, sdPhiSR, sdPhiR;
+
+    #ifdef OPENMP
+        #pragma omp parallel for private(p,q,r,s,iS1,iS2,iS3,iS4,sdPhiPQRS,sdPhiQRS,sdPhiSR,sdPhiR,iL,dV) schedule(dynamic,1)
+    #endif
+    for(i=0; i<iBasisDim; i++) {
+        for(r=0; r<iStates; r++) {
+            sdPhiR = oBasis->GetSlater(i);
+            iS1 = sdPhiR.Annihilate(r);
+            if(iS1 == 0) continue;
+            for(s=r+1; s<iStates; s++) {
+                sdPhiSR = sdPhiR;
+                iS2 = sdPhiSR.Annihilate(s);
+                if(iS2 == 0) continue;
+                for(q=0; q<iStates; q++) {
+                    sdPhiQRS = sdPhiSR;
+                    iS3 = sdPhiQRS.Create(q);
+                    if(iS3 == 0) continue;
+                    for(p=0; p<q; p++) {
+                        sdPhiPQRS = sdPhiQRS;
+                        iS4 = sdPhiPQRS.Create(p);
+                        if(iS4 == 0) continue;
+                        iL = oBasis->FindSlater(sdPhiPQRS,p,q);
+                        if(iL > -1) {
+                            dV = 0.0;
+                            if(p == r && q == s) dV += oSystem->Get1PElement(p,s)*d1PFac; // 1-particle interaction
+                            dV += oSystem->Get2PElement(p,q,r,s)*d2PFac;                  // 2-particle interaction
+                            #ifdef OPENMP
+                                #pragma omp critical
+                            #endif
+                            mReturn(iL) += iS1*iS2*iS3*iS4*dV*mInput(i);
+                        }
+                    }
+                }
+            }
+        }
+
+        #ifdef PROGRESS
+            #ifdef OPENMP
+            if(omp_get_thread_num() == 0) {
+            #endif
+                if(iBasisDim > 100 && i%10 == 9) {
+                    fflush(stdout);
+                    cout << "\r                                ";
+                    cout << "\rCalculating SD: " << i+1;
+                }
+            #ifdef OPENMP
+            }
+            #endif
+        #endif
+    }
+
+    return;
+}
 
 /*
 ** Output to stdout and logfile

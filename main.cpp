@@ -58,11 +58,11 @@ int main(int iArgs, char **aArgs) {
     Basis  *oBasis = new Basis(oSys);
 
     oSys->GenerateH(true);
-    oBasis->BuildBasis(iM, iMs);
+    //oBasis->BuildBasis(iM, iMs);
     //oBasis->Output();
 
-    Lanczos oLanczos(oSys, oBasis);
-    cout << "Energy: " << oLanczos.Run(iM, iMs, dOmega, dLambda) << endl;
+    //Lanczos oLanczos(oSys, oBasis);
+    //cout << "Energy: " << oLanczos.Run(iM, iMs, dOmega, dLambda) << endl;
 
     oSys->~System();
     tFinish = clock();

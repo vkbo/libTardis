@@ -55,11 +55,11 @@ double System::fCoulomb2D(int iN1, int iM1, int iN2, int iM2, int iN3, int iM3, 
 
                         double dLogRatio1   = - vLogFac[iJ1] - vLogFac[iJ2] - vLogFac[iJ3] - vLogFac[iJ4];
                         double dLogProduct2 = vLogFac[iN1 + abs(iM1)] + vLogFac[iN2 + abs(iM2)]
-                                + vLogFac[iN3 + abs(iM3)] + vLogFac[iN4 + abs(iM4)]
-                                - vLogFac[iN1 - iJ1] - vLogFac[iN2 - iJ2]
-                                - vLogFac[iN3 - iJ3] - vLogFac[iN4 - iJ4]
-                                - vLogFac[iJ1 + abs(iM1)] - vLogFac[iJ2 + abs(iM2)]
-                                - vLogFac[iJ3 + abs(iM3)] - vLogFac[iJ4 + abs(iM4)];
+                                            + vLogFac[iN3 + abs(iM3)] + vLogFac[iN4 + abs(iM4)]
+                                            - vLogFac[iN1 - iJ1] - vLogFac[iN2 - iJ2]
+                                            - vLogFac[iN3 - iJ3] - vLogFac[iN4 - iJ4]
+                                            - vLogFac[iJ1 + abs(iM1)] - vLogFac[iJ2 + abs(iM2)]
+                                            - vLogFac[iJ3 + abs(iM3)] - vLogFac[iJ4 + abs(iM4)];
                         double dLogRatio2   = -1*(iG + 1)*0.5*log(2);
 
                         dTemp   = 0.0;
@@ -73,10 +73,10 @@ double System::fCoulomb2D(int iN1, int iM1, int iN2, int iM2, int iN3, int iM3, 
                                         if((iL1 + iL2) == (iL3 + iL4)) {
                                             dTemp += MINUS_POW(iGamma2 + iGamma3 - iL2 - iL3)
                                                    * exp(vLogFac[iGamma1] + vLogFac[iGamma2] + vLogFac[iGamma3] + vLogFac[iGamma4]
-                                                          - vLogFac[iL1] - vLogFac[iL2] - vLogFac[iL3] - vLogFac[iL4]
-                                                          - vLogFac[iGamma1 - iL1] - vLogFac[iGamma2 - iL2]
-                                                          - vLogFac[iGamma3 - iL3] - vLogFac[iGamma4 - iL4]
-                                                          + vLGamma[2 + iLambda] + vLGamma[iG - iLambda + 1]);
+                                                         - vLogFac[iL1] - vLogFac[iL2] - vLogFac[iL3] - vLogFac[iL4]
+                                                         - vLogFac[iGamma1 - iL1] - vLogFac[iGamma2 - iL2]
+                                                         - vLogFac[iGamma3 - iL3] - vLogFac[iGamma4 - iL4]
+                                                         + vLGamma[2 + iLambda] + vLGamma[iG - iLambda + 1]);
                                         }
                                     }
                                 }
@@ -91,8 +91,8 @@ double System::fCoulomb2D(int iN1, int iM1, int iN2, int iM2, int iN3, int iM3, 
             }
         }
         dCoulombInt *= exp((vLogFac[iN1] + vLogFac[iN2] + vLogFac[iN3] + vLogFac[iN4]
-                        - vLogFac[iN1 + abs(iM1)] - vLogFac[iN2 + abs(iM2)]
-                        - vLogFac[iN3 + abs(iM3)] - vLogFac[iN4 + abs(iM4)])*0.5);
+                            - vLogFac[iN1 + abs(iM1)] - vLogFac[iN2 + abs(iM2)]
+                            - vLogFac[iN3 + abs(iM3)] - vLogFac[iN4 + abs(iM4)])*0.5);
     }
 
     return dCoulombInt;

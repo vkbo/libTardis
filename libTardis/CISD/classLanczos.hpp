@@ -10,7 +10,12 @@
 #include "../libTardis.hpp"
 #include <iostream>
 #include <fstream>
-#include "omp.h"
+#ifdef OPENMP
+    #include "omp.h"
+#endif
+#ifdef OPENMPI
+    #include "mpi.h"
+#endif
 
 namespace tardis {
 
@@ -44,6 +49,7 @@ class Lanczos
     tardis::Basis  *oBasis;
 
     // Functions
+    void fMatrixVector(arma::Col<double>&, arma::Col<double>&, double, double);
     void fOutput(std::stringstream*);
 
 };

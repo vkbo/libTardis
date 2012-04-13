@@ -23,7 +23,7 @@ QDot2D::QDot2D(int iShells, int iPartInt) {
     States   = Shells*(Shells + 1); // Number of possible quantum states
     bCoulomb = false;
 
-    sdTemp.resize(PartInt,0);      // Set size of temp SD vector
+    sdTemp.resize(PartInt,0); // Set size of temp SD vector
     iBasisDim = 0;
 
     // Generate array of log(n!)
