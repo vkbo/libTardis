@@ -7,7 +7,7 @@
 #include "../libTardis.hpp"
 
 using namespace std;
-//using namespace arma;
+using namespace arma;
 using namespace tardis;
 
 /*
@@ -36,14 +36,21 @@ Basis::Basis(System *oSys) {
 int Basis::BuildBasis(int iM, int iMs) {
 
     Slater      sdTest;
-    int         iTM = 0, iTMs = 0;
+    int         iTM = 0, iTMs = 0, iOut = 0, iProg = 1;
     int         iBasisDim = 0;
     int         iDim = iStates*iStates;
-    int         i,j,p,q, iOut;
+    int         i,j,k,p,q;
     vector<int> vTemp(iParticles,0);
+    vector<int> vMQN(iStates,0);
+
+
 
     vBasis.clear();
     //vIndex.resize(iDim);
+
+    for(i=0; i<iStates; i++) {
+        vMQN[i] = oSystem->GetState(i,1);
+    }
 
     #ifdef PROGRESS
         long   lConfMax, lCount = 0;
@@ -63,52 +70,128 @@ int Basis::BuildBasis(int iM, int iMs) {
 
     //fGenConfig(vTemp, iM, iMs, 0);
 
-    for(int i=0; i<iParticles; i++) {
-        vTemp[i] = i;
-        iTM  += oSystem->GetState(i,1);
-        iTMs += 2*(i%2)-1;
-    }
-    if(iTMs == iMs && iTM == iM) {
-        sdTest.Zero();
-        for(i=0; i<iParticles; i++) sdTest.Create(vTemp[i]);
-        vBasis.push_back(sdTest);
+    // For Particles = 0
+    if(iParticles == 0) {
+        return 0;
     }
 
-    iOut = 0;
-    while(vTemp[0] < iStates-iParticles) {
-        for(i=iParticles-1; i>=0; i--) {
-            if(vTemp[i] < iStates-iParticles+i) {
-                vTemp[i]++;
-                if(i < iParticles-1) {
-                    for(j=i+1; j<iParticles; j++) {
-                        vTemp[j] = vTemp[j-1] + 1;
-                    }
-                }
-                break;
-            }
+    // For Particles = 1
+    if(iParticles == 1) {
+        for(i=0; i<iStates; i++) {
+            sdTest.Zero();
+            sdTest.Create(i);
+            iTM  = oSystem->GetState(i,1);
+            iTMs = 2*(vTemp[i]%2)-1;
+            if(iTMs == iMs && iTM == iM) vBasis.push_back(sdTest);
+        }
+        return vBasis.size();
+    }
+
+    // For Particles >= 2
+    //for(int i=0; i<iParticles; i++) {
+    //    vTemp[i] = i;
+    //    iTM  += oSystem->GetState(i,1);
+    //    iTMs += 2*(i%2)-1;
+    //}
+    //if(iTMs == iMs && iTM == iM) {
+    //    sdTest.Zero();
+    //    for(i=0; i<iParticles; i++) sdTest.Create(vTemp[i]);
+    //    vBasis.push_back(sdTest);
+    //}
+
+    cout << endl;
+
+    #ifdef OPENMP
+        #pragma omp parallel for private(i,j,iTM,iTMs,vTemp,sdTest) schedule(dynamic,1)
+    #endif
+    for(k=0; k<iStates-iParticles+1; k++) {
+
+        #ifdef OPENMP
+            #pragma omp critical
+        #endif
+        cout << "\rThread " << omp_get_thread_num() << " running k=" << k << endl;
+
+        vTemp.resize(iParticles);
+        for(i=0; i<iParticles; i++) {
+            vTemp[i] = k+i;
         }
         iTM  = 0;
         iTMs = 0;
         for(i=0; i<iParticles; i++) {
-            iTM  += oSystem->GetState(vTemp[i],1);
+            //cout << "OK" << endl;
+            iTM  += vMQN[i];
             iTMs += 2*(vTemp[i]%2)-1;
         }
         if(iTMs == iMs && iTM == iM) {
             sdTest.Zero();
             for(i=0; i<iParticles; i++) sdTest.Create(vTemp[i]);
-            vBasis.push_back(sdTest);
+            //#ifdef OPENMP
+            //    #pragma omp critical
+            //#endif
+            //vBasis.push_back(sdTest);
         }
+        //sdTest.Zero();
+        //for(i=0; i<iParticles; i++) sdTest.Create(vTemp[i]);
+        //sdTest.Output(iStates);
+        //vTemp[0] = k;
+        //vTemp[1] = k;
+        //if(k==0) vTemp[1] = 1;
 
-        #ifdef PROGRESS
-            if(lConfMax > 100000) {
-                lCount++;
-                iOut++;
-                if(iOut >= lConfMax/1000) {
-                    cout << "\rBuilding Basis: " << OUTPUTF(3) << (lCount/double(lConfMax)*100) << "% " << flush;
-                    iOut = 0;
+        while(vTemp[1] < iStates-iParticles+1) {
+            for(i=iParticles-1; i>0; i--) {
+                if(vTemp[i] < iStates-iParticles+i) {
+                    vTemp[i]++;
+                    if(i < iParticles-1) {
+                        for(j=i+1; j<iParticles; j++) {
+                            vTemp[j] = vTemp[j-1] + 1;
+                        }
+                    }
+                    break;
                 }
             }
-        #endif
+            iTM  = 0;
+            iTMs = 0;
+            for(i=0; i<iParticles; i++) {
+                iTM  += vMQN[i];
+                iTMs += 2*(vTemp[i]%2)-1;
+            }
+            if(iTMs == iMs && iTM == iM) {
+                sdTest.Zero();
+                for(i=0; i<iParticles; i++) sdTest.Create(vTemp[i]);
+                #ifdef OPENMP
+                    //#pragma omp critical
+                #endif
+                //vBasis.push_back(sdTest);
+            }
+            //sdTest.Zero();
+            //for(i=0; i<iParticles; i++) sdTest.Create(vTemp[i]);
+            //sdTest.Output(iStates);
+
+            #ifdef PROGRESS
+                #ifdef OPENMP
+                if(omp_get_thread_num() == 0) {
+                #endif
+                    if(lConfMax > 100000) {
+                        lCount++;
+                        iOut++;
+                        if(iOut >= lConfMax/1000) {
+                            //cout << "\rBuilding Basis: " << OUTPUTF(3) << (lCount/double(lConfMax)*100) << "% " << flush;
+                            switch(iProg) {
+                                case 1: cout << "\rProcessing | "  << flush; break;
+                                case 2: cout << "\rProcessing / "  << flush; break;
+                                case 3: cout << "\rProcessing — "  << flush; break;
+                                case 4: cout << "\rProcessing \\ " << flush; break;
+                                default: iProg = 0; break;
+                            }
+                            iProg++;
+                            iOut = 0;
+                        }
+                    }
+                #ifdef OPENMP
+                }
+                #endif
+            #endif
+        }
     }
 
     iBasisDim = vBasis.size();

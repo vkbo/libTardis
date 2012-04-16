@@ -57,8 +57,8 @@ int main(int iArgs, char **aArgs) {
     System *oSys   = new System(iShell, iPartInt, QDOT2D);
     Basis  *oBasis = new Basis(oSys);
 
-    oSys->GenerateH(true);
-    //oBasis->BuildBasis(iM, iMs);
+    //oSys->GenerateH(true);
+    oBasis->BuildBasis(iM, iMs);
     //oBasis->Output();
 
     //Lanczos oLanczos(oSys, oBasis);
@@ -66,7 +66,7 @@ int main(int iArgs, char **aArgs) {
 
     oSys->~System();
     tFinish = clock();
-    cout << endl << "Computation time: " << double(tFinish-tStart)/CLOCKS_PER_SEC << " seconds" << endl << endl;
+    cout << endl << "Computation time: " << setprecision(5) << double(tFinish-tStart)/CLOCKS_PER_SEC << " seconds" << endl << endl;
 
     return 0;
 }

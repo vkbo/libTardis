@@ -27,6 +27,7 @@ class Slater
     int  Create(int);
     int  Annihilate(int);
     bool Compare(Slater);
+    void Zero();
     int  Count();
     int  CountOdd();
     int  CountEven();

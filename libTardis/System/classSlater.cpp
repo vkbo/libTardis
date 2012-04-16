@@ -33,6 +33,11 @@ bool Slater::Compare(Slater sdTest) {
     return (Word^sdTest.Word).none();
 }
 
+void Slater::Zero() {
+    Word.reset();
+    return;
+}
+
 int Slater::Count() {
     return Word.count();
 }

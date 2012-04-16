@@ -8,6 +8,9 @@
 
 #define CLASS_BASIS_HPP
 #include "../libTardis.hpp"
+#ifdef OPENMP
+    #include "omp.h"
+#endif
 
 namespace tardis {
 
@@ -34,8 +37,8 @@ class Basis
     // Variables
     int iParticles;
     int iStates;
-    int iConfMax;
-    int iConfCount;
+    //int iConfMax;
+    //int iConfCount;
 
     // Objects
     tardis::System                 *oSystem;
@@ -45,8 +48,8 @@ class Basis
     std::vector<std::vector<int> >  vIndex;
 
     // Functions
-    void fGenConfig(std::vector<int>&, int, int, int);
-    void fGenIndex();
+    //void fGenConfig(std::vector<int>&, int, int, int);
+    //void fGenIndex();
 
 };
 
