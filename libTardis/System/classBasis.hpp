@@ -35,8 +35,9 @@ class Basis
     private:
 
     // Variables
-    int iParticles;
-    int iStates;
+    int  iParticles;
+    int  iStates;
+    bool b3PIndex;
     //int iConfMax;
     //int iConfCount;
 
@@ -46,6 +47,9 @@ class Basis
     // Vectors
     std::vector<tardis::Slater>     vBasis;
     std::vector<std::vector<int> >  vIndex;
+    arma::Mat<int>                  m2PIndex;
+    arma::Cube<int>                 m3PIndex;
+    arma::Mat<int>                  mIndex;
 
     // Functions
     //void fGenConfig(std::vector<int>&, int, int, int);

@@ -30,7 +30,15 @@ int Slater::Annihilate(int i) {
 }
 
 bool Slater::Compare(Slater sdTest) {
-    return (Word^sdTest.Word).none();
+    return (Word==sdTest.Word);
+}
+
+bool Slater::After(Slater sdTest, int iStart, int iLen) {
+    for(int i=iStart; i<iLen; i++) {
+        if(sdTest.Word.test(i) && !Word.test(i)) return true;
+        if(!sdTest.Word.test(i) && Word.test(i)) return false;
+    }
+    return false;
 }
 
 void Slater::Zero() {
@@ -54,10 +62,15 @@ int Slater::CountEven() {
     return iCount;
 }
 
-void Slater::Output(int iLength) {
-    if(iLength > SLATER_WORD) iLength = SLATER_WORD;
+int Slater::GetFirst(int iOffset) {
+    for(int i=iOffset; i<SLATER_WORD; i++) if(Word.test(i)) return i;
+    return -1;
+}
+
+void Slater::Output(int iLen) {
+    if(iLen > SLATER_WORD) iLen = SLATER_WORD;
     cout << "|";
-    for(int i=0; i<iLength; i++) cout << Word[i];
+    for(int i=0; i<iLen; i++) cout << Word[i];
     cout << ">" << endl;
     return;
 }

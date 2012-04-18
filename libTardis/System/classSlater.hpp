@@ -14,23 +14,33 @@
 #ifndef SLATER_WORD
     #define SLATER_WORD 64
 #endif
+//#include <boost/dynamic_bitset.hpp>
+// URL: http://www.boost.org/doc/libs/1_49_0/libs/dynamic_bitset/dynamic_bitset.html
+//#define BOOST_BITSET
 
 namespace tardis {
 
 class Slater
 {
     public:
-    std::bitset<SLATER_WORD> Word;
-    Slater() {};
+    #ifndef BOOST_BITSET
+        std::bitset<SLATER_WORD> Word;
+        Slater() {};
+    #else
+        boost::dynamic_bitset<> Word;
+        Slater() {Word.resize(SLATER_WORD);};
+    #endif
     ~Slater() {};
 
     int  Create(int);
     int  Annihilate(int);
     bool Compare(Slater);
+    bool After(Slater, int, int);
     void Zero();
     int  Count();
     int  CountOdd();
     int  CountEven();
+    int  GetFirst(int);
     void Output(int);
 };
 

@@ -10,10 +10,10 @@
 // QDot2D Lanczos
 #define LANCZOS_ZERO     1e-9
 #define LANCZOS_CONVERGE 1e-6
-#define USE_RAND_SEED    true
+#define USE_RAND_SEED    false
 
 // Size of Slater Determinant
-#define SLATER_WORD 256
+#define SLATER_WORD 128
 
 // Enable Progress Output if defined
 #define PROGRESS
