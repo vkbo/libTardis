@@ -38,18 +38,17 @@ class Basis
     int  iParticles;
     int  iStates;
     bool b3PIndex;
-    //int iConfMax;
-    //int iConfCount;
 
     // Objects
     tardis::System                 *oSystem;
 
     // Vectors
-    std::vector<tardis::Slater>     vBasis;
-    std::vector<std::vector<int> >  vIndex;
-    arma::Mat<int>                  m2PIndex;
-    arma::Cube<int>                 m3PIndex;
-    arma::Mat<int>                  mIndex;
+    std::vector<tardis::Slater> vBasis;
+    #ifdef INDEX_BASIS
+        std::vector<std::vector<int> > vIndex;
+    #else
+        arma::Mat<int> mIndex;
+    #endif
 
     // Functions
     //void fGenConfig(std::vector<int>&, int, int, int);

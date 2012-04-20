@@ -29,16 +29,14 @@ int Slater::Annihilate(int i) {
     }
 }
 
-bool Slater::Compare(Slater sdTest) {
+bool Slater::Equal(Slater sdTest) {
     return (Word==sdTest.Word);
 }
 
-bool Slater::After(Slater sdTest, int iStart, int iLen) {
-    for(int i=iStart; i<iLen; i++) {
-        if(sdTest.Word.test(i) && !Word.test(i)) return true;
-        if(!sdTest.Word.test(i) && Word.test(i)) return false;
-    }
-    return false;
+int Slater::Compare(Slater sdTest) {
+    if(Word==sdTest.Word) return 0;
+    if(Word.test((Word^sdTest.Word)._Find_first())) return 1;
+    return -1;
 }
 
 void Slater::Zero() {
@@ -62,9 +60,12 @@ int Slater::CountEven() {
     return iCount;
 }
 
-int Slater::GetFirst(int iOffset) {
-    for(int i=iOffset; i<SLATER_WORD; i++) if(Word.test(i)) return i;
-    return -1;
+/*
+**  This function uses the experimental method _Find_first() from the bitset class
+**   - See stl source code: http://www.sgi.com/tech/stl/bitset
+*/
+int Slater::GetFirst() {
+    return Word._Find_first();
 }
 
 void Slater::Output(int iLen) {

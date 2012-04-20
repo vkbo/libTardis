@@ -23,3 +23,6 @@
 
 // Enable OpenMPI
 //#define OPENMPI
+
+// Use index-based basis search? Only useful for small configurations
+//#define INDEX_BASIS

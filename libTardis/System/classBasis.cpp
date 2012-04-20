@@ -26,25 +26,11 @@ Basis::Basis(System *oSys) {
         cout << endl;
     }
 
-    /*
-    ** Determining what type of search-index to use
-    **  - For systems larger than 420 states, only the first 2 particles are indexed
-    **  - For smaller systems, the first 3 particles are indexed
-    **  - For 2-particle systems only 2-particle index is needed
-    */
-
-    if(iStates > 420 || iParticles <= 2) {
-        m2PIndex.set_size(iStates,iStates);
-        m2PIndex.fill(-1);
-        b3PIndex = false;
-    } else {
-        m3PIndex.set_size(iStates,iStates,iStates);
-        m3PIndex.fill(-1);
-        b3PIndex = true;
-    }
-
-    mIndex.set_size(iStates+1,2);
-    mIndex.fill(-1);
+    // Using binary search
+    #ifndef INDEX_BASIS
+        mIndex.set_size(iStates+1,2);
+        mIndex.fill(-1);
+    #endif
 
     return;
 }
@@ -58,18 +44,13 @@ int Basis::BuildBasis(int iM, int iMs) {
     Slater      sdTest;
     int         iTM = 0, iTMs = 0;
     int         iBasisDim = 0;
-    int         iDim = iStates*iStates;
-    int         i,j,p,q, iOut;
+    int         i,j,iOut;
     vector<int> vTemp(iParticles,0);
-    vector<int> vPrev(3,-1);
-    int         iPrev = -1;
 
     vBasis.clear();
-    //if(b3PIndex)  m3PIndex.zeros(iStates,iStates,iStates);
-    //if(!b3PIndex) m2PIndex.zeros(iStates,iStates);
-
-    //cout << m3PIndex << endl;
-    vIndex.resize(iDim);
+    #ifndef INDEX_BASIS
+        int iPrev = -1;
+    #endif
 
     #ifdef PROGRESS
         long   lConfMax, lCount = 0;
@@ -98,12 +79,14 @@ int Basis::BuildBasis(int iM, int iMs) {
         sdTest.Zero();
         for(i=0; i<iParticles; i++) sdTest.Create(vTemp[i]);
         vBasis.push_back(sdTest);
-        if(vTemp[0] != iPrev) {
-            if(iPrev >= 0) mIndex(iPrev,1)  = vBasis.size()-2;
-            mIndex(vTemp[0],0) = vBasis.size()-1;
-            mIndex(vTemp[0],1) = vBasis.size()-1;
-            iPrev = vTemp[0];
-        }
+        #ifndef INDEX_BASIS
+            if(vTemp[0] != iPrev) {
+                if(iPrev >= 0) mIndex(iPrev,1)  = vBasis.size()-2;
+                mIndex(vTemp[0],0) = vBasis.size()-1;
+                mIndex(vTemp[0],1) = vBasis.size()-1;
+                iPrev = vTemp[0];
+            }
+        #endif
     }
 
     iOut = 0;
@@ -129,41 +112,14 @@ int Basis::BuildBasis(int iM, int iMs) {
             sdTest.Zero();
             for(i=0; i<iParticles; i++) sdTest.Create(vTemp[i]);
             vBasis.push_back(sdTest);
-            //mIndex(vTemp[0],0) = vBasis.size()-1;
-            //mIndex(vTemp[0]+1,0) = vBasis.size()-1;
-
-            if(vTemp[0] != iPrev) {
-                if(iPrev >= 0) mIndex(iPrev,1)  = vBasis.size()-2;
-                mIndex(vTemp[0],0) = vBasis.size()-1;
-                mIndex(vTemp[0],1) = vBasis.size()-1;
-                iPrev = vTemp[0];
-            }
-
-            //sdTest.Output(iStates);
-            //for(i=0; i<iParticles; i++) cout << vTemp[i] << " ";
-            //cout << endl;
-            //for(i=0; i<3; i++) cout << vPrev[i] << " ";
-            //cout << endl;
-
-            // Update index
-            if(b3PIndex) {
-                if(vPrev[0] != vTemp[0]) {
-                    m3PIndex(vTemp[0],0,0) = vBasis.size()-1;
-                    //cout << vTemp[0] << ",0,0 = " << vBasis.size()-1 << endl;
-                    vPrev[0] = vTemp[0];
+            #ifndef INDEX_BASIS
+                if(vTemp[0] != iPrev) {
+                    if(iPrev >= 0) mIndex(iPrev,1)  = vBasis.size()-2;
+                    mIndex(vTemp[0],0) = vBasis.size()-1;
+                    mIndex(vTemp[0],1) = vBasis.size()-1;
+                    iPrev = vTemp[0];
                 }
-                if(vPrev[1] != vTemp[1]) {
-                    m3PIndex(vTemp[0],vTemp[1],0) = vBasis.size()-1;
-                    //cout << vTemp[0] << "," << vTemp[1] << ",0 = " << vBasis.size()-1 << endl;
-                    vPrev[1] = vTemp[1];
-                }
-                if(vPrev[2] != vTemp[2]) {
-                    m3PIndex(vTemp[0],vTemp[1],vTemp[2]) = vBasis.size()-1;
-                    //cout << vTemp[0] << "," << vTemp[1] << "," << vTemp[2] << " = " << vBasis.size()-1 << endl;
-                    vPrev[2] = vTemp[2];
-                }
-            } else {
-            }
+            #endif
         }
 
         #ifdef PROGRESS
@@ -181,128 +137,100 @@ int Basis::BuildBasis(int iM, int iMs) {
 
     iBasisDim = vBasis.size();
 
-    //vBasis[200].Output(iStates);
-
-    //for(i=0; i<iBasisDim; i++) {
-    //    vBasis[i].Output(iStates);
-    //    if(vBasis[i].After(vBasis[200], iStates)) {
-    //        cout << "After" << endl;
-    //        vBasis[200].Output(iStates);
-    //        cout << endl;
-    //    }
-    //}
-
-    //cout << FindSlater(vBasis[200],0,0) << endl;
-    //cout << mIndex << endl;
-
-    //cout << m3PIndex << endl;
-
     #ifdef PROGRESS
         cout << "\rBuilding Basis: 100.0%" << endl;
         cout << "Basis Dim: " << iBasisDim << endl;
-        //return iBasisDim;
-        cout << "Indexing Basis ... " << flush;
-        lCount = 0;
-    #else
-        cout << "Done" << endl;
     #endif
 
-    //return iBasisDim;
+    #ifdef INDEX_BASIS
 
-    iOut = 0;
-    #ifdef OPENMP
-        #pragma omp parallel for private(i,q,sdTest) schedule(dynamic,1)
-    #endif
-    for(p=0; p<iStates; p++) {
-        for(q=0; q<iStates; q++) {
-            for(i=0; i<iBasisDim; i++) {
-                sdTest = vBasis[i];
-                if(sdTest.Annihilate(p) != 0) {
-                    if(sdTest.Annihilate(q) != 0) {
-                        #ifdef OPENMP
-                            #pragma omp critical
-                        #endif
-                        vIndex[p*iStates+q].push_back(i);
-                    }
-                }
-            }
+        int p,q;
+        int iDim = iStates*iStates;
+        vIndex.resize(iDim);
 
-            #ifdef PROGRESS
-                #ifdef OPENMP
-                if(omp_get_thread_num() == 0) {
-                #endif
-                    if(iDim > 1000) {
-                        lCount = p*iStates+q;
-                        iOut++;
-                        if(iOut >= iDim/1000) {
-                            cout << "\rIndexing Basis: " << OUTPUTF(3) << (lCount/double(iDim)*100) << "% " << flush;
-                            iOut = 0;
+        #ifdef PROGRESS
+            cout << "Indexing Basis ... " << flush;
+            lCount = 0;
+        #else
+            cout << "Done" << endl;
+        #endif
+
+        iOut = 0;
+        #ifdef OPENMP
+            #pragma omp parallel for private(i,q,sdTest) schedule(dynamic,1)
+        #endif
+        for(p=0; p<iStates; p++) {
+            for(q=0; q<iStates; q++) {
+                for(i=0; i<iBasisDim; i++) {
+                    sdTest = vBasis[i];
+                    if(sdTest.Annihilate(p) != 0) {
+                        if(sdTest.Annihilate(q) != 0) {
+                            #ifdef OPENMP
+                                #pragma omp critical
+                            #endif
+                            vIndex[p*iStates+q].push_back(i);
                         }
                     }
-                #ifdef OPENMP
                 }
+
+                #ifdef PROGRESS
+                    #ifdef OPENMP
+                    if(omp_get_thread_num() == 0) {
+                    #endif
+                        if(iDim > 1000) {
+                            lCount = p*iStates+q;
+                            iOut++;
+                            if(iOut >= iDim/1000) {
+                                cout << "\rIndexing Basis: " << OUTPUTF(3) << (lCount/double(iDim)*100) << "% " << flush;
+                                iOut = 0;
+                            }
+                        }
+                    #ifdef OPENMP
+                    }
+                    #endif
                 #endif
-            #endif
+            }
         }
-    }
-    #ifdef PROGRESS
-        cout << "\rIndexing Basis: 100.0%" << endl;
-    #else
-        cout << "Done" << endl;
+        #ifdef PROGRESS
+            cout << "\rIndexing Basis: 100.0%" << endl;
+        #else
+            cout << "Done" << endl;
+        #endif
+        cout << endl;
+        fflush(stdout);
+
     #endif
-    cout << endl;
-    fflush(stdout);
 
     return iBasisDim;
 }
 
 int Basis::FindSlater(Slater sdFind, int p, int q) {
 
-    /*
-    for(unsigned int i=0; i<vIndex[p*iStates+q].size(); i++) {
-        if(vBasis[vIndex[p*iStates+q][i]].Compare(sdFind)) {
-            return vIndex[p*iStates+q][i];
-        }
-    }
-
-    return -1;
-    */
-    //for(unsigned int i=0; i<vBasis.size(); i++) {
-    //    if(vBasis[i].Compare(sdFind)) return i;
-    //}
-
-    int iCheck;
-    int iMin = 0;
-    int iMax = vBasis.size();
-
-    int iP = sdFind.GetFirst(0);
-    //cout << iP << endl;
-    if(iP != -1) {
-        iMin = mIndex(iP,0);
-        iMax = mIndex(iP,1)+1;
-    }
-
-    if(iMin == -1) return -1;
-
-    //if(iMax-iMin < 10) {
-    //    for(int i=iMin; i<iMax; i++) {
-    //        if(vBasis[i].Compare(sdFind)) return i;
-    //    }
-    //} else {
-        while(iMax!=iMin) {
-            iCheck = iMin+floor((iMax-iMin)/2);
-            //cout << iMax << ", " << iMin << ", " << iCheck << endl;
-            if(vBasis[iCheck].Compare(sdFind)) {
-                return iCheck;
-            } else {
-                if(vBasis[iCheck].After(sdFind,iP,iStates)) {
-                    iMax = iCheck;
-                } else {
-                    iMin = iCheck+1;
-                }
+    #ifdef INDEX_BASIS
+        // Index-based search
+        for(unsigned int i=0; i<vIndex[p*iStates+q].size(); i++) {
+            if(vBasis[vIndex[p*iStates+q][i]].Equal(sdFind)) {
+                return vIndex[p*iStates+q][i];
             }
         }
-    //}
+    #else
+        // Binary search
+        int iCheck;
+        int iP = sdFind.GetFirst();
+        int iMin = mIndex(iP,0);
+        int iMax = mIndex(iP,1)+1;
+
+        if(iMin == -1) return -1;
+
+        while(iMax!=iMin) {
+            iCheck = iMin+(iMax-iMin)/2;
+            switch(vBasis[iCheck].Compare(sdFind)) {
+                case  0: return iCheck;
+                case -1: iMax = iCheck;   break;
+                case  1: iMin = iCheck+1; break;
+            }
+        }
+    #endif
 
     return -1;
 }

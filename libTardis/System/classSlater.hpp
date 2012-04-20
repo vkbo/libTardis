@@ -34,13 +34,13 @@ class Slater
 
     int  Create(int);
     int  Annihilate(int);
-    bool Compare(Slater);
-    bool After(Slater, int, int);
+    bool Equal(Slater);
+    int  Compare(Slater);
     void Zero();
     int  Count();
     int  CountOdd();
     int  CountEven();
-    int  GetFirst(int);
+    int  GetFirst();
     void Output(int);
 };
 
