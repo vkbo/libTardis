@@ -5,7 +5,6 @@
 // Armadillo Cache
 #define ARMA_CACHE     true                         // Enable?
 #define ARMA_CACHE_DIR "/scratch/Temp/arma_cache/"  // Path to cache, must end with "/"
-#define ARMA_CACHE_MIN 40                           // Minimum size matrix to save
 
 // QDot2D Lanczos
 #define LANCZOS_ZERO     1e-9
@@ -15,7 +14,7 @@
 // Size of Slater Determinant
 #define SLATER_WORD 128
 
-// Enable Progress Output if defined
+// Enable Progress Output
 #define PROGRESS
 
 // Enable OpenMP
@@ -24,5 +23,7 @@
 // Enable OpenMPI
 //#define OPENMPI
 
-// Use index-based basis search? Only useful for small configurations
+// Use index-based basis search?
+//  - Only useful for small basises.
+//  - Uses a lot of memory but gives a good speedup.
 //#define INDEX_BASIS
