@@ -38,6 +38,10 @@
     #include "CISD/classLanczos.hpp"
 #endif
 
+#ifndef CLASS_DIAG_HPP
+    #include "CISD/classDiag.hpp"
+#endif
+
 #ifndef CLASS_BASIS_HPP
     #include "System/classBasis.hpp"
 #endif

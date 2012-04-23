@@ -23,8 +23,6 @@ System::System(int iSh, int iP, int iSysType) {
     iShells     = iSh;
     iParticles  = iP;
     iSystemType = iSysType;
-    //iNMTotal    = iParticles*(iShells-1);
-    //iNLambda    = 0;
 
     bCache = false;
 
@@ -87,24 +85,28 @@ System::System(int iSh, int iP, int iSysType) {
 
 void System::GenerateH(bool bLoad) {
 
-    ostringstream sFileNameH, sFileNameM;
-    //bool bLoad = ARMA_CACHE;
+    stringstream sFileNameC, sFileNameH, sFileNameM;
     bool bCalc = true;
 
     sFileNameH << ARMA_CACHE_DIR << "QDot2D_CoulombBlock_Sh" << iShells << ".dat";
     sFileNameM << ARMA_CACHE_DIR << "QDot2D_CoulombBlockMap_Sh" << iShells << ".dat";
+    sFileNameC << ARMA_CACHE_DIR << "QDot2D_CoulombBlockConfig_Sh" << iShells << ".dat";
     if(bLoad) {
-        bCalc = !mHamiltonian.quiet_load(sFileNameH.str().c_str());
-        bCalc = !mMap.quiet_load(sFileNameM.str().c_str());
+        bool bFH = mHamiltonian.quiet_load(sFileNameH.str());
+        bool bFC = mConfig.quiet_load(sFileNameC.str());
+        bool bFM = mMap.quiet_load(sFileNameM.str());
+        bCalc = !bFH | !bFC | !bFM;
     }
 
     if(bCalc) {
+        int    i, j, k;
         int    iM, iMs, iLambda, iMu;
         int    iCount = 12*iShells-9;
         int    iDim;
         double dSize = 0.0;
 
         mMap.zeros(iStates*iStates,2);
+        mConfig.set_size(1,iCount);
         mHamiltonian.set_size(1,iCount+1);
         vector<vector<int> > vConfig(iCount);
 
@@ -112,11 +114,11 @@ void System::GenerateH(bool bLoad) {
         cout << "Generating configurations ...";
         fflush(stdout);
 
-        for(int i=0; i<iStates; i++) {
-            for(int j=i; j<iStates; j++) {
+        for(i=0; i<iStates; i++) {
+            for(j=i; j<iStates; j++) {
                 iM  = mStates(i,1)+mStates(j,1);
                 iMs = mStates(i,2)+mStates(j,2);
-                iLambda = (6*iM + 12*iShells + iMs - 10)/2;
+                iLambda = fMapLambda(iM, iMs);
                 mMap(i*iStates+j,0) = iLambda+1;
                 mMap(j*iStates+i,0) = iLambda+1;
                 if(j>i) {
@@ -129,7 +131,7 @@ void System::GenerateH(bool bLoad) {
             }
         }
 
-        for(int k=0; k<=iCount; k++) {
+        for(k=0; k<=iCount; k++) {
             iDim = vConfig[k-1].size()/2;
             dSize += iDim*iDim*sizeof(double);
         }
@@ -139,23 +141,27 @@ void System::GenerateH(bool bLoad) {
         fflush(stdout);
 
         mHamiltonian(0).zeros(iStates,iStates);
-        for(int i=0; i<iStates; i++) {
-            for(int j=0; j<iStates; j++) {
+        for(i=0; i<iStates; i++) {
+            for(j=0; j<iStates; j++) {
                 mHamiltonian(0)(i,j) = (1+2*mStates(i,0)+abs(mStates(i,1))) + (1+2*mStates(j,0)+abs(mStates(j,1)));
             }
         }
 
-        //cout << mHamiltonian(0) << endl;
-
-        for(int k=1; k<=iCount; k++) {
+        for(k=1; k<=iCount; k++) {
             iDim = vConfig[k-1].size()/2;
             cout << "\r                                                                                   ";
             cout << "\rGenerating 2-particle Hamiltonian, block " << k << " of " << iCount << " (Dim: " << iDim << "x" << iDim << ")";
             fflush(stdout);
             if(iDim > 0) {
                 mHamiltonian(k).zeros(iDim,iDim);
-                for(int i=0; i<iDim; i++) {
-                    for(int j=i; j<iDim; j++) {
+                mConfig(k-1).zeros(2,iDim);
+                #ifdef OPENMP
+                    #pragma omp parallel for private(j) schedule(dynamic,1)
+                #endif
+                for(i=0; i<iDim; i++) {
+                    mConfig(k-1)(0,i) = vConfig[k-1][2*i];
+                    mConfig(k-1)(1,i) = vConfig[k-1][2*i+1];
+                    for(j=i; j<iDim; j++) {
                         mHamiltonian(k)(i,j) = fCalcElementQ2D(vConfig[k-1][2*i],vConfig[k-1][2*i+1],vConfig[k-1][2*j],vConfig[k-1][2*j+1]);
                         mHamiltonian(k)(j,i) = mHamiltonian(k)(i,j);
                     }
@@ -167,8 +173,9 @@ void System::GenerateH(bool bLoad) {
 
         cout << "\r                                                                                   ";
         if(bLoad) {
-            mHamiltonian.save(sFileNameH.str().c_str());
-            mMap.save(sFileNameM.str().c_str());
+            mHamiltonian.save(sFileNameH.str());
+            mConfig.save(sFileNameC.str());
+            mMap.save(sFileNameM.str());
             cout << "\rDone and saved to cache";
         } else {
             cout << "\rDone";
@@ -228,4 +235,41 @@ double System::Get2PElement(int p, int q, int r, int s) {
         }
     }
     return -1.0;
+}
+
+const Col<double>* System::Get1PHam(int iM, int iMs) {
+
+    unsigned int iIndex = fMapLambda(iM, iMs);
+
+    if(mHamiltonian.n_elem > 0) {
+        m1PHam.zeros(mConfig(iIndex).n_cols);
+        for(unsigned int i=0; i<mConfig(iIndex).n_cols; i++) {
+            m1PHam(i) = Get1PElement(mConfig(iIndex)(0,i),mConfig(iIndex)(1,i));
+        }
+        return &m1PHam;
+    }
+
+    return NULL;
+}
+
+const Mat<double>* System::Get2PHam(int iM, int iMs) {
+    unsigned int iIndex = fMapLambda(iM, iMs)+1;
+    if(iIndex <= mHamiltonian.n_elem) return &mHamiltonian(iIndex);
+    return NULL;
+}
+
+int System::GetDim(int iM, int iMs) {
+    return mConfig(fMapLambda(iM, iMs)).n_cols;
+}
+
+/*
+** Private :: Functions
+*/
+
+/*
+** Returns Lambda map-index from M and Ms
+*/
+
+int System::fMapLambda(int iM, int iMs) {
+    return (6*iM + 12*iShells + iMs - 10)/2;
 }

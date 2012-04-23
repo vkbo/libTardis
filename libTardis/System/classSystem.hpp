@@ -8,6 +8,9 @@
 
 #define CLASS_SYSTEM_HPP
 #include "../libTardis.hpp"
+#ifdef OPENMP
+    #include "omp.h"
+#endif
 
 namespace tardis {
 
@@ -28,8 +31,11 @@ class System
     int GetState(int, int);
 
     // QDot2D functions in modQDot2D.cpp
-    double Get1PElement(int, int);
-    double Get2PElement(int, int, int, int);
+    double                   Get1PElement(int, int);
+    double                   Get2PElement(int, int, int, int);
+    const arma::Col<double> *Get1PHam(int, int);
+    const arma::Mat<double> *Get2PHam(int, int);
+    int                      GetDim(int, int);
 
 
     private:
@@ -50,8 +56,12 @@ class System
 
     // Hamiltonian
     arma::field<arma::Mat<double> > mHamiltonian; // Blockdiagonal Hamiltonian Matrix
-    arma::Mat<int>                  mLambda;      // Mapping of M- and Ms-total indicies
+    arma::field<arma::Mat<int> >    mConfig;      // Configurations
     arma::Mat<int>                  mMap;         // Mapping between mStates and mHamiltonian
+    arma::Col<double>               m1PHam;       // Array to hold 1P elements
+
+    // Private functions
+    int fMapLambda(int, int);
 
     // QDot2D functions in modQDot2D.cpp
     double fCalcElementQ2D(int, int, int, int);

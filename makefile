@@ -15,7 +15,7 @@ OUTPUT      = $(COMPILE)/$(NODE)
 EXEC        = CISD-$(NODE)
 MAIN        = main.cpp
 SYSOBJECTS  = classSystem.o classSlater.o classBasis.o
-CISDOBJECTS = classLanczos.o
+CISDOBJECTS = classLanczos.o classDiag.o
 OBJECTS     = $(addprefix $(OUTPUT)/,$(SYSOBJECTS) $(CISDOBJECTS))
 
 $(shell [ -d "$(OUTPUT)" ] || mkdir -p $(OUTPUT))
@@ -23,7 +23,7 @@ $(shell [ -d "$(OUTPUT)" ] || mkdir -p $(OUTPUT))
 $(EXEC) : $(OUTPUT)/main.o $(OBJECTS)
 	$(CC) $(LFLAGS) $(OUTPUT)/main.o $(OBJECTS) $(LIBFLAGS) -o $@
 
-$(OUTPUT)/main.o : $(MAIN)
+$(OUTPUT)/main.o : $(MAIN) $(LIBROOT)/libTardis.hpp
 	$(CC) $(CFLAGS) $(LIBFLAGS) $(MAIN) -o $@
 
 $(OUTPUT)/classSystem.o : $(LIBSYS)/classSystem.cpp $(LIBSYS)/classSystem.hpp $(LIBROOT)/config.hpp
@@ -37,6 +37,9 @@ $(OUTPUT)/classBasis.o : $(LIBSYS)/classBasis.cpp $(LIBSYS)/classBasis.hpp $(LIB
 
 $(OUTPUT)/classLanczos.o : $(LIBCISD)/classLanczos.cpp $(LIBCISD)/classLanczos.hpp $(LIBROOT)/config.hpp
 	$(CC) $(CFLAGS) $(LIBFLAGS) $(LIBCISD)/classLanczos.cpp -o $@
+
+$(OUTPUT)/classDiag.o : $(LIBCISD)/classDiag.cpp $(LIBCISD)/classDiag.hpp $(LIBROOT)/config.hpp
+	$(CC) $(CFLAGS) $(LIBFLAGS) $(LIBCISD)/classDiag.cpp -o $@
 
 clean:
 	rm $(OUTPUT)/* $(EXEC)

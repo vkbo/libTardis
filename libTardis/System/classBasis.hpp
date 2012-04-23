@@ -45,7 +45,7 @@ class Basis
     // Vectors
     std::vector<tardis::Slater> vBasis;
     #ifdef INDEX_BASIS
-        std::vector<std::vector<int> > vIndex;
+        std::vector<std::vector<short> > vIndex;
     #else
         arma::Mat<int> mIndex;
     #endif

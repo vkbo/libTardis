@@ -55,10 +55,13 @@ int main(int iArgs, char **aArgs) {
     //if(iArgs > 1) iShell = atoi(aArgs[1]);
 
     System *oSys   = new System(iShell, iPartInt, QDOT2D);
-    Basis  *oBasis = new Basis(oSys);
+    //Basis  *oBasis = new Basis(oSys);
+    oSys->GenerateH(true);
 
-    //oSys->GenerateH(true);
-    oBasis->BuildBasis(iM, iMs);
+    Diag   oDiag(oSys);
+    cout << "Energy: " << oDiag.Run(iM, iMs, dOmega, dLambda) << endl;
+
+    //oBasis->BuildBasis(iM, iMs);
     //oBasis->Output();
 
     //Lanczos oLanczos(oSys, oBasis);

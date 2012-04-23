@@ -168,7 +168,7 @@ double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda) {
         cout  << "\r                              \r";
         ssOut << "Lanczos Iteration " << setw(2) << k;
         ssOut << " : Energy = " << showpoint << setw(11) << setprecision(10) << mE(k);
-        ssOut << " : Converge = " << setprecision(3) << dConv << endl;
+        ssOut << " : Convergence = " << setprecision(3) << dConv << endl;
         fOutput(&ssOut);
 
         if(dConv < LANCZOS_CONVERGE) break;

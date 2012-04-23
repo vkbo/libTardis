@@ -3,7 +3,6 @@
 */
 
 // Armadillo Cache
-#define ARMA_CACHE     true                         // Enable?
 #define ARMA_CACHE_DIR "/scratch/Temp/arma_cache/"  // Path to cache, must end with "/"
 
 // QDot2D Lanczos
