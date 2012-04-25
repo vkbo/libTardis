@@ -14,19 +14,16 @@ using namespace tardis;
 ** Public :: Constructor and Destructor
 */
 
-Lanczos::Lanczos(System *oSys, Basis *oBas, const char* sOut) {
+Lanczos::Lanczos(System *oSys) {
 
     oSystem = oSys;
-    oBasis  = oBas;
+    oBasis  = oSystem->GetBasis();
+    oPot    = oSystem->GetPotential();
+    oOut    = oSystem->GetLog();
 
     iStates    = oSystem->GetStates();
     iParticles = oSystem->GetParticles();
     iBasisDim  = oBasis->GetSize();
-
-    // Log file
-    bLog    = false;
-    sOutput = sOut;
-    if(strlen(sOutput) > 0) bLog = true;
 
     return;
 }
@@ -37,19 +34,17 @@ Lanczos::Lanczos(System *oSys, Basis *oBas, const char* sOut) {
 
 double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda) {
 
-    stringstream ssOut;
-
     // Check for illegal values
 
     if(iBasisDim == 0) {
         ssOut << "Basis has dimension 0 ..." << endl;
-        fOutput(&ssOut);
+        oOut->Output(&ssOut);
         return -1.0;
     }
 
     if(iStates > SLATER_WORD) {
         ssOut << "Error: SLATER_WORD in libTardis.hpp too small, must be at least " << (ceil(iStates/64.0)*64) << " ..." << endl;
-        fOutput(&ssOut);
+        oOut->Output(&ssOut);
         return -1.0;
     }
 
@@ -68,6 +63,7 @@ double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda) {
             d2PFac = 0.0;
         }
     }
+    d1PFac *= 1.0/(iParticles-1);
 
     iM  = abs(iM);  // iM  = -iM
     iMs = abs(iMs); // iMs = -iMs
@@ -75,9 +71,6 @@ double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda) {
     /*
     ** Initializing
     */
-
-    ssOut << "Dimension of basis: " << iBasisDim << endl;
-    fOutput(&ssOut);
 
     // Lanczos vectors
     if(USE_RAND_SEED) srand(time(NULL));
@@ -142,7 +135,7 @@ double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda) {
             mW/norm(mW,2);
             cout  << "\r                         \r";
             ssOut << "Re-ortonormalizing. V·W = " << setprecision(3) << dO << endl;
-            fOutput(&ssOut);
+            oOut->Output(&ssOut);
         }
 
         // Building the tri-diagonal matrix
@@ -169,18 +162,15 @@ double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda) {
         ssOut << "Lanczos Iteration " << setw(2) << k;
         ssOut << " : Energy = " << showpoint << setw(11) << setprecision(10) << mE(k);
         ssOut << " : Convergence = " << setprecision(3) << dConv << endl;
-        fOutput(&ssOut);
+        oOut->Output(&ssOut);
 
         if(dConv < LANCZOS_CONVERGE) break;
     }
 
     ssOut << endl;
-    fOutput(&ssOut);
-
     ssOut << "Eigenvalues:" << endl;
-    fOutput(&ssOut);
     ssOut << mEnergy << endl;
-    fOutput(&ssOut);
+    oOut->Output(&ssOut);
 
     return mEnergy(0);
 }
@@ -223,8 +213,8 @@ void Lanczos::fMatrixVector(Col<double> &mInput, Col<double> &mReturn, double d1
                         iL = oBasis->FindSlater(sdPhiPQRS,p,q);
                         if(iL > -1) {
                             dV = 0.0;
-                            if(p == r && q == s) dV += oSystem->Get1PElement(p,s)*d1PFac; // 1-particle interaction
-                            dV += oSystem->Get2PElement(p,q,r,s)*d2PFac;                  // 2-particle interaction
+                            if(p == r && q == s) dV += oPot->Get1PElement(p,s)*d1PFac; // 1-particle interaction
+                            dV += oPot->Get2PElement(p,q,r,s)*d2PFac;                  // 2-particle interaction
                             #ifdef OPENMP
                                 #pragma omp critical
                             #endif
@@ -249,26 +239,6 @@ void Lanczos::fMatrixVector(Col<double> &mInput, Col<double> &mReturn, double d1
             #endif
         #endif
     }
-
-    return;
-}
-
-/*
-** Output to stdout and logfile
-*/
-
-void Lanczos::fOutput(stringstream* ssText) {
-
-    cout << ssText->str();
-
-    if(bLog) {
-        ofstream oLog;
-        oLog.open(sOutput, ios::app);
-        oLog << ssText->str();
-        oLog.close();
-    }
-
-    ssText->str(string());
 
     return;
 }

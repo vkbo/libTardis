@@ -8,9 +8,10 @@
 
 #define CLASS_SYSTEM_HPP
 #include "../libTardis.hpp"
-#ifdef OPENMP
-    #include "omp.h"
-#endif
+#include "classBasis.hpp"
+#include "classLog.hpp"
+#include "../Potential/classPotential.hpp"
+#include <iostream>
 
 namespace tardis {
 
@@ -19,54 +20,68 @@ class System
     public:
 
     // Constructor and Destructor
-    System(int, int, int);
-    ~System() {};
+    System();
+    ~System();
 
-    // Public Functions
-    void GenerateH(bool bLoad=false);
+    // Potential Configuration
+    bool SetPotential(int, int iPotential = QDOT2D, int iGenerator = Q2D_ANALYTIC);
+    int  GetPotentialType()   {return iPotType;};
+    int  GetShells()          {return iShells;};
+    int  GetStates()          {return iStates;};
 
-    // Getters, Setters and Output
-    int GetParticles();
-    int GetStates();
-    int GetState(int, int);
+    // Basis Configuration
+    bool SetParticles(int);
+    int  GetParticles()       {return iParticles;};
 
-    // QDot2D functions in modQDot2D.cpp
-    double                   Get1PElement(int, int);
-    double                   Get2PElement(int, int, int, int);
-    const arma::Col<double> *Get1PHam(int, int);
-    const arma::Mat<double> *Get2PHam(int, int);
-    int                      GetDim(int, int);
+    // System Configuration
+    bool   SetQNumber(int, int);
+    bool   SetVariable(int, double);
+    int    GetQNumber(int);
+    double GetVariable(int);
+    
+    // Cache Directory
+    void SetCache(const char*);
+    void SetLogFile(const char*);
+
+    // Pointers
+    Potential *GetPotential() {return oPot;};
+    Basis     *GetBasis()     {return oBasis;};
+    Log       *GetLog()       {return oOut;};
+
+    // System Functions
+    bool BuildPotential();
+    bool BuildBasis();
 
 
     private:
 
-    // Variables
-    int  iSystemType; // Type of system
-    int  iShells;     // Number of shells
-    int  iParticles;  // Number of particles
-    int  iStates;     // Number of quantum states |0> |1> ... |n>
-    int  iNMTotal;    // Number of M-totals
-    int  iNLambda;    // Number of blocks + H(1)
-    bool bCache;      // Is the Hamiltonian in memory?
+    // System Variables
+    int iPotType;   // Type of potential
+    int iGenType;   // Potential generator
+    int iShells;    // Number of shells
+    int iParticles; // Number of particles
+    int iStates;    // Number of quantum states |0> |1> ... |n>
 
-    // Initial Objects
-    arma::Mat<int>      mStates; // All possible states
-    std::vector<double> vLogFac;
-    std::vector<double> vLGamma;
+    // Switches
+    bool bPotType;    // Potential type set
+    bool bPotBuilt;   // Potential built
+    bool bBasisBuilt; // Basis built
 
-    // Hamiltonian
-    arma::field<arma::Mat<double> > mHamiltonian; // Blockdiagonal Hamiltonian Matrix
-    arma::field<arma::Mat<int> >    mConfig;      // Configurations
-    arma::Mat<int>                  mMap;         // Mapping between mStates and mHamiltonian
-    arma::Col<double>               m1PHam;       // Array to hold 1P elements
+    // System Configuration
+    int    iM;      // Total M
+    int    iMs;     // Total Spin
+    double dLambda; // Interaction strength
+    double dOmega;  // Harmonic oscillator frequency
 
-    // Private functions
-    int fMapLambda(int, int);
+    // Other Variables
+    std::stringstream ssOut;
+    std::stringstream ssCache;
 
-    // QDot2D functions in modQDot2D.cpp
-    double fCalcElementQ2D(int, int, int, int);
-    double fCoulomb2D(int, int, int, int, int, int, int, int);
-    double fLGamma(double);
+    // Objects
+    Potential *oPot;    // Potential object
+    Basis     *oBasis;  // Basis object
+    Log       *oOut;    // Logfile
+        
 };
 
 } // End namespace tardis

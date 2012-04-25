@@ -17,6 +17,7 @@ using namespace tardis;
 Diag::Diag(System *oSys) {
 
     oSystem = oSys;
+    oPot    = oSys->GetPotential();
 
     iStates    = oSystem->GetStates();
     iParticles = oSystem->GetParticles();
@@ -31,14 +32,11 @@ Diag::Diag(System *oSys) {
 double Diag::Run(int iM, int iMs, double dOmega, double dLambda) {
 
     // Check for illegal values
+    if(iParticles != 2) {
+        cout << "Error: Diag can only be used for systems of 2 particles ..." << endl;
+        return -1.0;
+    }
 
-    //if(iParticles != 2) {
-    //    cout << "Error: Diag can only be used for systems of 2 particles ..." << endl;
-    //    fOutput(&ssOut);
-    //    return -1.0;
-    //}
-
-    // Lambda or Omega values
     double d1PFac, d2PFac;
     int    iDim;
 
@@ -66,12 +64,13 @@ double Diag::Run(int iM, int iMs, double dOmega, double dLambda) {
     iM  = abs(iM);  // iM  = -iM
     iMs = abs(iMs); // iMs = -iMs
 
-    m1PHam = oSystem->Get1PHam(iM,iMs);
-    m2PHam = oSystem->Get2PHam(iM,iMs);
+    // Building Hamiltonian
+    m1PHam = oPot->Get1PHam(iM,iMs);
+    m2PHam = oPot->Get2PHam(iM,iMs);
     iDim = m1PHam->n_cols;
 
     mTemp.zeros(iDim,iDim);
-    mTemp = d2PFac*(*m2PHam);
+    mTemp = *m2PHam*d2PFac;
     mTemp.diag() += *m1PHam*d1PFac;
 
     // Calculating eigenvalues

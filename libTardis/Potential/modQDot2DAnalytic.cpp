@@ -4,7 +4,7 @@
 **  - Accounts for spin
 **  - Is antisymmetric
 */
-double System::fCalcElementQ2D(int p, int q, int r, int s) {
+double QDot2D::fCalcElementQ2D(int p, int q, int r, int s) {
 
     double dDirect = 0.0, dExchange = 0.0;
 
@@ -31,7 +31,7 @@ double System::fCalcElementQ2D(int p, int q, int r, int s) {
 **  - Calculate: d(Ms1,Ms3)*d(Ms2,Ms4)*<12|V|43> - d(Ms1,Ms4)*d(Ms2,Ms3)*<12|V|34>
 **      Where d(i,j) is the delta function
 */
-double System::fCoulomb2D(int iN1, int iM1, int iN2, int iM2, int iN3, int iM3, int iN4, int iM4) {
+double QDot2D::fCoulomb2D(int iN1, int iM1, int iN2, int iM2, int iN3, int iM3, int iN4, int iM4) {
 
     double dCoulombInt = 0.0;
 
@@ -110,7 +110,7 @@ double System::fCoulomb2D(int iN1, int iM1, int iN2, int iM2, int iN3, int iM3, 
 **  NOTE: Returns 1e308 if argument is 0 or negative.
 **  Taken from the web at http://www.crbond.com/math.htm
 */
-double System::fLGamma(double dX) {
+double QDot2D::fLGamma(double dX) {
 
     double dX0, dX2, dXp, dGL, dGL0;
     int    iN = 0, iK;

@@ -9,10 +9,13 @@
 ** o-------------------------------------------------------------------o
 */
 
+#ifndef LIBTARDIS_HPP
+#define LIBTARDIS_HPP
+
 #include <cstdlib>
 #include <iomanip>
+#include <iostream>
 #include <cmath>
-#include <ctime>
 #include <armadillo>
 
 #include "config.hpp"
@@ -22,38 +25,38 @@
 #define MBYTE 1048576
 #define GBYTE 1073741824
 
+// System Conditions
+#define QN_M       100
+#define QN_MS      101
+#define VAR_LAMBDA 200
+#define VAR_OMEGA  201
+
 // Systems
-#define ATOM     0
-#define QDOT2D   1
-#define QDOT3D   2
-#define NUCLEUS  3
-#define HNUCLEUS 4
+#define ATOM     1
+#define QDOT2D   2
+    #define Q2D_ANALYTIC  20
+    #define Q2D_NORMAL    21
+    #define Q2D_EFFECTIVE 22
+#define QDOT3D   3
+#define NUCLEUS  4
+#define HNUCLEUS 5
 
 // Other
 #define OUTPUTF(p) showpoint << setw((p+2)) << setprecision((p))
 #define OUTPUTN(p) noshowpoint << setw((p+2)) << setprecision((p))
 
-// Classes
-#ifndef CLASS_LANCZOS_HPP
-    #include "CISD/classLanczos.hpp"
-#endif
+// Solver Classes
+#include "CISD/classDiag.hpp"
+#include "CISD/classLanczos.hpp"
 
-#ifndef CLASS_DIAG_HPP
-    #include "CISD/classDiag.hpp"
-#endif
+// Potential Classes
+#include "Potential/classPotential.hpp"
+#include "Potential/classQDot2D.hpp"
 
-#ifndef CLASS_BASIS_HPP
-    #include "System/classBasis.hpp"
-#endif
+// System Classes
+#include "System/classSystem.hpp"
+#include "System/classLog.hpp"
+#include "System/classBasis.hpp"
+#include "System/classSlater.hpp"
 
-#ifndef CLASS_SYSTEM_HPP
-    #include "System/classSystem.hpp"
-#endif
-
-#ifndef CLASS_QDOT2D_HPP
-  #include "System/classQDot2D.hpp"
-#endif
-
-#ifndef CLASS_SLATER_HPP
-  #include "System/classSlater.hpp"
 #endif

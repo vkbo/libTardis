@@ -13,7 +13,7 @@
 using namespace std;
 using namespace tardis;
 
-int main(int iArgs, char **aArgs) {
+int main() {
 
     clock_t tStart, tFinish;
     tStart = clock();
@@ -52,22 +52,21 @@ int main(int iArgs, char **aArgs) {
 
     cout << endl;
 
-    //if(iArgs > 1) iShell = atoi(aArgs[1]);
+    System *oSystem = new System();
+    oSystem->SetPotential(iShell, QDOT2D, Q2D_ANALYTIC);
+    oSystem->SetParticles(iPartInt);
+    oSystem->SetQNumber(QN_M, iM);
+    oSystem->SetQNumber(QN_MS, iMs);
+    oSystem->SetCache("/scratch/Temp/arma_cache/");
+    oSystem->BuildPotential();
+    //oSystem->BuildBasis();
 
-    System *oSys   = new System(iShell, iPartInt, QDOT2D);
-    //Basis  *oBasis = new Basis(oSys);
-    oSys->GenerateH(true);
-
-    Diag   oDiag(oSys);
-    cout << "Energy: " << oDiag.Run(iM, iMs, dOmega, dLambda) << endl;
-
-    //oBasis->BuildBasis(iM, iMs);
-    //oBasis->Output();
-
-    //Lanczos oLanczos(oSys, oBasis);
+    //Lanczos oLanczos(oSystem);
     //cout << "Energy: " << oLanczos.Run(iM, iMs, dOmega, dLambda) << endl;
 
-    oSys->~System();
+    Diag oDiag(oSystem);
+    cout << "Energy: " << oDiag.Run(iM, iMs, dOmega, dLambda) << endl;
+
     tFinish = clock();
     cout << endl << "Computation time: " << setprecision(5) << double(tFinish-tStart)/CLOCKS_PER_SEC << " seconds" << endl << endl;
 

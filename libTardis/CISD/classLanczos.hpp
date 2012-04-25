@@ -8,11 +8,16 @@
 
 #define CLASS_LANCZOS_HPP
 #include "../libTardis.hpp"
+#include "../System/classSystem.hpp"
+//#include "../System/classBasis.hpp"
+//#include "../System/classLog.hpp"
 #include <iostream>
 #include <fstream>
+
 #ifdef OPENMP
     #include "omp.h"
 #endif
+
 #ifdef OPENMPI
     #include "mpi.h"
 #endif
@@ -24,12 +29,11 @@ class Lanczos
     public:
 
     // Constructor and Destructor
-    Lanczos(tardis::System*, tardis::Basis*, const char* = "");
+    Lanczos(System*);
     ~Lanczos() {};
 
     // Public Functions
     double Run(int, int, double dOmega = 1.0, double dLambda = 0.0);
-    //double RunMaster(int, int, double dOmega = 1.0, double dLambda = 0.0, const char* = "");
 
     // Getters, Setters and Output
 
@@ -37,20 +41,21 @@ class Lanczos
     private:
 
     // Variables
-    int           iStates;
-    int           iParticles;
-    int           iBasisDim;
-    const char*   sOutput;
-    bool          bLog;
+    int iStates;
+    int iParticles;
+    int iBasisDim;
 
+    // Other Variables
+    std::stringstream ssOut;
 
     // Objects
-    tardis::System *oSystem;
-    tardis::Basis  *oBasis;
+    System    *oSystem;
+    Potential *oPot;
+    Basis     *oBasis;
+    Log       *oOut;
 
     // Functions
     void fMatrixVector(arma::Col<double>&, arma::Col<double>&, double, double);
-    void fOutput(std::stringstream*);
 
 };
 

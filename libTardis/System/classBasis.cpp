@@ -14,16 +14,21 @@ using namespace tardis;
 ** Public :: Constructor and Destructor
 */
 
-Basis::Basis(System *oSys) {
+Basis::Basis(Potential *oPotential, Log *oLog, int iNumParticles, int iNumStates) {
 
-    oSystem    = oSys;
-    iParticles = oSystem->GetParticles();
-    iStates    = oSystem->GetStates();
+    oPot       = oPotential;
+    oOut       = oLog;
+    iParticles = iNumParticles;
+    iStates    = iNumStates;
+
+    // Qunatum Numbers
+    iM  = 0;
+    iMs = 0;
 
     if(iStates > SLATER_WORD) {
-        cout << "Warning: SLATER_WORD not large enough for this configuration." << endl;
-        cout << "         SLATER_WORD must be at least " << (floor(iStates/64)+1)*64 << " bit" << endl;
-        cout << endl;
+        ssOut << "Warning: SLATER_WORD not large enough for this configuration." << endl;
+        ssOut << "         SLATER_WORD must be at least " << (floor(iStates/64)+1)*64 << " bit" << endl;
+        oOut->Output(&ssOut);
     }
 
     // Using binary search
@@ -39,12 +44,14 @@ Basis::Basis(System *oSys) {
 ** Public :: Functions
 */
 
-int Basis::BuildBasis(int iM, int iMs) {
+int Basis::BuildBasis() {
 
     Slater      sdTest;
     int         iTM = 0, iTMs = 0;
     int         iBasisDim = 0;
-    int         i,j,iOut;
+    int         i,j,iOut,iExp;
+    long        lConfMax;
+    double      d, dX = 1.0;
     vector<int> vTemp(iParticles,0);
 
     vBasis.clear();
@@ -52,27 +59,27 @@ int Basis::BuildBasis(int iM, int iMs) {
         int iPrev = -1;
     #endif
 
+    for(d=0.0; d<iParticles; d++) dX *= (iStates-d)/(iParticles-d);
+    lConfMax = (long)dX;
+    iExp     = floor(log10(lConfMax));
+    ssOut << "Possible configurations: " << lConfMax << " ";
+    ssOut << "(~" << round(lConfMax/pow(10,iExp)) << "e" << iExp << ")" << endl;
+
     #ifdef PROGRESS
-        long   lConfMax, lCount = 0;
-        double d, dX = 1.0;
-        for(d=0.0; d<iParticles; d++) {
-            dX *= (iStates-d)/(iParticles-d);
-        }
-        lConfMax = (long)dX;
-        cout << "Possible configurations: " << lConfMax << endl;
+        long lCount = 0;
 
         cout << showpoint;
         cout << setw(5);
         cout << setprecision(3);
     #else
-        cout << "Building Basis ... " << flush;
+        ssOut << "Building Basis ... " << endl;
     #endif
 
-    //fGenConfig(vTemp, iM, iMs, 0);
+    oOut->Output(&ssOut);
 
     for(int i=0; i<iParticles; i++) {
         vTemp[i] = i;
-        iTM  += oSystem->GetState(i,1);
+        iTM  += oPot->GetState(i,1);
         iTMs += 2*(i%2)-1;
     }
     if(iTMs == iMs && iTM == iM) {
@@ -105,7 +112,7 @@ int Basis::BuildBasis(int iM, int iMs) {
         iTM  = 0;
         iTMs = 0;
         for(i=0; i<iParticles; i++) {
-            iTM  += oSystem->GetState(vTemp[i],1);
+            iTM  += oPot->GetState(vTemp[i],1);
             iTMs += 2*(vTemp[i]%2)-1;
         }
         if(iTMs == iMs && iTM == iM) {
@@ -139,8 +146,11 @@ int Basis::BuildBasis(int iM, int iMs) {
 
     #ifdef PROGRESS
         cout << "\rBuilding Basis: 100.0%" << endl;
-        cout << "Basis Dim: " << iBasisDim << endl;
     #endif
+
+    iExp = floor(log10(iBasisDim));
+    ssOut << "Dimension of Basis: " << iBasisDim << setprecision(1) << " ";
+    ssOut << "(~" << round(iBasisDim/pow(10,iExp)) << "e" << iExp << ")" << endl;
 
     #ifdef INDEX_BASIS
 
@@ -151,8 +161,6 @@ int Basis::BuildBasis(int iM, int iMs) {
         #ifdef PROGRESS
             cout << "Indexing Basis ... " << flush;
             lCount = 0;
-        #else
-            cout << "Done" << endl;
         #endif
 
         iOut = 0;
@@ -193,13 +201,12 @@ int Basis::BuildBasis(int iM, int iMs) {
         }
         #ifdef PROGRESS
             cout << "\rIndexing Basis: 100.0%" << endl;
-        #else
-            cout << "Done" << endl;
         #endif
-        cout << endl;
-        fflush(stdout);
 
     #endif
+
+    ssOut << endl;
+    oOut->Output(&ssOut);
 
     return iBasisDim;
 }
@@ -239,14 +246,6 @@ int Basis::FindSlater(Slater sdFind, int p, int q) {
 ** Public :: Getters, Setters and Output
 */
 
-int Basis::GetSize() {
-    return vBasis.size();
-}
-
-Slater Basis::GetSlater(int iIndex) {
-    return vBasis.at(iIndex);
-}
-
 void Basis::Output() {
 
     int iWidth = ceil(log10(iStates))+1;
@@ -259,46 +258,28 @@ void Basis::Output() {
     return;
 }
 
-/*
-** Private :: Functions
-*/
+bool Basis::SetQNumber(int iVar, int iValue) {
 
-/*
-void Basis::fGenConfig(vector<int> &vTemp, int iM, int iMs, int iP) {
-
-    int iStart = 0;
-
-    if(iP < iParticles) {
-        if(iP > 0) iStart = vTemp[iP-1]+1;
-        for(int iS=iStart; iS<iStates; iS++) {
-            vTemp[iP] = iS;
-            fGenConfig(vTemp, iM, iMs, iP+1);
-        }
-    } else {
-        Slater sdNew;
-        int iTM = 0;
-
-        for(int i=0; i<iParticles; i++) {
-            sdNew.Create(vTemp[i]);
-            iTM += oSystem->GetState(vTemp[i],1);
-        }
-
-        if(sdNew.CountOdd()-sdNew.CountEven() == iMs && iTM == iM) {
-            vBasis.push_back(sdNew);
-        }
-
-        #ifdef PROGRESS
-            iConfCount++;
-            if(iConfMax > 10000) {
-                if(iConfCount%(iConfMax/1000) == 0) {
-                    cout << "\r                           ";
-                    cout << "\rBuilding Basis: " << OUTPUTF(3) << (iConfCount/double(iConfMax)*100) << "%";
-                    fflush(stdout);
-                }
-            }
-        #endif
+    switch(iVar) {
+        case QN_M:  iM  = iValue; break;
+        case QN_MS: iMs = iValue; break;
+        default:
+            ssOut << "Error: Not a valid Quantum Number." << endl;
+            oOut->Output(&ssOut);
+            return false;
     }
 
-    return;
+    return true;
 }
-*/
+
+int Basis::GetQNumber(int iVar) {
+
+    switch(iVar) {
+        case QN_M:  return iM;  break;
+        case QN_MS: return iMs; break;
+        default:
+            ssOut << "Error: Not a valid Quantum Number." << endl;
+            oOut->Output(&ssOut);
+            return -1000;
+    }
+}
