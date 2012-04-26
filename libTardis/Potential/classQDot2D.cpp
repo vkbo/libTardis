@@ -9,7 +9,9 @@
 using namespace std;
 using namespace arma;
 using namespace tardis;
+using namespace quantumdot;
 
+#include "modQDot2D.cpp"
 #include "modQDot2DAnalytic.cpp"
 
 /*
@@ -45,40 +47,6 @@ QDot2D::QDot2D(int iNumShells, Log *oLog) : Potential(iNumShells, oLog) {
 /*
 ** Public :: Functions
 */
-
-void QDot2D::Load(int iType) {
-
-    switch(iType) {
-        case Q2D_ANALYTIC:
-            fLoadAnalytic();
-            break;
-        case Q2D_NORMAL:
-            fLoadNormal();
-            break;
-        case Q2D_EFFECTIVE:
-            fLoadEffective();
-            break;
-    }
-
-    return;
-}
-
-void QDot2D::Generate(int iType) {
-
-    switch(iType) {
-        case Q2D_ANALYTIC:
-            fGenAnalytic();
-            break;
-        case Q2D_NORMAL:
-            fGenNormal();
-            break;
-        case Q2D_EFFECTIVE:
-            fGenEffective();
-            break;
-    }
-
-    return;
-}
 
 void QDot2D::LoadOrGenerate(int iType) {
     Load(iType);
@@ -157,18 +125,32 @@ int QDot2D::fMapLambda(int iM, int iMs) {
 }
 
 /*
-** Loaders
+** Loader
 */
 
-void QDot2D::fLoadAnalytic() {
+void QDot2D::Load(int iType) {
 
     if(ssCache.str().length() == 0) return;
 
     stringstream sFileNameC, sFileNameH, sFileNameM;
 
-    sFileNameC << ssCache.str() << "QDot2D_" << iShells << "Sh_AnalyticBlockConfig.dat";
-    sFileNameH << ssCache.str() << "QDot2D_" << iShells << "Sh_AnalyticBlockDiag.dat";
-    sFileNameM << ssCache.str() << "QDot2D_" << iShells << "Sh_AnalyticBlockMap.dat";
+    switch(iType) {
+        case Q2D_ANALYTIC:
+            sFileNameC << ssCache.str() << "QDot2D_" << iShells << "Sh_AnalyticBlockConfig.dat";
+            sFileNameH << ssCache.str() << "QDot2D_" << iShells << "Sh_AnalyticBlockDiag.dat";
+            sFileNameM << ssCache.str() << "QDot2D_" << iShells << "Sh_AnalyticBlockMap.dat";
+            break;
+        case Q2D_NORMAL:
+            sFileNameC << ssCache.str() << "QDot2D_" << iShells << "Sh_NormalBlockConfig.dat";
+            sFileNameH << ssCache.str() << "QDot2D_" << iShells << "Sh_NormalBlockDiag.dat";
+            sFileNameM << ssCache.str() << "QDot2D_" << iShells << "Sh_NormalBlockMap.dat";
+            break;
+        case Q2D_EFFECTIVE:
+            sFileNameC << ssCache.str() << "QDot2D_" << iShells << "Sh_EffectiveBlockConfig.dat";
+            sFileNameH << ssCache.str() << "QDot2D_" << iShells << "Sh_EffectiveBlockDiag.dat";
+            sFileNameM << ssCache.str() << "QDot2D_" << iShells << "Sh_EffectiveBlockMap.dat";
+            break;
+    }
 
     bool bFC = mConfig.quiet_load(sFileNameC.str());
     bool bFH = mBlHam.quiet_load(sFileNameH.str());
@@ -184,19 +166,11 @@ void QDot2D::fLoadAnalytic() {
     return;
 }
 
-void QDot2D::fLoadNormal() {
-    return;
-}
-
-void QDot2D::fLoadEffective() {
-    return;
-}
-
 /*
-** Generators
+** Generator
 */
 
-void QDot2D::fGenAnalytic() {
+void QDot2D::Generate(int iType) {
 
     int    i, j, k;
     int    iM, iMs, iLambda, iMu;
@@ -204,29 +178,32 @@ void QDot2D::fGenAnalytic() {
     int    iDim;
     double dSize = 0.0;
 
-    vLogFac.resize(MAX_FAC+1);
-    vLogFac[0] = 0.0;
-    vLogFac[1] = 0.0;
-    for(int i = 2; i <= MAX_FAC; i++) {
-        vLogFac[i] = vLogFac[i-1] + log(i);
+    // Precalculate LogFac and LGamma values for analytic Coulomb
+    if(iType == Q2D_ANALYTIC) {
+        vLogFac.resize(MAX_FAC+1);
+        vLogFac[0] = 0.0;
+        vLogFac[1] = 0.0;
+        for(int i = 2; i <= MAX_FAC; i++) {
+            vLogFac[i] = vLogFac[i-1] + log(i);
+        }
+
+        vLGamma.resize(2*MAX_LGAMMA+1);
+        for(double dX = 0.0; dX <= MAX_LGAMMA; dX += 0.5) {
+            vLGamma[(int)(dX*2)] = fLGamma(dX);
+        }
     }
 
-    vLGamma.resize(2*MAX_LGAMMA+1);
-    for(double dX = 0.0; dX <= MAX_LGAMMA; dX += 0.5) {
-        vLGamma[(int)(dX*2)] = fLGamma(dX);
-    }
+    //
+    //  Building vector of configurations
+    //
+
+    ssOut << "Generating configurations ..." << endl;
+    oOut->Output(&ssOut);
 
     mMap.zeros(iStates*iStates,2);
     mBlHam.set_size(1,iCount+1);
     mConfig.set_size(1,iCount);
     vector<vector<int> > vConfig(iCount);
-
-    ssOut << "Hamiltonian not found in cache, building ..." << endl;
-    oOut->Output(&ssOut);
-
-    #ifdef PROGRESS
-        cout << "Generating configurations ..." << flush;
-    #endif
 
     for(i=0; i<iStates; i++) {
         for(j=i; j<iStates; j++) {
@@ -245,14 +222,11 @@ void QDot2D::fGenAnalytic() {
         }
     }
 
+    // Estimating size of file/memory
     for(k=0; k<=iCount; k++) {
         iDim = vConfig[k-1].size()/2;
         dSize += iDim*iDim*sizeof(double);
     }
-
-    #ifdef PROGRESS
-        cout << "\r                                                                                   \r";
-    #endif
 
     if(dSize > GBYTE) {
         ssOut << "Estimated size: " << setprecision(4) << dSize/GBYTE << " Gb" << endl;
@@ -265,10 +239,6 @@ void QDot2D::fGenAnalytic() {
     }
     oOut->Output(&ssOut);
 
-    #ifdef PROGRESS
-        cout << "Generating 1-particle Hamiltonian ..." << flush;
-    #endif
-
     mBlHam(0).zeros(iStates,iStates);
     for(i=0; i<iStates; i++) {
         for(j=0; j<iStates; j++) {
@@ -276,26 +246,82 @@ void QDot2D::fGenAnalytic() {
         }
     }
 
+    // Generating 2-p Hamiltonian
+    if(iType == Q2D_NORMAL || iType == Q2D_EFFECTIVE) {
+        oOFCI = new QdotInteraction();
+        oOFCI->setR(iShells-1);
+        oOFCI->setLambda(1.0);
+    }
+
+    if(iType == Q2D_NORMAL) {
+        ssOut << "Building interaction CoM Blocks ..." << endl;
+        oOut->Output(&ssOut);
+        oOFCI->buildInteractionComBlocks();
+    }
+
+    if(iType == Q2D_EFFECTIVE) {
+        ssOut << "Building effective interaction CoM Blocks ..." << endl;
+        oOut->Output(&ssOut);
+        oOFCI->buildEffectiveInteractionComBlocks(2);
+    }
+
     for(k=1; k<=iCount; k++) {
         iDim = vConfig[k-1].size()/2;
         #ifdef PROGRESS
             cout << "\r                                                                                   ";
-            cout << "\rGenerating 2-particle Hamiltonian, block " << k << " of " << iCount << " (Dim: " << iDim << "x" << iDim << ")" << flush;
+            cout << "\rGenerating 2-particle Hamiltonian, block " << k << " of " << iCount << " ";
+            cout << "(Dim: " << iDim << "x" << iDim << ")" << flush;
         #endif
 
         if(iDim > 0) {
             mBlHam(k).zeros(iDim,iDim);
             mConfig(k-1).zeros(2,iDim);
-            #ifdef OPENMP
-                #pragma omp parallel for private(j) schedule(dynamic,1)
-            #endif
-            for(i=0; i<iDim; i++) {
-                mConfig(k-1)(0,i) = vConfig[k-1][2*i];
-                mConfig(k-1)(1,i) = vConfig[k-1][2*i+1];
-                for(j=i; j<iDim; j++) {
-                    mBlHam(k)(i,j) = fCalcElementQ2D(vConfig[k-1][2*i],vConfig[k-1][2*i+1],vConfig[k-1][2*j],vConfig[k-1][2*j+1]);
-                    mBlHam(k)(j,i) = mBlHam(k)(i,j);
-                }
+            switch(iType) {
+
+                case Q2D_ANALYTIC:
+                    #ifdef OPENMP
+                        #pragma omp parallel for private(j) schedule(dynamic,1)
+                    #endif
+                    for(i=0; i<iDim; i++) {
+                        mConfig(k-1)(0,i) = vConfig[k-1][2*i];
+                        mConfig(k-1)(1,i) = vConfig[k-1][2*i+1];
+                        for(j=i; j<iDim; j++) {
+                            mBlHam(k)(i,j) = fCalcElementQ2D(vConfig[k-1][2*i],
+                                                             vConfig[k-1][2*i+1],
+                                                             vConfig[k-1][2*j],
+                                                             vConfig[k-1][2*j+1]);
+                            mBlHam(k)(j,i) = mBlHam(k)(i,j);
+                        }
+                    }
+                    break;
+
+                case Q2D_NORMAL:
+                    for(i=0; i<iDim; i++) {
+                        mConfig(k-1)(0,i) = vConfig[k-1][2*i];
+                        mConfig(k-1)(1,i) = vConfig[k-1][2*i+1];
+                        for(j=i; j<iDim; j++) {
+                            mBlHam(k)(i,j) = fCalcElementQ2DOpenFCI(vConfig[k-1][2*i],
+                                                                    vConfig[k-1][2*i+1],
+                                                                    vConfig[k-1][2*j],
+                                                                    vConfig[k-1][2*j+1]);
+                            mBlHam(k)(j,i) = mBlHam(k)(i,j);
+                        }
+                    }
+                    break;
+
+                case Q2D_EFFECTIVE:
+                    for(i=0; i<iDim; i++) {
+                        mConfig(k-1)(0,i) = vConfig[k-1][2*i];
+                        mConfig(k-1)(1,i) = vConfig[k-1][2*i+1];
+                        for(j=i; j<iDim; j++) {
+                            mBlHam(k)(i,j) = fCalcElementQ2DOpenFCI(vConfig[k-1][2*i],
+                                                                    vConfig[k-1][2*i+1],
+                                                                    vConfig[k-1][2*j],
+                                                                    vConfig[k-1][2*j+1]);
+                            mBlHam(k)(j,i) = mBlHam(k)(i,j);
+                        }
+                    }
+                    break;
             }
         } else {
             mBlHam(k).zeros(1,1);
@@ -309,9 +335,23 @@ void QDot2D::fGenAnalytic() {
     if(ssCache.str().length() > 0) {
         stringstream sFileNameC, sFileNameH, sFileNameM;
 
-        sFileNameC << ssCache.str() << "QDot2D_" << iShells << "Sh_AnalyticBlockConfig.dat";
-        sFileNameH << ssCache.str() << "QDot2D_" << iShells << "Sh_AnalyticBlockDiag.dat";
-        sFileNameM << ssCache.str() << "QDot2D_" << iShells << "Sh_AnalyticBlockMap.dat";
+        switch(iType) {
+            case Q2D_ANALYTIC:
+                sFileNameC << ssCache.str() << "QDot2D_" << iShells << "Sh_AnalyticBlockConfig.dat";
+                sFileNameH << ssCache.str() << "QDot2D_" << iShells << "Sh_AnalyticBlockDiag.dat";
+                sFileNameM << ssCache.str() << "QDot2D_" << iShells << "Sh_AnalyticBlockMap.dat";
+                break;
+            case Q2D_NORMAL:
+                sFileNameC << ssCache.str() << "QDot2D_" << iShells << "Sh_NormalBlockConfig.dat";
+                sFileNameH << ssCache.str() << "QDot2D_" << iShells << "Sh_NormalBlockDiag.dat";
+                sFileNameM << ssCache.str() << "QDot2D_" << iShells << "Sh_NormalBlockMap.dat";
+                break;
+            case Q2D_EFFECTIVE:
+                sFileNameC << ssCache.str() << "QDot2D_" << iShells << "Sh_EffectiveBlockConfig.dat";
+                sFileNameH << ssCache.str() << "QDot2D_" << iShells << "Sh_EffectiveBlockDiag.dat";
+                sFileNameM << ssCache.str() << "QDot2D_" << iShells << "Sh_EffectiveBlockMap.dat";
+                break;
+        }
 
         mConfig.save(sFileNameC.str());
         mBlHam.save(sFileNameH.str());
@@ -324,13 +364,5 @@ void QDot2D::fGenAnalytic() {
 
     bCache = true;
 
-    return;
-}
-
-void QDot2D::fGenNormal() {
-    return;
-}
-
-void QDot2D::fGenEffective() {
     return;
 }

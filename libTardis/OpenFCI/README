@@ -1,0 +1,9 @@
+koden kjøres ved følgende komando i terminal:
+
+tabulate.x w
+
+der w representerer 1/lambda som er gitt i tabulate.ini filen. Tabulate.ini filen angir flere forskjellige options for output-filen, blant annet antall skall R (merk at angitt skalnummer i tabulate.ini filen er R-1, dvs. ønskes skallnummer 12 må det stå 11 i ini-filen). Disse Vekselvirkningselement-filene generers lett v.h.a. et pythonskript som vist i runscript.py (produce_potfiles). NB merk at filene tabulate.ini tabulate.o og tabulate.x må ligge i samme folder som pythonskriptet.
+
+dene koden er en modifisert version av Simen Kvaals orginale program og er den type output som er brukt i mine masterkoder. koden kompileres ved komandoen.
+
+build.sh

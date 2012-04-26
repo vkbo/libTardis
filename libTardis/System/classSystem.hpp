@@ -11,6 +11,7 @@
 #include "classBasis.hpp"
 #include "classLog.hpp"
 #include "../Potential/classPotential.hpp"
+//#include "../Potential/classQDot2D.hpp"
 #include <iostream>
 
 namespace tardis {

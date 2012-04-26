@@ -11,7 +11,7 @@
 #define USE_RAND_SEED    false
 
 // Size of Slater Determinant
-#define SLATER_WORD 128
+#define SLATER_WORD 512
 
 // Enable Progress Output
 #define PROGRESS

@@ -10,6 +10,9 @@
 #include "../libTardis.hpp"
 #include "classPotential.hpp"
 
+// openFCI
+#include "../OpenFCI/classQDotInteraction.hpp"
+
 #ifdef OPENMP
     #include "omp.h"
 #endif
@@ -62,12 +65,15 @@ class QDot2D : public Potential
     std::stringstream ssCache;               // Cache directory for quick loading
 
     // Objects
-    Log *oOut;                               // Logfile
+    Log             *oOut;                   // Logfile
+    quantumdot::QdotInteraction *oOFCI;                  // OpenFCI Object
+
 
     // Initial Objects
-    arma::Mat<int>      mStates;             // Holds qunatum numbers for all states   :: 3xN Matrix
-    std::vector<double> vLogFac;             // Temp vector for log(n!)
-    std::vector<double> vLGamma;             // Temp vector for analytic gamma values
+    arma::Mat<int>                  mStates; // Holds qunatum numbers for all states   :: 3xN Matrix
+    std::vector<double>             vLogFac; // Temp vector for log(n!)
+    std::vector<double>             vLGamma; // Temp vector for analytic gamma values
+
 
     // Hamiltonian
     arma::Col<double>               m1PHam;  // 1-Particle Hamiltonian (not cached)    :: Column (Diagonal)
@@ -78,20 +84,15 @@ class QDot2D : public Potential
     // Private functions
     int fMapLambda(int, int);                // Returns the Lambda value from M and Ms
 
-    // Loaders
-    void fLoadAnalytic();
-    void fLoadNormal();
-    void fLoadEffective();
-
-    // Generators
-    void fGenAnalytic();
-    void fGenNormal();
-    void fGenEffective();
-
     // Analytic functions in modQDot2DAnalytic.cpp
     double fCalcElementQ2D(int, int, int, int);
     double fCoulomb2D(int, int, int, int, int, int, int, int);
     double fLGamma(double);
+
+    // OpenFCI function from modQDot2D.cpp
+    //void   fTabulateCoulomb(double, int, bool, bool, double);
+    double fCalcElementQ2DOpenFCI(int, int, int, int);
+
 };
 
 } // End namespace tardis

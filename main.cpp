@@ -53,19 +53,19 @@ int main() {
     cout << endl;
 
     System *oSystem = new System();
-    oSystem->SetPotential(iShell, QDOT2D, Q2D_ANALYTIC);
+    oSystem->SetPotential(iShell, QDOT2D, Q2D_EFFECTIVE);
     oSystem->SetParticles(iPartInt);
     oSystem->SetQNumber(QN_M, iM);
     oSystem->SetQNumber(QN_MS, iMs);
-    oSystem->SetCache("/scratch/Temp/arma_cache/");
+    //oSystem->SetCache("/scratch/Temp/arma_cache/");
     oSystem->BuildPotential();
-    //oSystem->BuildBasis();
+    oSystem->BuildBasis();
 
-    //Lanczos oLanczos(oSystem);
-    //cout << "Energy: " << oLanczos.Run(iM, iMs, dOmega, dLambda) << endl;
+    Lanczos oLanczos(oSystem);
+    cout << "Energy: " << setprecision(8) << oLanczos.Run(iM, iMs, dOmega, dLambda) << endl;
 
-    Diag oDiag(oSystem);
-    cout << "Energy: " << oDiag.Run(iM, iMs, dOmega, dLambda) << endl;
+    //Diag oDiag(oSystem);
+    //cout << "Energy: " << oDiag.Run(iM, iMs, dOmega, dLambda) << endl;
 
     tFinish = clock();
     cout << endl << "Computation time: " << setprecision(5) << double(tFinish-tStart)/CLOCKS_PER_SEC << " seconds" << endl << endl;
