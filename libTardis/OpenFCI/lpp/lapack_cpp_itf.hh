@@ -2,7 +2,6 @@
 #define __PROJECT__LPP__MON_JAN_16_10_29_29_2006__FILE__LAPACK_CPP_ITF_HH__INCLUDED
 
 #include <string>
-
 namespace lpp
 {
   inline int EnvBlockSize(int ispec,
@@ -35,7 +34,8 @@ namespace lpp
   }
 
 }
+#include "lapack_cpp_itf/gesvd_itf.hh"
 #include "lapack_cpp_itf/gtsv_itf.hh"
 #include "lapack_cpp_itf/syev_itf.hh"
 
-#endif
+#endif    
