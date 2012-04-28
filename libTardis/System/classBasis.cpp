@@ -20,6 +20,7 @@ Basis::Basis(Potential *oPotential, Log *oLog, int iNumParticles, int iNumStates
     oOut       = oLog;
     iParticles = iNumParticles;
     iStates    = iNumStates;
+    bEnergyCut = false;
 
     // Qunatum Numbers
     iM  = 0;
@@ -47,7 +48,6 @@ Basis::Basis(Potential *oPotential, Log *oLog, int iNumParticles, int iNumStates
 int Basis::BuildBasis() {
 
     Slater      sdTest;
-    int         iTM = 0, iTMs = 0;
     int         iBasisDim = 0;
     int         i,j,iOut,iExp;
     long        lConfMax;
@@ -77,12 +77,9 @@ int Basis::BuildBasis() {
 
     oOut->Output(&ssOut);
 
-    for(int i=0; i<iParticles; i++) {
-        vTemp[i] = i;
-        iTM  += oPot->GetState(i,1);
-        iTMs += 2*(i%2)-1;
-    }
-    if(iTMs == iMs && iTM == iM) {
+    for(int i=0; i<iParticles; i++) vTemp[i] = i;
+
+    if(fCheckQDot2D(vTemp)) {
         sdTest.Zero();
         for(i=0; i<iParticles; i++) sdTest.Create(vTemp[i]);
         vBasis.push_back(sdTest);
@@ -93,9 +90,9 @@ int Basis::BuildBasis() {
             if(vTemp[0] != iPrev) {
                 if(iPrev >= 0) mIndex(iPrev,1)  = vBasis.size()-2;
                 mIndex(vTemp[0],0) = vBasis.size()-1;
-                mIndex(vTemp[0],1) = vBasis.size()-1;
                 iPrev = vTemp[0];
             }
+            mIndex(vTemp[0],1) = vBasis.size()-1;
         #endif
     }
 
@@ -112,13 +109,7 @@ int Basis::BuildBasis() {
                 break;
             }
         }
-        iTM  = 0;
-        iTMs = 0;
-        for(i=0; i<iParticles; i++) {
-            iTM  += oPot->GetState(vTemp[i],1);
-            iTMs += 2*(vTemp[i]%2)-1;
-        }
-        if(iTMs == iMs && iTM == iM) {
+        if(fCheckQDot2D(vTemp)) {
             sdTest.Zero();
             for(i=0; i<iParticles; i++) sdTest.Create(vTemp[i]);
             vBasis.push_back(sdTest);
@@ -127,11 +118,11 @@ int Basis::BuildBasis() {
             //~ cout << iTMs << ", " << iTM << endl;
             #ifndef INDEX_BASIS
                 if(vTemp[0] != iPrev) {
-                    if(iPrev >= 0) mIndex(iPrev,1)  = vBasis.size()-2;
+                    if(iPrev >= 0) mIndex(iPrev,1) = vBasis.size()-2;
                     mIndex(vTemp[0],0) = vBasis.size()-1;
-                    mIndex(vTemp[0],1) = vBasis.size()-1;
                     iPrev = vTemp[0];
                 }
+                mIndex(vTemp[0],1) = vBasis.size()-1;
             #endif
         }
 
@@ -233,7 +224,7 @@ int Basis::FindSlater(Slater sdFind, int p, int q) {
         int iCheck;
         int iP = sdFind.GetFirst();
         int iMin = mIndex(iP,0);
-        int iMax = mIndex(iP,1)+1;
+        int iMax = mIndex(iP,1);
 
         if(iMin == -1) return -1;
 
@@ -250,6 +241,25 @@ int Basis::FindSlater(Slater sdFind, int p, int q) {
     #endif
 
     return -1;
+}
+
+/*
+** Private :: Basis selction functions
+*/
+
+bool Basis::fCheckQDot2D(const vector<int> &vTemp) {
+
+    int iTM  = 0;
+    int iTMs = 0;
+
+    for(int i=0; i<iParticles; i++) {
+        iTM  += oPot->GetState(vTemp[i],1);
+        iTMs += 2*(vTemp[i]%2)-1;
+    }
+
+    if(iTMs == iMs && iTM == iM) return true;
+
+    return false;
 }
 
 /*
@@ -292,4 +302,9 @@ int Basis::GetQNumber(int iVar) {
             oOut->Output(&ssOut);
             return -1000;
     }
+}
+
+bool Basis::SetEnergyCut(bool bValue) {
+    bEnergyCut = bValue;
+    return true;
 }

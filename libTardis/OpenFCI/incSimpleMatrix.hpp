@@ -51,7 +51,7 @@ namespace simple_dense {
 
     public:
       /// Default constructor. Simple initialization.
-      simple_matrix() : nrows_(0), ncols_(0), ld_(0), data_(0),
+      simple_matrix() : data_(0), nrows_(0), ncols_(0), ld_(0),
 			active_rows_(), active_cols_(), use_block_(false) { }
 
       /// Constructor that allocates memory for matrix.
@@ -89,7 +89,8 @@ namespace simple_dense {
 	assert( (row>=1) && (row <= nrows_) );
 	assert( (col>=1) && (col <= ncols_) );
 	const index_t index = ld_*(col-1) + (row-1);
-	assert( index < data_.size() );
+    // Added (index_t) to resolve -Wsign-compare error
+	assert( (index_t)index < (index_t)data_.size() );
 	return data_.begin() + index;
 	
       }
@@ -102,7 +103,8 @@ namespace simple_dense {
 	assert( (row>=1) && (row <= nrows_) );
 	assert( (col>=1) && (col <= ncols_) );
 	const index_t index = ld_*(col-1) + (row-1);
-	assert( index < data_.size() );
+    // Added (index_t) to resolve -Wsign-compare error
+	assert((index_t)index < (index_t)data_.size() );
 	return data_.begin() + index;
 	
       }

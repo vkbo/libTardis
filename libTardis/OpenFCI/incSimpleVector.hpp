@@ -91,11 +91,11 @@ namespace simple_dense {
 
     public:
       /// \brief Default constructor
-      simple_vector() : length_(0), data_(0) { }
+      simple_vector() : data_(0), length_(0) { }
 
       /// \brief Constructur that allocates memory (if OWNS = true)
       /// \brief length     Length of vector
-      simple_vector(index_t length) : length_(0), data_(0)
+      simple_vector(index_t length) : data_(0), length_(0)
       {
 	this->resize(length);
       }

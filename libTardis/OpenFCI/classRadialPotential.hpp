@@ -124,12 +124,12 @@ namespace quantumdot
       void computeEffectiveMatrix(dense_matrix& Ceff, int n_max, int m = 0);
 
       /// \brief Print brief info to stream.
-      std::ostream& operator<<(std::ostream& os)
-      {
-	using namespace std;
-	os << "Potential:" << endl;
-	os << "  r^(-"<<alpha<<")*p(r)*exp(-r*"<<beta<<")"<<endl;
-      }
+      //~ std::ostream& operator<<(std::ostream& os)
+      //~ {
+	//~ using namespace std;
+	//~ os << "Potential:" << endl;
+	//~ os << "  r^(-"<<alpha<<")*p(r)*exp(-r*"<<beta<<")"<<endl;
+      //~ }
 
 
   };

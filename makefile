@@ -5,8 +5,7 @@
 # Default Compiler Options
 
 CC          = g++
-#DEBUG       = -g -Wall
-DEBUG       = -g
+DEBUG       = -g -Wall
 LIBADD      =
 LIBFLAGS    = -llapack -lblas -larmadillo $(LIBADD)
 CFLAGS      = $(DEBUG) -O2 -c -fopenmp

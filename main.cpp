@@ -53,9 +53,9 @@ int main() {
     cout << endl;
 
     System *oSystem = new System();
-    oSystem->SetPotential(iShell, QDOT2D, Q2D_ANALYTIC);
+    //~ oSystem->SetPotential(iShell, QDOT2D, Q2D_ANALYTIC);
     //~ oSystem->SetPotential(iShell, QDOT2D, Q2D_NORMAL);
-    //~ oSystem->SetPotential(iShell, QDOT2D, Q2D_EFFECTIVE);
+    oSystem->SetPotential(iShell, QDOT2D, Q2D_EFFECTIVE);
     oSystem->SetParticles(iPartInt);
     oSystem->SetQNumber(QN_M, iM);
     oSystem->SetQNumber(QN_MS, iMs);

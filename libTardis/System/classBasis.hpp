@@ -38,6 +38,9 @@ class Basis
     // System Configuration
     bool SetQNumber(int, int);
     int  GetQNumber(int);
+    bool SetEnergyCut(bool);
+    bool GetEnergyCut()       {return bEnergyCut;};
+
 
     private:
 
@@ -45,6 +48,7 @@ class Basis
     int  iParticles;
     int  iStates;
     bool b3PIndex;
+    bool bEnergyCut;
 
     // System Configuration
     int iM;      // Total M
@@ -64,6 +68,9 @@ class Basis
     #else
         arma::Mat<int> mIndex;
     #endif
+
+    // Basis selection functions
+    bool fCheckQDot2D(const std::vector<int>&);
 };
 
 } // End namespace tardis

@@ -42,6 +42,4 @@ typedef simple_dense::simple_vector<double> dense_vector;
 /// \brief Dense matrix of ints
 typedef simple_dense::simple_matrix<int> dense_matrix_int;
 
-
-
 #endif // _LINALG_HPP_

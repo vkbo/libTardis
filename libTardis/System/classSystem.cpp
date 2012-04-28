@@ -27,6 +27,7 @@ System::System() {
     bPotType    = false;
     bPotBuilt   = false;
     bBasisBuilt = false;
+    bEnergyCut  = false;
 
     // Qunatum Numbers
     iM  = 0;
@@ -101,6 +102,7 @@ bool System::BuildBasis() {
     oBasis = new Basis(oPot, oOut, iParticles, iStates);
     oBasis->SetQNumber(QN_M, iM);
     oBasis->SetQNumber(QN_MS, iMs);
+    oBasis->SetEnergyCut(bEnergyCut);
     oBasis->BuildBasis();
 
     return true;
@@ -171,6 +173,11 @@ bool System::SetParticles(int iValue) {
 
     iParticles = iValue;
 
+    return true;
+}
+
+bool System::SetEnergyCut(bool bValue) {
+    bEnergyCut = bValue;
     return true;
 }
 
@@ -253,14 +260,23 @@ void System::fUpdateFac() {
     if(dOmega != 0.0) {
         d1PFac = dOmega;
         d2PFac = sqrt(dOmega);
+        //~ if(iPotType == QDOT2D && iGenType == Q2D_EFFECTIVE) {
+            //~ d2PFac = dOmega;
+            //~ dLambda = 1/sqrt(dOmega);
+        //~ }
     } else {
         if(dLambda != 0.0) {
             d1PFac = 1.0;
             d2PFac = dLambda;
-            if(iPotType == QDOT2D && iGenType == Q2D_EFFECTIVE) d2PFac = 1.0;
+            if(iPotType == QDOT2D && iGenType == Q2D_EFFECTIVE) {
+                d2PFac = 1.0;
+            }
         } else {
             d1PFac = 1.0;
             d2PFac = 0.0;
+            //~ if(iPotType == QDOT2D && iGenType == Q2D_EFFECTIVE) {
+                //~ dLambda = 1.0;
+            //~ }
         }
     }
 

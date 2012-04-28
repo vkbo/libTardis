@@ -33,6 +33,8 @@ class System
     // Basis Configuration
     bool SetParticles(int);
     int  GetParticles()       {return iParticles;};
+    bool SetEnergyCut(bool);
+    bool GetEnergyCut()       {return bEnergyCut;};
 
     // System Configuration
     bool   SetQNumber(int, int);
@@ -67,6 +69,7 @@ class System
     bool bPotType;    // Potential type set
     bool bPotBuilt;   // Potential built
     bool bBasisBuilt; // Basis built
+    bool bEnergyCut;  // Use energy cut for basis
 
     // System Configuration
     int    iM;      // Total M

@@ -7,7 +7,7 @@
 
 // QDot2D Lanczos
 #define LANCZOS_ZERO     1e-9
-#define LANCZOS_CONVERGE 1e-6
+#define LANCZOS_CONVERGE 1e-5
 #define USE_RAND_SEED    false
 
 // Size of Slater Determinant
