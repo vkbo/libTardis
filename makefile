@@ -64,7 +64,7 @@ $(OUTPUT)/classSlater.o : $(LIBSYS)/classSlater.cpp $(LIBSYS)/classSlater.hpp $(
 
 # Potential Classes
 
-$(OUTPUT)/classQDot2D.o : $(LIBPOT)/classQDot2D.cpp $(LIBPOT)/classQDot2D.hpp $(LIBPOT)/classPotential.hpp $(LIBROOT)/libTardis.hpp
+$(OUTPUT)/classQDot2D.o : $(LIBPOT)/classQDot2D.cpp $(LIBPOT)/modQDot2D.cpp $(LIBPOT)/classQDot2D.hpp $(LIBPOT)/classPotential.hpp $(LIBROOT)/libTardis.hpp
 	$(CC) $(CFLAGS) $(LIBPOT)/classQDot2D.cpp -o $@
 
 # Solver Classes

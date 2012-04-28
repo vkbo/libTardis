@@ -33,7 +33,7 @@ System::System() {
     iMs = 0;
 
     // System Variables
-    dLambda = 0.0;
+    dLambda = 1.0;
     dOmega  = 0.0;
 
     oOut = new Log();
@@ -70,6 +70,7 @@ bool System::BuildPotential() {
         oPot->SetCache(ssCache.str().c_str());
     }
 
+    oPot->SetLambda(dLambda);
     oPot->LoadOrGenerate(iGenType);
     bPotBuilt = true;
 
@@ -112,6 +113,10 @@ bool System::BuildBasis() {
 bool System::SetPotential(int iNumShells, int iPotential, int iGenerator) {
 
     bool bOK = false;
+
+    if(iPotential != iPotType) bPotBuilt = false;
+    if(iGenerator != iGenType) bPotBuilt = false;
+    if(iNumShells != iShells)  bPotBuilt = false;
 
     iPotType = iPotential;
     iGenType = iGenerator;
@@ -200,8 +205,10 @@ bool System::SetQNumber(int iVar, int iValue) {
 bool System::SetVariable(int iVar, double dValue) {
 
     switch(iVar) {
-        case VAR_LAMBDA: dLambda = dValue; break;
-        case VAR_OMEGA:  dOmega  = dValue; break;
+        case VAR_LAMBDA: dLambda = dValue; fUpdateFac(); break;
+        case VAR_OMEGA:  dOmega  = dValue; fUpdateFac(); break;
+        case VAR_1PFAC:  d1PFac  = dValue; break;
+        case VAR_2PFAC:  d2PFac  = dValue; break;
         default:
             ssOut << "Error: Not a valid System Variable." << endl;
             oOut->Output(&ssOut);
@@ -228,9 +235,34 @@ double System::GetVariable(int iVar) {
     switch(iVar) {
         case VAR_LAMBDA: return dLambda; break;
         case VAR_OMEGA:  return dOmega;  break;
+        case VAR_1PFAC:  return d1PFac;  break;
+        case VAR_2PFAC:  return d2PFac;  break;
         default:
             ssOut << "Error: Not a valid System Variable." << endl;
             oOut->Output(&ssOut);
             return -1.0;
     }
+}
+
+/*
+** Private Functions
+*/
+
+void System::fUpdateFac() {
+
+    if(dOmega != 0.0) {
+        d1PFac = dOmega;
+        d2PFac = sqrt(dOmega);
+    } else {
+        if(dLambda != 0.0) {
+            d1PFac = 1.0;
+            d2PFac = dLambda;
+            if(iPotType == QDOT2D && iGenType == Q2D_EFFECTIVE) d2PFac = 1.0;
+        } else {
+            d1PFac = 1.0;
+            d2PFac = 0.0;
+        }
+    }
+
+    return;
 }

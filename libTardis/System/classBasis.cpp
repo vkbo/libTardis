@@ -86,6 +86,9 @@ int Basis::BuildBasis() {
         sdTest.Zero();
         for(i=0; i<iParticles; i++) sdTest.Create(vTemp[i]);
         vBasis.push_back(sdTest);
+        //~ sdTest.Output(iStates);
+        //~ for(i=0; i<iParticles; i++) cout << vTemp[i] << ", ";
+        //~ cout << iTMs << ", " << iTM << endl;
         #ifndef INDEX_BASIS
             if(vTemp[0] != iPrev) {
                 if(iPrev >= 0) mIndex(iPrev,1)  = vBasis.size()-2;
@@ -119,6 +122,9 @@ int Basis::BuildBasis() {
             sdTest.Zero();
             for(i=0; i<iParticles; i++) sdTest.Create(vTemp[i]);
             vBasis.push_back(sdTest);
+            //~ sdTest.Output(iStates);
+            //~ for(i=0; i<iParticles; i++) cout << vTemp[i] << ", ";
+            //~ cout << iTMs << ", " << iTM << endl;
             #ifndef INDEX_BASIS
                 if(vTemp[0] != iPrev) {
                     if(iPrev >= 0) mIndex(iPrev,1)  = vBasis.size()-2;
@@ -141,6 +147,8 @@ int Basis::BuildBasis() {
         #endif
 
     }
+
+    //~ cout << mIndex << endl;
 
     iBasisDim = vBasis.size();
 
@@ -237,6 +245,8 @@ int Basis::FindSlater(Slater sdFind, int p, int q) {
                 case  1: iMin = iCheck+1; break;
             }
         }
+
+        if(iMax == iMin) return iMin;
     #endif
 
     return -1;

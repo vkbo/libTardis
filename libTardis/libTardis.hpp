@@ -30,6 +30,8 @@
 #define QN_MS      101
 #define VAR_LAMBDA 200
 #define VAR_OMEGA  201
+#define VAR_1PFAC  202
+#define VAR_2PFAC  203
 
 // Systems
 #define ATOM     1

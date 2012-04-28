@@ -40,6 +40,7 @@ class QDot2D : public Potential
 
     // Setters
     void SetCache(const char*);
+    void SetLambda(double);
 
     // Getters, Setters and Output
     int  GetShells() {return iShells;};
@@ -49,6 +50,7 @@ class QDot2D : public Potential
     double Get1PElement(int, int);
     double Get2PElement(int, int, int, int);
 
+    const arma::Mat<int>    *GetConfig(int, int);
     const arma::Col<double> *Get1PHam(int, int);
     const arma::Mat<double> *Get2PHam(int, int);
 
@@ -56,9 +58,10 @@ class QDot2D : public Potential
     private:
 
     // Variables
-    int   iShells;                           // Number of shells
-    int   iStates;                           // Number of quantum states |0> |1> ... |n>
-    bool  bCache;                            // Is the Hamiltonian in memory?
+    int    iShells;                          // Number of shells
+    int    iStates;                          // Number of quantum states |0> |1> ... |n>
+    double dLambda;                          // Lambda value for QDot2D VEff
+    bool   bCache;                           // Is the Hamiltonian in memory?
 
     // Other Variables
     std::stringstream ssOut;                 // stdout and log string

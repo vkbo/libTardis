@@ -12,7 +12,6 @@ using namespace tardis;
 using namespace quantumdot;
 
 #include "modQDot2D.cpp"
-#include "modQDot2DAnalytic.cpp"
 
 /*
 ** Public :: Constructor and Destructor
@@ -23,6 +22,7 @@ QDot2D::QDot2D(int iNumShells, Log *oLog) : Potential(iNumShells, oLog) {
     bCache  = false;
     iShells = iNumShells;
     iStates = iShells*(iShells+1);
+    dLambda = 1.0;
     oOut    = oLog;
 
     int iIndex=0;
@@ -64,6 +64,11 @@ void QDot2D::SetCache(const char *cCache) {
     return;
 }
 
+void QDot2D::SetLambda(double dValue) {
+    dLambda = dValue;
+    return;
+}
+
 /*
 ** Public :: Getters
 */
@@ -89,6 +94,12 @@ double QDot2D::Get2PElement(int p, int q, int r, int s) {
         return 0.0;
     }
 
+}
+
+const Mat<int>* QDot2D::GetConfig(int iM, int iMs) {
+    unsigned int iIndex = fMapLambda(iM, iMs);
+    if(iIndex <= mConfig.n_cols) return &mConfig(iIndex);
+    return NULL;
 }
 
 const Col<double>* QDot2D::Get1PHam(int iM, int iMs) {
@@ -147,7 +158,7 @@ void QDot2D::Load(int iType) {
             break;
         case Q2D_EFFECTIVE:
             sFileNameC << ssCache.str() << "QDot2D_" << iShells << "Sh_EffectiveBlockConfig.dat";
-            sFileNameH << ssCache.str() << "QDot2D_" << iShells << "Sh_EffectiveBlockDiag.dat";
+            sFileNameH << ssCache.str() << "QDot2D_" << iShells << "Sh_EffectiveBlockDiag_L" << setprecision(5) << dLambda << ".dat";
             sFileNameM << ssCache.str() << "QDot2D_" << iShells << "Sh_EffectiveBlockMap.dat";
             break;
     }
@@ -250,18 +261,19 @@ void QDot2D::Generate(int iType) {
     if(iType == Q2D_NORMAL || iType == Q2D_EFFECTIVE) {
         oOFCI = new QdotInteraction();
         oOFCI->setR(iShells-1);
-        oOFCI->setLambda(1.0);
     }
 
     if(iType == Q2D_NORMAL) {
         ssOut << "Building interaction CoM Blocks ..." << endl;
         oOut->Output(&ssOut);
+        oOFCI->setLambda(1.0);
         oOFCI->buildInteractionComBlocks();
     }
 
     if(iType == Q2D_EFFECTIVE) {
         ssOut << "Building effective interaction CoM Blocks ..." << endl;
         oOut->Output(&ssOut);
+        oOFCI->setLambda(dLambda);
         oOFCI->buildEffectiveInteractionComBlocks(2);
     }
 
@@ -296,19 +308,6 @@ void QDot2D::Generate(int iType) {
                     break;
 
                 case Q2D_NORMAL:
-                    for(i=0; i<iDim; i++) {
-                        mConfig(k-1)(0,i) = vConfig[k-1][2*i];
-                        mConfig(k-1)(1,i) = vConfig[k-1][2*i+1];
-                        for(j=i; j<iDim; j++) {
-                            mBlHam(k)(i,j) = fCalcElementQ2DOpenFCI(vConfig[k-1][2*i],
-                                                                    vConfig[k-1][2*i+1],
-                                                                    vConfig[k-1][2*j],
-                                                                    vConfig[k-1][2*j+1]);
-                            mBlHam(k)(j,i) = mBlHam(k)(i,j);
-                        }
-                    }
-                    break;
-
                 case Q2D_EFFECTIVE:
                     for(i=0; i<iDim; i++) {
                         mConfig(k-1)(0,i) = vConfig[k-1][2*i];
@@ -348,7 +347,7 @@ void QDot2D::Generate(int iType) {
                 break;
             case Q2D_EFFECTIVE:
                 sFileNameC << ssCache.str() << "QDot2D_" << iShells << "Sh_EffectiveBlockConfig.dat";
-                sFileNameH << ssCache.str() << "QDot2D_" << iShells << "Sh_EffectiveBlockDiag.dat";
+                sFileNameH << ssCache.str() << "QDot2D_" << iShells << "Sh_EffectiveBlockDiag_L" << setprecision(5) << dLambda << ".dat";
                 sFileNameM << ssCache.str() << "QDot2D_" << iShells << "Sh_EffectiveBlockMap.dat";
                 break;
         }

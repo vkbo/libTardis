@@ -53,16 +53,63 @@ int main() {
     cout << endl;
 
     System *oSystem = new System();
-    oSystem->SetPotential(iShell, QDOT2D, Q2D_EFFECTIVE);
+    oSystem->SetPotential(iShell, QDOT2D, Q2D_ANALYTIC);
+    //~ oSystem->SetPotential(iShell, QDOT2D, Q2D_NORMAL);
+    //~ oSystem->SetPotential(iShell, QDOT2D, Q2D_EFFECTIVE);
     oSystem->SetParticles(iPartInt);
     oSystem->SetQNumber(QN_M, iM);
     oSystem->SetQNumber(QN_MS, iMs);
+    oSystem->SetVariable(VAR_LAMBDA, dLambda);
+    oSystem->SetVariable(VAR_OMEGA,  dOmega);
     //oSystem->SetCache("/scratch/Temp/arma_cache/");
     oSystem->BuildPotential();
     oSystem->BuildBasis();
+    //oSystem->GetBasis()->Output();
 
     Lanczos oLanczos(oSystem);
-    cout << "Energy: " << setprecision(8) << oLanczos.Run(iM, iMs, dOmega, dLambda) << endl;
+    double dEnergy = oLanczos.Run();
+    cout << "Energy: " << setprecision(8) << dEnergy << endl;
+/*
+    Potential *oPot;
+    const arma::Mat<int>    *mConf;
+    const arma::Mat<double> *mHam1;
+    const arma::Mat<double> *mHam2;
+
+    // Test Matrix-elements
+    oSystem->SetPotential(iShell, QDOT2D, Q2D_ANALYTIC);
+    oSystem->BuildPotential();
+    oPot = oSystem->GetPotential();
+    mHam1 = oPot->Get2PHam(0,0);
+    mConf = oPot->GetConfig(0,0);
+
+    oSystem->SetPotential(iShell, QDOT2D, Q2D_NORMAL);
+    oSystem->BuildPotential();
+    oPot = oSystem->GetPotential();
+    mHam2 = oPot->Get2PHam(0,0);
+
+    //cout << *mConf << endl;
+    for(int i=0; i<mConf->n_cols; i++) {
+        cout << "|" << mConf->at(0,i) << " " << mConf->at(1,i) << ">\t    ";
+        cout << "|";
+        cout << oPot->GetState(mConf->at(0,i),0) << " ";
+        cout << oPot->GetState(mConf->at(0,i),1) << " ";
+        cout << oPot->GetState(mConf->at(0,i),2) << ">\t";
+        cout << "|";
+        cout << oPot->GetState(mConf->at(1,i),0) << " ";
+        cout << oPot->GetState(mConf->at(1,i),1) << " ";
+        cout << oPot->GetState(mConf->at(1,i),2) << ">" << endl;
+    }
+    cout << endl;
+    cout << *mHam1 << endl;
+    cout << *mHam2 << endl;
+    cout << (*mHam2-*mHam1) << endl;
+
+    //oSystem->SetPotential(iShell, QDOT2D, Q2D_EFFECTIVE);
+    //oSystem->BuildPotential();
+    //oPot = oSystem->GetPotential();
+    //mHam = oPot->Get2PHam(0,0);
+    //cout << *mHam << endl;
+*/
 
     //Diag oDiag(oSystem);
     //cout << "Energy: " << oDiag.Run(iM, iMs, dOmega, dLambda) << endl;

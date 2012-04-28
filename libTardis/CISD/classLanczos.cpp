@@ -24,6 +24,8 @@ Lanczos::Lanczos(System *oSys) {
     iStates    = oSystem->GetStates();
     iParticles = oSystem->GetParticles();
     iBasisDim  = oBasis->GetSize();
+    d1PFac     = oSystem->GetVariable(VAR_1PFAC);
+    d2PFac     = oSystem->GetVariable(VAR_2PFAC);
 
     return;
 }
@@ -32,7 +34,7 @@ Lanczos::Lanczos(System *oSys) {
 ** Public :: Functions
 */
 
-double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda) {
+double Lanczos::Run() {
 
     // Check for illegal values
 
@@ -48,28 +50,11 @@ double Lanczos::Run(int iM, int iMs, double dOmega, double dLambda) {
         return -1.0;
     }
 
-    // Lambda or Omega values
-    double d1PFac, d2PFac;
-
-    if(dOmega != 0.0) {
-        d1PFac = dOmega;
-        d2PFac = sqrt(dOmega);
-    } else {
-        if(dLambda != 0.0) {
-            d1PFac = 1.0;
-            d2PFac = dLambda;
-        } else {
-            d1PFac = 1.0;
-            d2PFac = 0.0;
-        }
-    }
+    // 1-Particle Hamiltonian scale factor
     d1PFac *= 1.0/(iParticles-1);
 
-    iM  = abs(iM);  // iM  = -iM
-    iMs = abs(iMs); // iMs = -iMs
-
     /*
-    ** Initializing
+    ** Initializing Lanczos
     */
 
     // Lanczos vectors

@@ -73,6 +73,8 @@ class System
     int    iMs;     // Total Spin
     double dLambda; // Interaction strength
     double dOmega;  // Harmonic oscillator frequency
+    double d1PFac;  // 1-Particle hamiltonian factor (derived from dOmega or dLambda)
+    double d2PFac;  // 2-Particle hamiltonian factor (derived from dOmega or dLambda)
 
     // Other Variables
     std::stringstream ssOut;
@@ -82,7 +84,9 @@ class System
     Potential *oPot;    // Potential object
     Basis     *oBasis;  // Basis object
     Log       *oOut;    // Logfile
-        
+
+    // Private Functions
+    void fUpdateFac();
 };
 
 } // End namespace tardis

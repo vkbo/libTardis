@@ -33,7 +33,7 @@ class Lanczos
     ~Lanczos() {};
 
     // Public Functions
-    double Run(int, int, double dOmega = 1.0, double dLambda = 0.0);
+    double Run();
 
     // Getters, Setters and Output
 
@@ -41,9 +41,11 @@ class Lanczos
     private:
 
     // Variables
-    int iStates;
-    int iParticles;
-    int iBasisDim;
+    int    iStates;
+    int    iParticles;
+    int    iBasisDim;
+    double d1PFac;
+    double d2PFac;
 
     // Other Variables
     std::stringstream ssOut;

@@ -27,6 +27,7 @@ class Potential
 
     // Setters
     virtual void SetCache(const char*) {return;};
+    virtual void SetLambda(double)     {return;};
 
     // Getters, Setters and Output
     virtual int  GetShells()        {return -1;};
@@ -36,8 +37,9 @@ class Potential
     virtual double Get1PElement(int, int)           {return -1.0;};
     virtual double Get2PElement(int, int, int, int) {return -1.0;};
 
-    virtual const arma::Col<double> *Get1PHam(int, int) {return NULL;};
-    virtual const arma::Mat<double> *Get2PHam(int, int) {return NULL;};
+    virtual const arma::Mat<int>    *GetConfig(int, int) {return NULL;};
+    virtual const arma::Col<double> *Get1PHam(int, int)  {return NULL;};
+    virtual const arma::Mat<double> *Get2PHam(int, int)  {return NULL;};
 };
 
 } // End namespace tardis
