@@ -34,14 +34,14 @@
 #define VAR_2PFAC  203
 
 // Systems
-#define ATOM     1
-#define QDOT2D   2
-    #define Q2D_ANALYTIC  20
-    #define Q2D_NORMAL    21
-    #define Q2D_EFFECTIVE 22
-#define QDOT3D   3
-#define NUCLEUS  4
-#define HNUCLEUS 5
+#define ATOM     1 // Atomic electrons
+#define QDOT2D   2 // Quantum dots in 2 dimensions
+    #define Q2D_ANALYTIC  20 // Using analytic expression (Anisimovas and Matulis)
+    #define Q2D_NORMAL    21 // Using OpenFCI (Simen Kvaal) without effective interaction
+    #define Q2D_EFFECTIVE 22 // Using OpenFCI (Simen Kvaal) with effective interaction
+#define QDOT3D   3 // Quantum dots in 3 dimensions
+#define NUCLEUS  4 // Atomic nucleus
+#define HNUCLEUS 5 // Atomic nucleus with strangeness != 0
 
 // Other
 #define OUTPUTF(p) showpoint << setw((p+2)) << setprecision((p))

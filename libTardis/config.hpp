@@ -24,5 +24,5 @@
 
 // Use index-based basis search?
 //  - Only useful for small basises.
-//  - Uses a lot of memory but gives a good speedup.
+//  - Uses a lot of memory but gives a good speedup for small systems.
 //#define INDEX_BASIS
