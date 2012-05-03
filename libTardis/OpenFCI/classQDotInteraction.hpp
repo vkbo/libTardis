@@ -29,11 +29,11 @@
 
 /**
  * \file QdotInteraction.hpp
- * 
+ *
  * \brief Class definition of quantum dot interaction matrix elements, plus various helper
  * functions related to this.
  *
- * QdotInteraction takes care of building lab frame matrix elements <a b | U | c d> 
+ * QdotInteraction takes care of building lab frame matrix elements <a b | U | c d>
  * given a radial potential U(r_12), encapsulated in RadialPotential.
  *
  *
@@ -45,8 +45,7 @@ namespace quantumdot {
 
 
 /// \brief Internal struct used in QdotInteraction.
-typedef struct
-{
+typedef struct {
     int N1, m1, N2, m2;
 } orb_pair;
 
@@ -85,10 +84,10 @@ typedef struct
 ///
 /// // Ready to use! Call singleElement(N1,m1,N2,m2,N3,m3,N4,m4) to calculate!
 /// \endcode
-class QdotInteraction
-{
+class QdotInteraction {
 
-  private:
+    private:
+
     /// Maximum shell index. (Number of shells = R + 1.)
     int R;
 
@@ -108,7 +107,7 @@ class QdotInteraction
     /// Strength of interaction.
     double lambda;
 
-    /// Vector of sparse matrices holding a precomputed LAB-frame interaction, 
+    /// Vector of sparse matrices holding a precomputed LAB-frame interaction,
     /// if desired. U[M] is the matrix elements belonging to M = m1 + m2 = m3 + m4.
     std::vector<simple_sparse::SparseMatrix<size_t, double> > U;
 
@@ -124,30 +123,31 @@ class QdotInteraction
     /// Interaction potential.
     RadialPotential potential;
 
-  protected:
-    /// \brief Build the Talmi matrices up to 2*R shells. 
+
+    protected:
+
+    /// \brief Build the Talmi matrices up to 2*R shells.
     /// (We need 2*R blocks if we use
     /// direct product Hilbert space; only R otherwise. But this is insignificant in the greater scheme of things.)
     void buildTalmiBlocks();
-
 
     /// \brief Map quantum number pair to orbital number.
     /// Used for precomputing lab frame interaction. Harmonic oscillator energy
     /// is given by E = N + 1, and the usual radial quantum number n is defined through N = 2*n + abs(m).
     /// \param N    Shell number quantum number
     /// \param m    Angular momentum quantum number.
-    int orbitalMap2(int N, int m)
-    {
-      return (N*(N+2)+m)/2;
+    int orbitalMap2(int N, int m) {
+        return (N*(N+2)+m)/2;
     }
-    
-  public:
+
+
+    public:
+
     /// \brief Default constructor.
-    QdotInteraction()
-    {
-      lambda = 1.0;
-      R = -1;
-      precomputed = false;
+    QdotInteraction() {
+        lambda = 1.0;
+        R = -1;
+        precomputed = false;
     }
 
     /// \brief Assign a RadialPotential object. (The default object is a Coulomb potential.)
@@ -167,35 +167,20 @@ class QdotInteraction
 
     /// \brief Set the maximum shell number R.
     /// \param the_R The value for R.
-    void setR(int the_R)
-    {
-      R = the_R;
-      assert(R >= 0);
-      buildTalmiBlocks();
+    void setR(int the_R) {
+        R = the_R;
+        assert(R >= 0);
+        buildTalmiBlocks();
     }
-    
-    /// \brief Compute the matrix element <a1 a2|U|b1 b2> of
-    /// the interaction. 
-    ///Here, a1 = (N1, m1), a2 = (N2, m2), b1 = (N1pr, m2pr) and
-    /// b2 = (N2pr, m2pr). 
-    double singleElement(int N1, int m1, int N2, int m2, int N1pr, int m1pr, int N2pr, int m2pr);
 
-    /// \brief Analytic computation of LAB frame elements. Note: The order of arguments is not wrong!
-    /// This is included only for completeness, and it is really slow and inaccurate for many shells.
-    /// For many-particle problems (>3) it can be useful since we are then restricted to only a 
-    /// few shells.
-    ///
-    /// \b NOTE: In the code in QdotInteraction.cc, it would be better to take the log of f0, f1 etc and use
-    /// exp(f0+....) instead of f0*f1...
-    /// Should implement this; if I haven't done it when you read this, do so
-    /// yourself. :-)
-    ///
-    double singleElementAnalytic(int N1, int m1, int N2, int m2, int N4, int m4, int N3, int m3);
+    /// \brief Compute the matrix element <a1 a2|U|b1 b2> of
+    /// the interaction.
+    ///Here, a1 = (N1, m1), a2 = (N2, m2), b1 = (N1pr, m2pr) and
+    /// b2 = (N2pr, m2pr).
+    double singleElement(int N1, int m1, int N2, int m2, int N1pr, int m1pr, int N2pr, int m2pr);
 
     /// \brief Precopute lab frame version of the interaction.
     void precomputeLabFrameMatrix();
-
-
 };
 
 
@@ -205,9 +190,7 @@ class QdotInteraction
 /// \param N    Index of matrix
 void computeTalmiMatrix(dense_matrix& TN, int N);
 
-
-
 } // namespace quantumdot
 
 
-#endif 
+#endif

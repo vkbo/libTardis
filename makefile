@@ -1,9 +1,8 @@
-##
-##  Default Makfeile for libTardis
-##
+###
+###  Default Makfeile for libTardis
+###
 
 # Default Compiler Options
-
 CC          = g++
 DEBUG       = -g -Wall
 LIBADD      =
@@ -12,7 +11,6 @@ CFLAGS      = $(DEBUG) -O2 -c -fopenmp
 LFLAGS      = $(DEBUG) -fopenmp
 
 # Path Settings
-
 LIBROOT     = libTardis
 LIBSYS      = $(LIBROOT)/System
 LIBCISD     = $(LIBROOT)/CISD
@@ -23,18 +21,25 @@ COMPILE     = tempCompile
 OUTPUT      = $(COMPILE)/$(NODE)
 
 # Executable
-
 EXEC        = CISD-$(NODE)
 MAIN        = main.cpp
 
-# Compile Variables
-
+# libTardis Objects
 SYSOBJECTS  = classLog.o classSystem.o classSlater.o classBasis.o
 CISDOBJECTS = classLanczos.o classDiag.o
 POTOBJECTS  = classQDot2D.o
+
+# OpenFCI Files
 OFCIOBJECTS = modGaussTools.o classRadialPotential.o classQDotInteraction.o
+OFCIINCLUDE = incLinalg.hpp incSimpleLinalg.hpp incSimpleMatrix.hpp incSimpleVector.hpp incSparse.hpp incTools.hpp lapack/lapack.hpp
+OFCIHEADERS = $(addprefix $(LIBFCI)/,$(OFCIINCLUDE))
+
+# Combine Objects
 OBJECTS     = $(addprefix $(OUTPUT)/,$(SYSOBJECTS) $(CISDOBJECTS) $(POTOBJECTS) $(OFCIOBJECTS))
 
+##
+## Compile
+##
 
 # Check if Output directory exists
 $(shell [ -d "$(OUTPUT)" ] || mkdir -p $(OUTPUT))
@@ -76,13 +81,13 @@ $(OUTPUT)/classLanczos.o : $(LIBCISD)/classLanczos.cpp $(LIBCISD)/classLanczos.h
 
 # OpenFCI
 
-$(OUTPUT)/modGaussTools.o : $(LIBFCI)/modGaussTools.cpp $(LIBFCI)/modGaussTools.hpp $(LIBFCI)/lpp/lapack.hh $(LIBFCI)/lpp/lapack_cpp_itf.hh
+$(OUTPUT)/modGaussTools.o : $(LIBFCI)/modGaussTools.cpp $(LIBFCI)/modGaussTools.hpp $(OFCIHEADERS)
 	$(CC) $(CFLAGS) $(LIBFCI)/modGaussTools.cpp -o $@
 
-$(OUTPUT)/classRadialPotential.o : $(LIBFCI)/classRadialPotential.cpp $(LIBFCI)/classRadialPotential.hpp
+$(OUTPUT)/classRadialPotential.o : $(LIBFCI)/classRadialPotential.cpp $(LIBFCI)/classRadialPotential.hpp $(OFCIHEADERS)
 	$(CC) $(CFLAGS) $(LIBFCI)/classRadialPotential.cpp -o $@
 
-$(OUTPUT)/classQDotInteraction.o : $(LIBFCI)/classQDotInteraction.cpp $(LIBFCI)/classQDotInteraction.hpp
+$(OUTPUT)/classQDotInteraction.o : $(LIBFCI)/classQDotInteraction.cpp $(LIBFCI)/classQDotInteraction.hpp $(OFCIHEADERS)
 	$(CC) $(CFLAGS) $(LIBFCI)/classQDotInteraction.cpp -o $@
 
 # Make Clean

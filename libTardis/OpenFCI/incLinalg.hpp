@@ -33,7 +33,7 @@
 #include "incSimpleVector.hpp"
 #include "incSimpleMatrix.hpp"
 #include "incSimpleLinalg.hpp"
-#include "lpp/lapack.hh"
+#include "lapack/lapack.hpp"
 
 /// \brief Dense matrix
 typedef simple_dense::simple_matrix<double> dense_matrix;
