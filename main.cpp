@@ -59,8 +59,10 @@ int main() {
     oSystem->SetParticles(iPartInt);
     oSystem->SetQNumber(QN_M, iM);
     oSystem->SetQNumber(QN_MS, iMs);
+    oSystem->SetQNumber(QN_EMAX, iShell);
     oSystem->SetVariable(VAR_LAMBDA, dLambda);
     oSystem->SetVariable(VAR_OMEGA,  dOmega);
+    oSystem->EnableEnergyCut(true);
     //oSystem->SetCache("/scratch/Temp/arma_cache/");
     oSystem->BuildPotential();
     oSystem->BuildBasis();

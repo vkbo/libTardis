@@ -38,8 +38,7 @@ class Basis
     // System Configuration
     bool SetQNumber(int, int);
     int  GetQNumber(int);
-    bool SetEnergyCut(bool);
-    bool GetEnergyCut()       {return bEnergyCut;};
+    bool EnableEnergyCut(bool);
 
 
     private:
@@ -47,12 +46,14 @@ class Basis
     // Variables
     int  iParticles;
     int  iStates;
+    int  iShells;
     bool b3PIndex;
     bool bEnergyCut;
 
     // System Configuration
-    int iM;      // Total M
-    int iMs;     // Total Spin
+    int iM;    // Total M
+    int iMs;   // Total Spin
+    int iEMax; // Energy cut value
 
     // Other Variables
     std::stringstream ssOut;  // stdout and log string

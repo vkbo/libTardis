@@ -11,16 +11,18 @@ using namespace arma;
 using namespace tardis;
 
 /*
-** Public :: Constructor and Destructor
+** Basis Constructor
 */
 
-Basis::Basis(Potential *oPotential, Log *oLog, int iNumParticles, int iNumStates) {
+Basis::Basis(Potential *oPotential, Log *oLog, int iNumParticles, int iNumShells) {
 
     oPot       = oPotential;
     oOut       = oLog;
     iParticles = iNumParticles;
-    iStates    = iNumStates;
+    iShells    = iNumShells;
+    iStates    = iShells*(iShells+1);
     bEnergyCut = false;
+    iEMax      = iShells;
 
     // Qunatum Numbers
     iM  = 0;
@@ -32,7 +34,7 @@ Basis::Basis(Potential *oPotential, Log *oLog, int iNumParticles, int iNumStates
         oOut->Output(&ssOut);
     }
 
-    // Using binary search
+    // Using binary search and simple index
     #ifndef INDEX_BASIS
         mIndex.set_size(iStates+1,2);
         mIndex.fill(-1);
@@ -41,24 +43,49 @@ Basis::Basis(Potential *oPotential, Log *oLog, int iNumParticles, int iNumStates
     return;
 }
 
+
 /*
-** Public :: Functions
+**  Building the Basis
+** ====================
+**
+**  If INDEX_BASIS is defined:
+**   - Builds a full index after the basis itself has been built
+**   - The size of the index should scale like Np(Np+1)/2 * Dim_Basis * sizeof(short)
+**   - Not recommended for large systems where both Np and Dim_Basis blows up
+**
+**  If INDEX_BASIS is not defined:
+**   - Builds a simple index of the first particle (vTemp[0])
+**   - Index is built in the basis loop tself
+**   - Scales as 2*N_States * sizeof(int)
+**   - Defines the initial interval for the binary search
 */
 
 int Basis::BuildBasis() {
 
-    Slater      sdTest;
-    int         iBasisDim = 0;
-    int         i,j,iOut,iExp;
-    long        lConfMax;
-    double      d, dX = 1.0;
-    vector<int> vTemp(iParticles,0);
-
-    vBasis.clear();
+    Slater sdTest;
+    int    iBasisDim = 0;
+    int    i,j,iExp;
+    long   lConfMax;
+    double d, dX = 1.0;
     #ifndef INDEX_BASIS
         int iPrev = -1;
     #endif
 
+    // Calculate energy cut-off is bEnergyCut=true
+    //~ if(bEnergyCut) {
+        //~ int iMin = 0;
+        //~ int iFermi = 0;
+        //~ while(iFermi < iParticles) {
+            //~ iMin++;
+            //~ iFermi = iMin*(iMin+1);
+        //~ }
+        //~ iEMax = iFermi + iStates - iParticles;
+        //~ iEMax = iMin + iShells;
+        //~ cout << "EMin: " << iMin << endl;
+        //~ cout << "EMax: " << iEMax << endl;
+    //~ }
+
+    // Calculating number of possible configurations
     for(d=0.0; d<iParticles; d++) dX *= (iStates-d)/(iParticles-d);
     lConfMax = (long)dX;
     iExp     = floor(log10(lConfMax));
@@ -67,6 +94,7 @@ int Basis::BuildBasis() {
 
     #ifdef PROGRESS
         long lCount = 0;
+        int  iOut = 0;
 
         cout << showpoint;
         cout << setw(5);
@@ -74,9 +102,29 @@ int Basis::BuildBasis() {
     #else
         ssOut << "Building Basis ... " << endl;
     #endif
-
     oOut->Output(&ssOut);
 
+    /*
+    **  Building Basis
+    ** ================
+    **  Example: Np = 4 particles, States = 12 (3 shells)
+    **   - Initial config: (|0>,|1>,|2>,|3>)
+    **   - Next step:      (|0>,|1>,|2>,|4>)
+    **     ...
+    **   - Then:           (|0>,|1>,|2>,|11>)
+    **   - Next step:      (|0>,|1>,|3>,|4>)
+    **     ...
+    **   - Then:           (|0>,|1>,|10>,|11>)
+    **   - Next step:      (|0>,|2>,|3>,|4>)
+    **
+    **   ! Did not achieve significant improvement with OpenMP
+    **     Implementation is complicated due to outer while-loop
+    */
+
+    vector<int> vTemp(iParticles,0); // Vector of particles
+    vBasis.clear();                  // Clearing old basis
+
+    // Setting and checking lowest particle states (|0>, |1>, ... , |Np>)
     for(int i=0; i<iParticles; i++) vTemp[i] = i;
 
     if(fCheckQDot2D(vTemp)) {
@@ -96,13 +144,13 @@ int Basis::BuildBasis() {
         #endif
     }
 
-    iOut = 0;
-    while(vTemp[0] < iStates-iParticles) {
-        for(i=iParticles-1; i>=0; i--) {
-            if(vTemp[i] < iStates-iParticles+i) {
-                vTemp[i]++;
-                if(i < iParticles-1) {
-                    for(j=i+1; j<iParticles; j++) {
+    // Looping over the rest of the possible configurations
+    while(vTemp[0] < iStates-iParticles) {           // Stop if first particle is in highest state allowed
+        for(i=iParticles-1; i>=0; i--) {             // Loop through particles from last to first
+            if(vTemp[i] < iStates-iParticles+i) {    // If there are any higher state available for given particle
+                vTemp[i]++;                          // Move particle up one state
+                if(i < iParticles-1) {               // If this is not the last particle
+                    for(j=i+1; j<iParticles; j++) {  // Reset the following particles to lowest states available
                         vTemp[j] = vTemp[j-1] + 1;
                     }
                 }
@@ -136,10 +184,7 @@ int Basis::BuildBasis() {
                 }
             }
         #endif
-
     }
-
-    //~ cout << mIndex << endl;
 
     iBasisDim = vBasis.size();
 
@@ -148,8 +193,18 @@ int Basis::BuildBasis() {
     #endif
 
     iExp = floor(log10(iBasisDim));
-    ssOut << "Dimension of Basis: " << iBasisDim << setprecision(1) << " ";
+    ssOut << "Dimension of Basis: " << iBasisDim << " ";
     ssOut << "(~" << round(iBasisDim/pow(10,iExp)) << "e" << iExp << ")" << endl;
+
+    /*
+    **  Building Index (Only if INDEX_BASIS is defined)
+    ** =================================================
+    **  - Builds a vector for indices p*iStates+q (N = States^2)
+    **  - For each index, builds a vector of all slater determinants that contains
+    **    particles in state p and q
+    **  ! Can probably be optimised. For instance by only running q>p
+    **  ! Is fairly slow, but uses OpenMP relatively efficiently
+    */
 
     #ifdef INDEX_BASIS
 
@@ -210,6 +265,19 @@ int Basis::BuildBasis() {
     return iBasisDim;
 }
 
+/*
+**  Basis Search
+** ==============
+**
+**  If INDEX_BASIS is defined:
+**   - Uses simple straight forward search for slater determinants that have state p and q occupied
+**   ! Can probably be improved by implementing binary search
+**
+**  If INDEX_BASIS is not defined
+**   - Uses binary search. Should scale with ln(Dim_Basis)
+*    - Is more efficient than full index for large systems
+*/
+
 int Basis::FindSlater(Slater sdFind, int p, int q) {
 
     #ifdef INDEX_BASIS
@@ -222,13 +290,13 @@ int Basis::FindSlater(Slater sdFind, int p, int q) {
     #else
         // Binary search
         int iCheck;
-        int iP = sdFind.GetFirst();
-        int iMin = mIndex(iP,0);
+        int iP   = sdFind.GetFirst();  // Find lowest occupied state
+        int iMin = mIndex(iP,0);       // Set search range based on lowest occupied state
         int iMax = mIndex(iP,1);
 
-        if(iMin == -1) return -1;
+        if(iMin == -1) return -1;      // Returns "not found" if stae is never occupied in basis
 
-        while(iMax!=iMin) {
+        while(iMax!=iMin) {            // Otherwise do binary searchy until search interval is 1
             iCheck = iMin+(iMax-iMin)/2;
             switch(vBasis[iCheck].Compare(sdFind)) {
                 case  0: return iCheck;
@@ -237,7 +305,7 @@ int Basis::FindSlater(Slater sdFind, int p, int q) {
             }
         }
 
-        if(iMax == iMin) return iMin;
+        if(iMax == iMin) return iMin;  // If only one state exists, return index value
     #endif
 
     return -1;
@@ -251,13 +319,22 @@ bool Basis::fCheckQDot2D(const vector<int> &vTemp) {
 
     int iTM  = 0;
     int iTMs = 0;
+    int iEnergy = 0;
 
     for(int i=0; i<iParticles; i++) {
         iTM  += oPot->GetState(vTemp[i],1);
         iTMs += 2*(vTemp[i]%2)-1;
+        if(bEnergyCut) {
+            iEnergy += 2*oPot->GetState(vTemp[i],0) + abs(oPot->GetState(vTemp[i],1));
+        }
     }
 
-    if(iTMs == iMs && iTM == iM) return true;
+    //~ if(iEnergy > iEMax && iTMs == iMs && iTM == iM) {
+        //~ cout << "Cut: " << iEnergy << " > " << iEMax << endl;
+    //~ }
+    //~ iEnergy = 0;
+
+    if(iTMs == iMs && iTM == iM && iEnergy <= iEMax) return true;
 
     return false;
 }
@@ -281,8 +358,9 @@ void Basis::Output() {
 bool Basis::SetQNumber(int iVar, int iValue) {
 
     switch(iVar) {
-        case QN_M:  iM  = iValue; break;
-        case QN_MS: iMs = iValue; break;
+        case QN_M:    iM    = iValue; break;
+        case QN_MS:   iMs   = iValue; break;
+        case QN_EMAX: iEMax = iValue; break;
         default:
             ssOut << "Error: Not a valid Quantum Number." << endl;
             oOut->Output(&ssOut);
@@ -295,8 +373,9 @@ bool Basis::SetQNumber(int iVar, int iValue) {
 int Basis::GetQNumber(int iVar) {
 
     switch(iVar) {
-        case QN_M:  return iM;  break;
-        case QN_MS: return iMs; break;
+        case QN_M:    return iM;    break;
+        case QN_MS:   return iMs;   break;
+        case QN_EMAX: return iEMax; break;
         default:
             ssOut << "Error: Not a valid Quantum Number." << endl;
             oOut->Output(&ssOut);
@@ -304,7 +383,7 @@ int Basis::GetQNumber(int iVar) {
     }
 }
 
-bool Basis::SetEnergyCut(bool bValue) {
+bool Basis::EnableEnergyCut(bool bValue) {
     bEnergyCut = bValue;
     return true;
 }

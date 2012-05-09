@@ -274,7 +274,7 @@ void QDot2D::Generate(int iType) {
         ssOut << "Building effective interaction CoM Blocks ..." << endl;
         oOut->Output(&ssOut);
         oOFCI->setLambda(dLambda);
-        oOFCI->buildEffectiveInteractionComBlocks(2);
+        oOFCI->buildEffectiveInteractionComBlocks(1);
     }
 
     for(k=1; k<=iCount; k++) {

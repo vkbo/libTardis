@@ -69,7 +69,7 @@ class QDot2D : public Potential
 
     // Objects
     Log             *oOut;                   // Logfile
-    quantumdot::QdotInteraction *oOFCI;                  // OpenFCI Object
+    quantumdot::QdotInteraction *oOFCI;      // OpenFCI Object
 
 
     // Initial Objects

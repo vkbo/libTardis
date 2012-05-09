@@ -88,7 +88,7 @@ double Lanczos::Run() {
     ** Source: Golub/Van Loan - Matrix Computations Third Edition, Page 480
     */
 
-    while(abs(mB(k)) > 1e-9 && k < iBasisDim && k < 200) {
+    while(abs(mB(k)) > 1e-9 && k < iBasisDim && k < LANCZOS_MAX_IT) {
 
         if(k > 0) {
             for(i=0; i<iBasisDim; i++) {
@@ -118,9 +118,11 @@ double Lanczos::Run() {
             mV -= (dO/dot(mW,mW))*mW;
             mV/norm(mV,2);
             mW/norm(mW,2);
-            cout  << "\r                         \r";
-            ssOut << "Re-ortonormalizing. V·W = " << setprecision(3) << dO << endl;
-            oOut->Output(&ssOut);
+            #ifndef MINIMAL
+                cout  << "\r                         \r";
+                ssOut << "Re-ortonormalizing. V·W = " << setprecision(3) << dO << endl;
+                oOut->Output(&ssOut);
+            #endif
         }
 
         // Building the tri-diagonal matrix
@@ -142,27 +144,35 @@ double Lanczos::Run() {
         // Checking for energy convergence
         dConv = abs(abs(mE(k-1)/mE(k))-1);
 
-        fflush(stdout);
-        cout  << "\r                              \r";
-        ssOut << "Lanczos Iteration " << setw(2) << k;
-        ssOut << " : Energy = " << showpoint << setw(11) << setprecision(10) << mE(k);
-        ssOut << " : Convergence = " << setprecision(3) << dConv << endl;
-        oOut->Output(&ssOut);
+        #ifndef MINIMAL
+            fflush(stdout);
+            cout  << "\r                              \r";
+            ssOut << "Lanczos Iteration " << setw(2) << k;
+            ssOut << " : Energy = " << showpoint << setw(11) << setprecision(10) << mE(k);
+            ssOut << " : Convergence = " << setprecision(3) << dConv << endl;
+            oOut->Output(&ssOut);
+        #else
+            fflush(stdout);
+            cout << "\r                                                                        \r";
+            cout << "Lanczos Iteration " << setw(2) << k;
+            cout << " : Energy = " << showpoint << setw(11) << setprecision(10) << mE(k);
+            cout << " : Convergence = " << setprecision(3) << dConv;
+        #endif
 
         if(dConv < LANCZOS_CONVERGE) break;
     }
 
-    ssOut << endl;
-    ssOut << "Eigenvalues:" << endl;
-    ssOut << mEnergy << endl;
-    oOut->Output(&ssOut);
+    #ifndef MINIMAL
+        ssOut << endl;
+        ssOut << "Eigenvalues:" << endl;
+        ssOut << mEnergy << endl;
+        oOut->Output(&ssOut);
+    #else
+        cout << endl;
+    #endif
 
     return mEnergy(0);
 }
-
-/*
-** Private :: Functions
-*/
 
 /*
 ** Matrix-Vector multiplication section of the Lanczos algorithm

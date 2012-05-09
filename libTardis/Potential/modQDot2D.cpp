@@ -21,6 +21,10 @@ double QDot2D::fCalcElementQ2DOpenFCI(int p, int q, int r, int s) {
     int iM4 = mStates(s,1);
     int iS4 = mStates(s,2);
 
+    int iEpsilon1 = 2*iN1 + abs(iM1) + 2*iN2 + abs(iM2);
+    int iEpsilon2 = 2*iN3 + abs(iM3) + 2*iN4 + abs(iM4);
+    if(iEpsilon1 >= iShells || iEpsilon2 >= iShells) return 0.0;
+
     int iNNNN = iN1 + iN2 + iN3 + iN4;
     int iP = 1-2*(iNNNN%2);
 
@@ -62,15 +66,7 @@ double QDot2D::fCalcElementQ2D(int p, int q, int r, int s) {
     int iN4 = mStates(s,0);
     int iM4 = mStates(s,1);
     int iS4 = mStates(s,2);
-/*
-    if(DELTA(mStates(p,2),mStates(r,2)) && DELTA(mStates(q,2),mStates(s,2))) {
-        dElement1 = fCoulomb2D(mStates(p,0),mStates(p,1),mStates(q,0),mStates(q,1),mStates(s,0),mStates(s,1),mStates(r,0),mStates(r,1));
-    }
 
-    if(DELTA(mStates(p,2),mStates(s,2)) && DELTA(mStates(q,2),mStates(r,2))) {
-        dElement2 = fCoulomb2D(mStates(p,0),mStates(p,1),mStates(q,0),mStates(q,1),mStates(r,0),mStates(r,1),mStates(s,0),mStates(s,1));
-    }
-*/
     if(DELTA(iS1,iS3) && DELTA(iS2,iS4)) {
         dElement1 = fCoulomb2D(iN1, iM1, iN2, iM2, iN3, iM3, iN4, iM4);
     }

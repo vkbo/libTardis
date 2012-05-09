@@ -30,8 +30,9 @@ System::System() {
     bEnergyCut  = false;
 
     // Qunatum Numbers
-    iM  = 0;
-    iMs = 0;
+    iM    = 0;
+    iMs   = 0;
+    iEMax = iShells;
 
     // System Variables
     dLambda = 1.0;
@@ -99,10 +100,11 @@ bool System::BuildBasis() {
         return false;
     }
 
-    oBasis = new Basis(oPot, oOut, iParticles, iStates);
+    oBasis = new Basis(oPot, oOut, iParticles, iShells);
     oBasis->SetQNumber(QN_M, iM);
     oBasis->SetQNumber(QN_MS, iMs);
-    oBasis->SetEnergyCut(bEnergyCut);
+    oBasis->SetQNumber(QN_EMAX, iEMax);
+    oBasis->EnableEnergyCut(bEnergyCut);
     oBasis->BuildBasis();
 
     return true;
@@ -176,7 +178,7 @@ bool System::SetParticles(int iValue) {
     return true;
 }
 
-bool System::SetEnergyCut(bool bValue) {
+bool System::EnableEnergyCut(bool bValue) {
     bEnergyCut = bValue;
     return true;
 }
@@ -198,8 +200,9 @@ void System::SetLogFile(const char *cCache) {
 bool System::SetQNumber(int iVar, int iValue) {
 
     switch(iVar) {
-        case QN_M:  iM  = iValue; break;
-        case QN_MS: iMs = iValue; break;
+        case QN_M:    iM    = iValue; break;
+        case QN_MS:   iMs   = iValue; break;
+        case QN_EMAX: iEMax = iValue; break;
         default:
             ssOut << "Error: Not a valid Quantum Number." << endl;
             oOut->Output(&ssOut);
@@ -228,8 +231,9 @@ bool System::SetVariable(int iVar, double dValue) {
 int System::GetQNumber(int iVar) {
 
     switch(iVar) {
-        case QN_M:  return iM;  break;
-        case QN_MS: return iMs; break;
+        case QN_M:    return iM;    break;
+        case QN_MS:   return iMs;   break;
+        case QN_EMAX: return iEMax; break;
         default:
             ssOut << "Error: Not a valid Quantum Number." << endl;
             oOut->Output(&ssOut);

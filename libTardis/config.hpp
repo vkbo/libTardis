@@ -2,12 +2,10 @@
 ** Configuration file for libTardis
 */
 
-// Armadillo Cache
-#define ARMA_CACHE_DIR "/scratch/Temp/arma_cache/"  // Path to cache, must end with "/"
-
 // QDot2D Lanczos
 #define LANCZOS_ZERO     1e-9
 #define LANCZOS_CONVERGE 1e-5
+#define LANCZOS_MAX_IT   50
 #define USE_RAND_SEED    false
 
 // Size of Slater Determinant
@@ -15,6 +13,7 @@
 
 // Enable Progress Output
 #define PROGRESS
+//#define MINIMAL
 
 // Enable OpenMP
 #define OPENMP

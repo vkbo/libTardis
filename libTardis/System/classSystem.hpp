@@ -33,15 +33,14 @@ class System
     // Basis Configuration
     bool SetParticles(int);
     int  GetParticles()       {return iParticles;};
-    bool SetEnergyCut(bool);
-    bool GetEnergyCut()       {return bEnergyCut;};
+    bool EnableEnergyCut(bool);
 
     // System Configuration
     bool   SetQNumber(int, int);
     bool   SetVariable(int, double);
     int    GetQNumber(int);
     double GetVariable(int);
-    
+
     // Cache Directory
     void SetCache(const char*);
     void SetLogFile(const char*);
@@ -74,6 +73,7 @@ class System
     // System Configuration
     int    iM;      // Total M
     int    iMs;     // Total Spin
+    int    iEMax;   // Energy cut value
     double dLambda; // Interaction strength
     double dOmega;  // Harmonic oscillator frequency
     double d1PFac;  // 1-Particle hamiltonian factor (derived from dOmega or dLambda)

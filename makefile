@@ -49,6 +49,8 @@ $(shell [ -d "$(OUTPUT)" ] || mkdir -p $(OUTPUT))
 $(EXEC) : $(OUTPUT)/main.o $(OBJECTS)
 	$(CC) $(LFLAGS) $(OUTPUT)/main.o $(OBJECTS) $(LIBFLAGS) -o $@
 
+# Main File
+
 $(OUTPUT)/main.o : $(MAIN) $(LIBROOT)/libTardis.hpp
 	$(CC) $(CFLAGS) $(MAIN) -o $@
 
