@@ -14,16 +14,17 @@ using namespace quantumdot;
 #include "modQDot2D.cpp"
 
 /*
-** Public :: Constructor and Destructor
+** Public :: Constructor
 */
 
 QDot2D::QDot2D(int iNumShells, Log *oLog) : Potential(iNumShells, oLog) {
 
-    bCache  = false;
-    iShells = iNumShells;
-    iStates = iShells*(iShells+1);
-    dLambda = 1.0;
-    oOut    = oLog;
+    iShells    = iNumShells;
+    iStates    = iShells*(iShells+1);
+    bEnergyCut = false;
+    dLambda    = 1.0;
+    oOut       = oLog;
+    bCache     = false;
 
     int iIndex=0;
 
@@ -45,7 +46,7 @@ QDot2D::QDot2D(int iNumShells, Log *oLog) : Potential(iNumShells, oLog) {
 }
 
 /*
-** Public :: Functions
+** Public :: Load or Generate
 */
 
 void QDot2D::LoadOrGenerate(int iType) {
@@ -56,87 +57,7 @@ void QDot2D::LoadOrGenerate(int iType) {
 }
 
 /*
-** Public :: Setters
-*/
-
-void QDot2D::SetCache(const char *cCache) {
-    ssCache << cCache;
-    return;
-}
-
-void QDot2D::SetLambda(double dValue) {
-    dLambda = dValue;
-    return;
-}
-
-/*
-** Public :: Getters
-*/
-
-int QDot2D::GetState(int iState, int iQN) {
-    return mStates(iState, iQN);
-}
-
-double QDot2D::Get1PElement(int p, int q) {
-    if(bCache) return mBlHam(0)(p,q);
-    return (1 + 2*mStates(p,0) + abs(mStates(p,1))) + (1 + 2*mStates(q,0) + abs(mStates(q,1)));
-}
-
-double QDot2D::Get2PElement(int p, int q, int r, int s) {
-
-    if(!bCache) return fCalcElementQ2D(p, q, r, s);
-
-    int iLambda1 = mMap(p*iStates+q,0);
-    int iLambda2 = mMap(r*iStates+s,0);
-    if(iLambda1 == iLambda2) {
-        return mBlHam(iLambda1)(mMap(p*iStates+q,1),mMap(r*iStates+s,1));
-    } else {
-        return 0.0;
-    }
-
-}
-
-const Mat<int>* QDot2D::GetConfig(int iM, int iMs) {
-    unsigned int iIndex = fMapLambda(iM, iMs);
-    if(iIndex <= mConfig.n_cols) return &mConfig(iIndex);
-    return NULL;
-}
-
-const Col<double>* QDot2D::Get1PHam(int iM, int iMs) {
-
-    unsigned int iIndex = fMapLambda(iM, iMs);
-
-    if(mBlHam.n_elem > 0) {
-        m1PHam.zeros(mConfig(iIndex).n_cols);
-        for(unsigned int i=0; i<mConfig(iIndex).n_cols; i++) {
-            m1PHam(i) = Get1PElement(mConfig(iIndex)(0,i),mConfig(iIndex)(1,i));
-        }
-        return &m1PHam;
-    }
-
-    return NULL;
-}
-
-const Mat<double>* QDot2D::Get2PHam(int iM, int iMs) {
-    unsigned int iIndex = fMapLambda(iM, iMs)+1;
-    if(iIndex <= mBlHam.n_elem) return &mBlHam(iIndex);
-    return NULL;
-}
-
-/*
-** Private :: Functions
-*/
-
-/*
-** Returns Lambda map-index from M and Ms
-*/
-
-int QDot2D::fMapLambda(int iM, int iMs) {
-    return (6*iM + 12*iShells + iMs - 10)/2;
-}
-
-/*
-** Loader
+** Public :: Loader
 */
 
 void QDot2D::Load(int iType) {
@@ -178,7 +99,7 @@ void QDot2D::Load(int iType) {
 }
 
 /*
-** Generator
+** Public :: Generator
 */
 
 void QDot2D::Generate(int iType) {
@@ -274,7 +195,7 @@ void QDot2D::Generate(int iType) {
         ssOut << "Building effective interaction CoM Blocks ..." << endl;
         oOut->Output(&ssOut);
         oOFCI->setLambda(dLambda);
-        oOFCI->buildEffectiveInteractionComBlocks(1);
+        oOFCI->buildEffectiveInteractionComBlocks(2);
     }
 
     for(k=1; k<=iCount; k++) {
@@ -364,4 +285,58 @@ void QDot2D::Generate(int iType) {
     bCache = true;
 
     return;
+}
+
+/*
+** Public :: Getters :: Elements
+*/
+
+double QDot2D::Get1PElement(int p, int q) {
+    if(bCache) return mBlHam(0)(p,q);
+    return (1 + 2*mStates(p,0) + abs(mStates(p,1))) + (1 + 2*mStates(q,0) + abs(mStates(q,1)));
+}
+
+double QDot2D::Get2PElement(int p, int q, int r, int s) {
+
+    if(!bCache) return fCalcElementQ2D(p, q, r, s);
+
+    int iLambda1 = mMap(p*iStates+q,0);
+    int iLambda2 = mMap(r*iStates+s,0);
+    if(iLambda1 == iLambda2) {
+        return mBlHam(iLambda1)(mMap(p*iStates+q,1),mMap(r*iStates+s,1));
+    } else {
+        return 0.0;
+    }
+
+}
+
+const Mat<int>* QDot2D::GetConfig(int iM, int iMs) {
+    unsigned int iIndex = fMapLambda(iM, iMs);
+    if(iIndex <= mConfig.n_cols) return &mConfig(iIndex);
+    return NULL;
+}
+
+/*
+** Public :: Getters :: Pointers
+*/
+
+const Col<double>* QDot2D::Get1PHam(int iM, int iMs) {
+
+    unsigned int iIndex = fMapLambda(iM, iMs);
+
+    if(mBlHam.n_elem > 0) {
+        m1PHam.zeros(mConfig(iIndex).n_cols);
+        for(unsigned int i=0; i<mConfig(iIndex).n_cols; i++) {
+            m1PHam(i) = Get1PElement(mConfig(iIndex)(0,i),mConfig(iIndex)(1,i));
+        }
+        return &m1PHam;
+    }
+
+    return NULL;
+}
+
+const Mat<double>* QDot2D::Get2PHam(int iM, int iMs) {
+    unsigned int iIndex = fMapLambda(iM, iMs)+1;
+    if(iIndex <= mBlHam.n_elem) return &mBlHam(iIndex);
+    return NULL;
 }

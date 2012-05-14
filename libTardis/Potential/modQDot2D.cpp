@@ -21,9 +21,11 @@ double QDot2D::fCalcElementQ2DOpenFCI(int p, int q, int r, int s) {
     int iM4 = mStates(s,1);
     int iS4 = mStates(s,2);
 
-    int iEpsilon1 = 2*iN1 + abs(iM1) + 2*iN2 + abs(iM2);
-    int iEpsilon2 = 2*iN3 + abs(iM3) + 2*iN4 + abs(iM4);
-    if(iEpsilon1 >= iShells || iEpsilon2 >= iShells) return 0.0;
+    if(bEnergyCut) {
+        int iEpsilon1 = 2*iN1 + abs(iM1) + 2*iN2 + abs(iM2);
+        int iEpsilon2 = 2*iN3 + abs(iM3) + 2*iN4 + abs(iM4);
+        if(iEpsilon1 >= iShells || iEpsilon2 >= iShells) return 0.0;
+    }
 
     int iNNNN = iN1 + iN2 + iN3 + iN4;
     int iP = 1-2*(iNNNN%2);

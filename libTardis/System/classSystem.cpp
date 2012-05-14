@@ -73,6 +73,7 @@ bool System::BuildPotential() {
     }
 
     oPot->SetLambda(dLambda);
+    oPot->SetEnergyCut(bEnergyCut);
     oPot->LoadOrGenerate(iGenType);
     bPotBuilt = true;
 

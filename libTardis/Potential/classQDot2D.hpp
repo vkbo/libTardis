@@ -39,14 +39,16 @@ class QDot2D : public Potential
     void LoadOrGenerate(int);
 
     // Setters
-    void SetCache(const char*);
-    void SetLambda(double);
+    void SetCache(const char *cCache) {ssCache << cCache;};
+    void SetLambda(double dValue)     {dLambda = dValue;};
+    void SetEnergyCut(bool bValue)    {bEnergyCut = bValue;};
 
-    // Getters, Setters and Output
-    int  GetShells() {return iShells;};
-    int  GetStates() {return iStates;};
+    // Getters
+    int  GetShells()                   {return iShells;};
+    int  GetStates()                   {return iStates;};
+    int  GetState(int iState, int iQN) {return mStates(iState, iQN);};
+    bool GetEnergyCut()                {return bEnergyCut;};
 
-    int    GetState(int, int);
     double Get1PElement(int, int);
     double Get2PElement(int, int, int, int);
 
@@ -58,43 +60,43 @@ class QDot2D : public Potential
     private:
 
     // Variables
-    int    iShells;                          // Number of shells
-    int    iStates;                          // Number of quantum states |0> |1> ... |n>
-    double dLambda;                          // Lambda value for QDot2D VEff
-    bool   bCache;                           // Is the Hamiltonian in memory?
+    int                             iShells;    // Number of shells
+    int                             iStates;    // Number of quantum states |0> |1> ... |n>
+    bool                            bEnergyCut; // Use Energy Cut?
+    double                          dLambda;    // Lambda value for QDot2D VEff
+    bool                            bCache;     // Is the Hamiltonian in memory?
 
     // Other Variables
-    std::stringstream ssOut;                 // stdout and log string
-    std::stringstream ssCache;               // Cache directory for quick loading
+    std::stringstream               ssOut;      // stdout and log string
+    std::stringstream               ssCache;    // Cache directory for quick loading
 
     // Objects
-    Log             *oOut;                   // Logfile
-    quantumdot::QdotInteraction *oOFCI;      // OpenFCI Object
-
+    Log                            *oOut;       // Logfile
+    quantumdot::QdotInteraction    *oOFCI;      // OpenFCI Object
 
     // Initial Objects
-    arma::Mat<int>                  mStates; // Holds qunatum numbers for all states   :: 3xN Matrix
-    std::vector<double>             vLogFac; // Temp vector for log(n!)
-    std::vector<double>             vLGamma; // Temp vector for analytic gamma values
-
+    arma::Mat<int>                  mStates;    // Holds qunatum numbers for all states   :: 3xN Matrix
+    std::vector<double>             vLogFac;    // Temp vector for log(n!)
+    std::vector<double>             vLGamma;    // Temp vector for analytic gamma values
 
     // Hamiltonian
-    arma::Col<double>               m1PHam;  // 1-Particle Hamiltonian (not cached)    :: Column (Diagonal)
-    arma::field<arma::Mat<double> > mBlHam;  // Blockdiagonal 1+2-Particle Hamiltonian :: Field of Matrices
-    arma::field<arma::Mat<int> >    mConfig; // Allowed Configurations                 :: Field of 2xN Matrices
-    arma::Mat<int>                  mMap;    // Mapping between mStates and m2PHam     :: 2xN Matrix
+    arma::Col<double>               m1PHam;     // 1-Particle Hamiltonian (not cached)    :: Column (Diagonal)
+    arma::field<arma::Mat<double> > mBlHam;     // Blockdiagonal 1+2-Particle Hamiltonian :: Field of Matrices
+    arma::field<arma::Mat<int> >    mConfig;    // Allowed Configurations                 :: Field of 2xN Matrices
+    arma::Mat<int>                  mMap;       // Mapping between mStates and m2PHam     :: 2xN Matrix
 
-    // Private functions
-    int fMapLambda(int, int);                // Returns the Lambda value from M and Ms
+    /*
+    ** Private functions
+    */
 
-    // Analytic functions in modQDot2DAnalytic.cpp
+    // Returns the Lambda value from M and Ms
+    int fMapLambda(int iM, int iMs) {return (6*iM + 12*iShells + iMs - 10)/2;};
+
+    // Functions in modQDot2D.cpp
+    double fCalcElementQ2DOpenFCI(int, int, int, int);
     double fCalcElementQ2D(int, int, int, int);
     double fCoulomb2D(int, int, int, int, int, int, int, int);
     double fLGamma(double);
-
-    // OpenFCI function from modQDot2D.cpp
-    //void   fTabulateCoulomb(double, int, bool, bool, double);
-    double fCalcElementQ2DOpenFCI(int, int, int, int);
 
 };
 

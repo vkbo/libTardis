@@ -58,7 +58,7 @@ double Lanczos::Run() {
     */
 
     // Lanczos vectors
-    if(USE_RAND_SEED) srand(time(NULL));
+    if(LANCZOS_SEED) srand(time(NULL));
     Col<double> mT;
     Col<double> mV;
     Col<double> mW;
@@ -88,7 +88,7 @@ double Lanczos::Run() {
     ** Source: Golub/Van Loan - Matrix Computations Third Edition, Page 480
     */
 
-    while(abs(mB(k)) > 1e-9 && k < iBasisDim && k < LANCZOS_MAX_IT) {
+    while(abs(mB(k)) > LANCZOS_ZERO && k < iBasisDim && k < LANCZOS_MAX_IT) {
 
         if(k > 0) {
             for(i=0; i<iBasisDim; i++) {
@@ -103,7 +103,7 @@ double Lanczos::Run() {
         fMatrixVector(mW,mT,d1PFac,d2PFac);
         mV += mT;
 
-        // Prepere next iteration
+        // Prepare next iteration
         k++;
         mA.insert_cols(k,1);
         mB.insert_cols(k,1);
@@ -160,6 +160,9 @@ double Lanczos::Run() {
         #endif
 
         if(dConv < LANCZOS_CONVERGE) break;
+        #ifdef LANCZOS_STRICT
+            if(k > 1) if(dConv > abs(abs(mE(k-2)/mE(k-1))-1)) break;
+        #endif
     }
 
     #ifndef MINIMAL

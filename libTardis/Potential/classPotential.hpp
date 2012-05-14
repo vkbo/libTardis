@@ -28,11 +28,13 @@ class Potential
     // Setters
     virtual void SetCache(const char*) {return;};
     virtual void SetLambda(double)     {return;};
+    virtual void SetEnergyCut(bool)    {return;};
 
-    // Getters, Setters and Output
+    // Getters
     virtual int  GetShells()        {return -1;};
     virtual int  GetStates()        {return -1;};
     virtual int  GetState(int, int) {return -1;};
+    virtual bool GetEnergyCut()     {return false;};
 
     virtual double Get1PElement(int, int)           {return -1.0;};
     virtual double Get2PElement(int, int, int, int) {return -1.0;};
