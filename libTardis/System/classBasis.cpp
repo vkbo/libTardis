@@ -16,13 +16,14 @@ using namespace tardis;
 
 Basis::Basis(Potential *oPotential, Log *oLog, int iNumParticles, int iNumShells) {
 
-    oPot       = oPotential;
-    oOut       = oLog;
-    iParticles = iNumParticles;
-    iShells    = iNumShells;
-    iStates    = iShells*(iShells+1);
-    bEnergyCut = false;
-    iEMax      = iShells;
+    oPot        = oPotential;
+    oOut        = oLog;
+    iParticles  = iNumParticles;
+    iShells     = iNumShells;
+    iStates     = iShells*(iShells+1);
+    bEnergyCut  = false;
+    iEnergyCuts = 0;
+    iEMax       = iShells;
 
     // Qunatum Numbers
     iM  = 0;
@@ -195,6 +196,11 @@ int Basis::BuildBasis() {
     iExp = floor(log10(iBasisDim));
     ssOut << "Dimension of Basis: " << iBasisDim << " ";
     ssOut << "(~" << round(iBasisDim/pow(10,iExp)) << "e" << iExp << ")" << endl;
+    if(bEnergyCut) {
+        iExp = floor(log10(iEnergyCuts));
+        ssOut << "Energy Cuts: " << iEnergyCuts << " ";
+        ssOut << "(" << setprecision(3) << (iEnergyCuts*100.0/(iEnergyCuts + iBasisDim)) << "%)" << endl;
+    }
 
     /*
     **  Building Index (Only if INDEX_BASIS is defined)
@@ -329,12 +335,14 @@ bool Basis::fCheckQDot2D(const vector<int> &vTemp) {
         }
     }
 
-    //~ if(iEnergy > iEMax && iTMs == iMs && iTM == iM) {
-        //~ cout << "Cut: " << iEnergy << " > " << iEMax << endl;
-    //~ }
-    //~ iEnergy = 0;
-
-    if(iTMs == iMs && iTM == iM && iEnergy <= iEMax) return true;
+    if(iTMs == iMs && iTM == iM) {
+        if(bEnergyCut && iEnergy > iEMax) {
+            //~ cout << "Cut: " << iEnergy << " > " << iEMax << endl;
+            iEnergyCuts++;
+            return false;
+        }
+        return true;
+    }
 
     return false;
 }

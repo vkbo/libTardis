@@ -49,6 +49,7 @@ class Basis
     int  iShells;
     bool b3PIndex;
     bool bEnergyCut;
+    int  iEnergyCuts;
 
     // System Configuration
     int iM;    // Total M

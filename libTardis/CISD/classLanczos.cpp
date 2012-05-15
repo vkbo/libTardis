@@ -68,7 +68,7 @@ double Lanczos::Run() {
 
     // Runtime variables
     int    i, k=0;
-    double dTemp, dO, dConv;
+    double dTemp, dO, dConv=1.0, dConvPrev=1.0;
     Row<double> mA;
     Row<double> mB;
     Row<double> mE;
@@ -142,7 +142,8 @@ double Lanczos::Run() {
         mE(k) = mEnergy(0);
 
         // Checking for energy convergence
-        dConv = abs(abs(mE(k-1)/mE(k))-1);
+        dConvPrev = dConv;
+        dConv     = abs(abs(mE(k-1)/mE(k))-1);
 
         #ifndef MINIMAL
             fflush(stdout);
@@ -161,7 +162,11 @@ double Lanczos::Run() {
 
         if(dConv < LANCZOS_CONVERGE) break;
         #ifdef LANCZOS_STRICT
-            if(k > 1) if(dConv > abs(abs(mE(k-2)/mE(k-1))-1)) break;
+            if(k > 1 && dConv > dConvPrev && abs(dConv/dConvPrev) > LANCZOS_DIVERGE) {
+                ssOut << "Warning: Lanczos Divergence. Breaking ..." << endl;
+                oOut->Output(&ssOut);
+                break;
+            }
         #endif
     }
 
