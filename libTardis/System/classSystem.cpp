@@ -24,10 +24,11 @@ System::System() {
     iStates    = iShells*(iShells+1);
 
     // Init switches
-    bPotType    = false;
-    bPotBuilt   = false;
-    bBasisBuilt = false;
-    bEnergyCut  = false;
+    bPotType      = false;
+    bPotBuilt     = false;
+    bBasisBuilt   = false;
+    bEnergyCut    = false;
+    bEnergyCutSet = false;
 
     // Qunatum Numbers
     iM    = 0;
@@ -104,7 +105,7 @@ bool System::BuildBasis() {
     oBasis = new Basis(oPot, oOut, iParticles, iShells);
     oBasis->SetQNumber(QN_M, iM);
     oBasis->SetQNumber(QN_MS, iMs);
-    oBasis->SetQNumber(QN_EMAX, iEMax);
+    if(bEnergyCutSet) oBasis->SetQNumber(QN_EMAX, iEMax);
     oBasis->EnableEnergyCut(bEnergyCut);
     oBasis->BuildBasis();
 
@@ -203,7 +204,7 @@ bool System::SetQNumber(int iVar, int iValue) {
     switch(iVar) {
         case QN_M:    iM    = iValue; break;
         case QN_MS:   iMs   = iValue; break;
-        case QN_EMAX: iEMax = iValue; break;
+        case QN_EMAX: iEMax = iValue; bEnergyCutSet = true; break;
         default:
             ssOut << "Error: Not a valid Quantum Number." << endl;
             oOut->Output(&ssOut);

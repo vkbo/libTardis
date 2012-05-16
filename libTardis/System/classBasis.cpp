@@ -16,14 +16,15 @@ using namespace tardis;
 
 Basis::Basis(Potential *oPotential, Log *oLog, int iNumParticles, int iNumShells) {
 
-    oPot        = oPotential;
-    oOut        = oLog;
-    iParticles  = iNumParticles;
-    iShells     = iNumShells;
-    iStates     = iShells*(iShells+1);
-    bEnergyCut  = false;
-    iEnergyCuts = 0;
-    iEMax       = iShells;
+    oPot          = oPotential;
+    oOut          = oLog;
+    iParticles    = iNumParticles;
+    iShells       = iNumShells;
+    iStates       = iShells*(iShells+1);
+    bEnergyCut    = false;
+    bEnergyCutSet = false;
+    iEnergyCuts   = 0;
+    iEMax         = iShells;
 
     // Qunatum Numbers
     iM  = 0;
@@ -73,25 +74,33 @@ int Basis::BuildBasis() {
     #endif
 
     // Calculate energy cut-off is bEnergyCut=true
-    //~ if(bEnergyCut) {
-        //~ int iMin = 0;
-        //~ int iFermi = 0;
-        //~ while(iFermi < iParticles) {
-            //~ iMin++;
-            //~ iFermi = iMin*(iMin+1);
-        //~ }
-        //~ iEMax = iFermi + iStates - iParticles;
-        //~ iEMax = iMin + iShells;
-        //~ cout << "EMin: " << iMin << endl;
-        //~ cout << "EMax: " << iEMax << endl;
-    //~ }
+    if(bEnergyCut && !bEnergyCutSet) {
+        int iMin = 0;
+        int iFull = 0;
+        while(iFull < iParticles) {
+            iMin++;
+            iFull = iMin*(iMin+1);
+        }
+        //~ iMin--;
+        //~ int iSPMin = iParticles - iMin*(iMin+1) - 2;
+        //~ if(abs(iSPMin%2) == 1) iSPMin++;
+        int iNMax = iShells - iMin;
+        //~ int iNTotMax = iSPMin + 2 + iNMax;
+        //~ iEMax = iNTotMax - iSPMin;
+        iEMax = iNMax + 2;
+        //~ cout << "NMax: "    << iNMax << endl;
+        //~ cout << "NTotMax: " << iNTotMax << endl;
+        //~ cout << "SPMin: "   << iSPMin << endl;
+        ssOut << "Energy Cut-off: 2·max(N) + max(|M|) <= " << iEMax << endl;
+    }
 
     // Calculating number of possible configurations
     for(d=0.0; d<iParticles; d++) dX *= (iStates-d)/(iParticles-d);
     lConfMax = (long)dX;
     iExp     = floor(log10(lConfMax));
-    ssOut << "Possible configurations: " << lConfMax << " ";
-    ssOut << "(~" << round(lConfMax/pow(10,iExp)) << "e" << iExp << ")" << endl;
+    ssOut << "Possible configurations: " << lConfMax;
+    if(lConfMax > 0) ssOut << " (~" << round(lConfMax/pow(10,iExp)) << "e" << iExp << ")";
+    ssOut << endl;
 
     #ifdef PROGRESS
         long lCount = 0;
@@ -194,12 +203,14 @@ int Basis::BuildBasis() {
     #endif
 
     iExp = floor(log10(iBasisDim));
-    ssOut << "Dimension of Basis: " << iBasisDim << " ";
-    ssOut << "(~" << round(iBasisDim/pow(10,iExp)) << "e" << iExp << ")" << endl;
+    ssOut << "Dimension of Basis: " << iBasisDim;
+    if(iBasisDim > 0) ssOut << " (~" << round(iBasisDim/pow(10,iExp)) << "e" << iExp << ")";
+    ssOut << endl;
     if(bEnergyCut) {
         iExp = floor(log10(iEnergyCuts));
-        ssOut << "Energy Cuts: " << iEnergyCuts << " ";
-        ssOut << "(" << setprecision(3) << (iEnergyCuts*100.0/(iEnergyCuts + iBasisDim)) << "%)" << endl;
+        ssOut << "Energy Cuts: " << iEnergyCuts;
+        if(iEnergyCuts > 0) ssOut << " (~" << setprecision(3) << (iEnergyCuts*100.0/(iEnergyCuts + iBasisDim)) << "%)";
+        ssOut << endl;
     }
 
     /*
@@ -318,24 +329,94 @@ int Basis::FindSlater(Slater sdFind, int p, int q) {
 }
 
 /*
+**  Setting Coefficients
+** ======================
+**  After calculating the coefficients with Lanczos, these can be returned to the basis
+*/
+
+bool Basis::SetCoefficients(Col<double> &mInput) {
+
+    if(vBasis.size() == 0) {
+        ssOut << "Error: Basis is of dimension 0. Nothing to do." << endl;
+        oOut->Output(&ssOut);
+        return false;
+    }
+
+    if(mInput.n_elem != vBasis.size()) {
+        ssOut << "Error: Coefficient Vector is not of same dimension as basis." << endl;
+        oOut->Output(&ssOut);
+        return false;
+    }
+
+    mCoefficients = mInput;
+    return true;
+}
+
+/*
+**  Saving Basis
+** ==============
+*/
+
+bool Basis::Save(const char *cPath, int iMode) {
+
+    ofstream oOutput;
+    oOutput.open(cPath);
+
+    oOutput << "#  States:" << endl;
+    oOutput << "# ---------" << endl;
+    oOutput << "# State   N   M  2*Spin" << endl;
+    for(int i=0; i<iStates; i++) {
+        oOutput << "|" << setw(3) << i << ">  ";
+        oOutput << setw(4) << oPot->GetState(i,0);
+        oOutput << setw(4) << oPot->GetState(i,1);
+        oOutput << setw(4) << oPot->GetState(i,2);
+        oOutput << endl;
+    }
+
+    oOutput << endl;
+    oOutput << "#  Basis:" << endl;
+    oOutput << "# --------" << endl;
+
+    for(unsigned int i=0; i<vBasis.size(); i++) {
+        oOutput << setprecision(12) << setw(18) << mCoefficients[i] << " |";
+        for(int j=0; j<iStates; j++) {
+            oOutput << vBasis[i].Word[j];
+        }
+        oOutput << ">" << endl;
+    }
+
+    oOutput.close();
+
+    return true;
+}
+
+/*
 ** Private :: Basis selction functions
 */
 
 bool Basis::fCheckQDot2D(const vector<int> &vTemp) {
 
-    int iTM  = 0;
-    int iTMs = 0;
+    int iTotM   = 0;
+    int iTotMs  = 0;
+    int iNCurr  = 0;
+    int iMCurr  = 0;
+    int iNMax   = 0;
+    int iMMax   = 0;
     int iEnergy = 0;
 
     for(int i=0; i<iParticles; i++) {
-        iTM  += oPot->GetState(vTemp[i],1);
-        iTMs += 2*(vTemp[i]%2)-1;
+        iTotM  += oPot->GetState(vTemp[i],1);
+        iTotMs += 2*(vTemp[i]%2)-1;
         if(bEnergyCut) {
-            iEnergy += 2*oPot->GetState(vTemp[i],0) + abs(oPot->GetState(vTemp[i],1));
+            iNCurr = oPot->GetState(vTemp[i],0);
+            iMCurr = abs(oPot->GetState(vTemp[i],1));
+            if(iNCurr > iNMax) iNMax = iNCurr;
+            if(iMCurr > iMMax) iMMax = iMCurr;
+            iEnergy = 2*iNMax + iMMax;
         }
     }
 
-    if(iTMs == iMs && iTM == iM) {
+    if(iTotMs == iMs && iTotM == iM) {
         if(bEnergyCut && iEnergy > iEMax) {
             //~ cout << "Cut: " << iEnergy << " > " << iEMax << endl;
             iEnergyCuts++;
@@ -368,7 +449,7 @@ bool Basis::SetQNumber(int iVar, int iValue) {
     switch(iVar) {
         case QN_M:    iM    = iValue; break;
         case QN_MS:   iMs   = iValue; break;
-        case QN_EMAX: iEMax = iValue; break;
+        case QN_EMAX: iEMax = iValue; bEnergyCutSet = true; break;
         default:
             ssOut << "Error: Not a valid Quantum Number." << endl;
             oOut->Output(&ssOut);

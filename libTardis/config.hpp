@@ -7,8 +7,8 @@
 #define LANCZOS_CONVERGE 1e-5   // Covergence condition for Lanczos iterations
 #define LANCZOS_MAX_IT   50     // Max number of iterations
 #define LANCZOS_SEED     false  // If true, seeds random generator with time(NULL)
-#define LANCZOS_STRICT          // If defined, will break the Lanczos if convergence increase
-#define LANCZOS_DIVERGE  0.25   // How much divergence to allow if LANCZOS_STRICT is set
+#define LANCZOS_STRICT   true   // If true, will break the Lanczos if convergence increase
+#define LANCZOS_DIVERGE  2.0    // How much divergence to allow if LANCZOS_STRICT is set
 
 // Size of Slater Determinant
 #define SLATER_WORD 512

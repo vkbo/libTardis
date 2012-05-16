@@ -33,7 +33,9 @@ class Basis
     // Getters, Setters and Output
     int    GetSize()        {return vBasis.size();};
     Slater GetSlater(int i) {return vBasis.at(i);};
+    bool   SetCoefficients(arma::Col<double>&);
     void   Output();
+    bool   Save(const char*, int iMode = 0);
 
     // System Configuration
     bool SetQNumber(int, int);
@@ -44,27 +46,29 @@ class Basis
     private:
 
     // Variables
-    int  iParticles;
-    int  iStates;
-    int  iShells;
-    bool b3PIndex;
-    bool bEnergyCut;
-    int  iEnergyCuts;
+    int  iParticles;     // Number of particles
+    int  iStates;        // Number of quantum states
+    int  iShells;        // Number of shells
+    //~ bool b3PIndex;
+    bool bEnergyCut;     // Use Energy Cut?
+    bool bEnergyCutSet;  // Is Energy Cut set manually?
+    int  iEnergyCuts;    // Number of energy cuts done.
 
     // System Configuration
-    int iM;    // Total M
-    int iMs;   // Total Spin
-    int iEMax; // Energy cut value
+    int  iM;             // Total M
+    int  iMs;            // Total Spin
+    int  iEMax;          // Energy cut value
 
     // Other Variables
     std::stringstream ssOut;  // stdout and log string
 
     // Objects
-    Potential *oPot;  // Potential
-    Log       *oOut;  // Logfile
+    Potential *oPot;     // Potential
+    Log       *oOut;     // Logfile
 
     // Vectors
     std::vector<tardis::Slater> vBasis;
+    arma::Col<double>           mCoefficients;
     #ifdef INDEX_BASIS
         std::vector<std::vector<short> > vIndex;
     #else

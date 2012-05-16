@@ -102,6 +102,7 @@ double Lanczos::Run() {
         mT.zeros(iBasisDim);
         fMatrixVector(mW,mT,d1PFac,d2PFac);
         mV += mT;
+        mT.clear();
 
         // Prepare next iteration
         k++;
@@ -161,13 +162,11 @@ double Lanczos::Run() {
         #endif
 
         if(dConv < LANCZOS_CONVERGE) break;
-        #ifdef LANCZOS_STRICT
-            if(k > 1 && dConv > dConvPrev && abs(dConv/dConvPrev) > LANCZOS_DIVERGE) {
-                ssOut << "Warning: Lanczos Divergence. Breaking ..." << endl;
-                oOut->Output(&ssOut);
-                break;
-            }
-        #endif
+        if(LANCZOS_STRICT && k > 1 && dConv > dConvPrev && abs(dConv/dConvPrev) > LANCZOS_DIVERGE) {
+            ssOut << "Warning: Lanczos Divergence > " << floor(LANCZOS_DIVERGE*100) << "%. Breaking ..." << endl;
+            oOut->Output(&ssOut);
+            break;
+        }
     }
 
     #ifndef MINIMAL
@@ -178,6 +177,10 @@ double Lanczos::Run() {
     #else
         cout << endl;
     #endif
+
+    mW.clear();
+    oBasis->SetCoefficients(mV);
+    mV.clear();
 
     return mEnergy(0);
 }

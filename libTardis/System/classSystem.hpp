@@ -65,10 +65,11 @@ class System
     int iStates;    // Number of quantum states |0> |1> ... |n>
 
     // Switches
-    bool bPotType;    // Potential type set
-    bool bPotBuilt;   // Potential built
-    bool bBasisBuilt; // Basis built
-    bool bEnergyCut;  // Use energy cut for basis
+    bool bPotType;      // Potential type set
+    bool bPotBuilt;     // Potential built
+    bool bBasisBuilt;   // Basis built
+    bool bEnergyCut;    // Use energy cut for basis
+    bool bEnergyCutSet; // Is Energy Cut set manually?
 
     // System Configuration
     int    iM;      // Total M

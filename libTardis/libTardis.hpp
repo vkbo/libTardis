@@ -79,6 +79,9 @@
 #define MBYTE 1048576
 #define GBYTE 1073741824
 
+#define F_ASCII  0
+#define F_BINARY 1
+
 #define OUTPUTF(p) showpoint << setw((p+2)) << setprecision((p))
 #define OUTPUTN(p) noshowpoint << setw((p+2)) << setprecision((p))
 
