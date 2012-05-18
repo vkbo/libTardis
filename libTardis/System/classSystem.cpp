@@ -266,10 +266,10 @@ void System::fUpdateFac() {
     if(dOmega != 0.0) {
         d1PFac = dOmega;
         d2PFac = sqrt(dOmega);
-        //~ if(iPotType == QDOT2D && iGenType == Q2D_EFFECTIVE) {
-            //~ d2PFac = dOmega;
-            //~ dLambda = 1/sqrt(dOmega);
-        //~ }
+        if(iPotType == QDOT2D && iGenType == Q2D_EFFECTIVE) {
+            d2PFac = dOmega;
+            dLambda = 1/sqrt(dOmega);
+        }
     } else {
         if(dLambda != 0.0) {
             d1PFac = 1.0;
@@ -280,9 +280,9 @@ void System::fUpdateFac() {
         } else {
             d1PFac = 1.0;
             d2PFac = 0.0;
-            //~ if(iPotType == QDOT2D && iGenType == Q2D_EFFECTIVE) {
-                //~ dLambda = 1.0;
-            //~ }
+            if(iPotType == QDOT2D && iGenType == Q2D_EFFECTIVE) {
+                dLambda = 1.0;
+            }
         }
     }
 
