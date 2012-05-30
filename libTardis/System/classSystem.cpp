@@ -24,11 +24,12 @@ System::System() {
     iStates    = iShells*(iShells+1);
 
     // Init switches
-    bPotType      = false;
-    bPotBuilt     = false;
-    bBasisBuilt   = false;
-    bEnergyCut    = false;
-    bEnergyCutSet = false;
+    bPotType       = false;
+    bPotBuilt      = false;
+    bPotBlockBuilt = false;
+    bBasisBuilt    = false;
+    bEnergyCut     = false;
+    bEnergyCutSet  = false;
 
     // Qunatum Numbers
     iM    = 0;
@@ -75,7 +76,35 @@ bool System::BuildPotential() {
 
     oPot->SetLambda(dLambda);
     oPot->SetEnergyCut(bEnergyCut);
-    oPot->LoadOrGenerate(iGenType);
+    oPot->LoadOrGenerate(iGenType, true);
+    bPotBuilt = true;
+
+    return true;
+}
+
+bool System::BuildPotentialBlock() {
+
+    if(bPotBlockBuilt) {
+        ssOut << "Potential block already built. Nothing to do." << endl;
+        oOut->Output(&ssOut);
+        return false;
+    }
+
+    if(!bPotType) {
+        ssOut << "Error: Potential not set." << endl;
+        ssOut << "       Please run System->SetPotential(...) first." << endl;
+        oOut->Output(&ssOut);
+        return false;
+    }
+
+    if(ssCache.str().length() > 0) {
+        oPot->SetCache(ssCache.str().c_str());
+    }
+
+    oPot->SetLambda(dLambda);
+    oPot->SetEnergyCut(bEnergyCut);
+    if(iPotType == QDOT2D) oPot->SetBlock(iM, iMs);
+    oPot->LoadOrGenerate(iGenType, false);
     bPotBuilt = true;
 
     return true;

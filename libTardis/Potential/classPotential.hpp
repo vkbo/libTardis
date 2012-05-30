@@ -21,14 +21,15 @@ class Potential
     virtual ~Potential() {};
 
     // Public Functions
-    virtual void Load(int)           {return;};
-    virtual void Generate(int)       {return;};
-    virtual void LoadOrGenerate(int) {return;};
+    virtual void Load(int)                 {return;};
+    virtual void Generate(int, bool)       {return;};
+    virtual void LoadOrGenerate(int, bool) {return;};
 
     // Setters
     virtual void SetCache(const char*) {return;};
     virtual void SetLambda(double)     {return;};
     virtual void SetEnergyCut(bool)    {return;};
+    virtual void SetBlock(int, int)    {return;};
 
     // Getters
     virtual int  GetShells()        {return -1;};

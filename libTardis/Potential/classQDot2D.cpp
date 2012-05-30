@@ -21,6 +21,8 @@ QDot2D::QDot2D(int iNumShells, Log *oLog) : Potential(iNumShells, oLog) {
 
     iShells    = iNumShells;
     iStates    = iShells*(iShells+1);
+    iFM        = 0;
+    iFMs       = 0;
     bEnergyCut = false;
     dLambda    = 1.0;
     oOut       = oLog;
@@ -49,10 +51,10 @@ QDot2D::QDot2D(int iNumShells, Log *oLog) : Potential(iNumShells, oLog) {
 ** Public :: Load or Generate
 */
 
-void QDot2D::LoadOrGenerate(int iType) {
+void QDot2D::LoadOrGenerate(int iType, bool bAll) {
     Load(iType);
     if(bCache) return;
-    Generate(iType);
+    Generate(iType, bAll);
     return;
 }
 
@@ -102,7 +104,7 @@ void QDot2D::Load(int iType) {
 ** Public :: Generator
 */
 
-void QDot2D::Generate(int iType) {
+void QDot2D::Generate(int iType, bool bAll) {
 
     int    i, j, k;
     int    iM, iMs, iLambda, iMu;
@@ -198,7 +200,17 @@ void QDot2D::Generate(int iType) {
         oOFCI->buildEffectiveInteractionComBlocks(2);
     }
 
-    for(k=1; k<=iCount; k++) {
+    int iStart, iStop;
+
+    if(bAll) {
+        iStart = 1;
+        iStop  = iCount;
+    } else {
+        iStart = fMapLambda(iFM, iFMs)+1;
+        iStop  = fMapLambda(iFM, iFMs)+1;
+    }
+
+    for(k=iStart; k<=iStop; k++) {
         iDim = vConfig[k-1].size()/2;
         #ifdef PROGRESS
             cout << "\r                                                                                   ";

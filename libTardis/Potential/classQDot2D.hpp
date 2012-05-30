@@ -35,13 +35,14 @@ class QDot2D : public Potential
 
     // Public Functions
     void Load(int);
-    void Generate(int);
-    void LoadOrGenerate(int);
+    void Generate(int, bool);
+    void LoadOrGenerate(int, bool);
 
     // Setters
     void SetCache(const char *cCache) {ssCache << cCache;};
     void SetLambda(double dValue)     {dLambda = dValue;};
     void SetEnergyCut(bool bValue)    {bEnergyCut = bValue;};
+    void SetBlock(int iQa, int iQb)   {iFM = iQa; iFMs = iQb;};
 
     // Getters
     int  GetShells()                   {return iShells;};
@@ -62,6 +63,8 @@ class QDot2D : public Potential
     // Variables
     int                             iShells;    // Number of shells
     int                             iStates;    // Number of quantum states |0> |1> ... |n>
+    int                             iFM;        // One block only M total
+    int                             iFMs;       // One block only Spinn total
     bool                            bEnergyCut; // Use Energy Cut?
     double                          dLambda;    // Lambda value for QDot2D VEff
     bool                            bCache;     // Is the Hamiltonian in memory?

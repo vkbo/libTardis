@@ -21,7 +21,7 @@ class Diag
     ~Diag() {};
 
     // Public Functions
-    double Run(int, int, double dOmega = 1.0, double dLambda = 0.0);
+    double Run();
 
 
     private:
