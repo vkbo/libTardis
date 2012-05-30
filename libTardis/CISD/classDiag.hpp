@@ -22,13 +22,17 @@ class Diag
 
     // Public Functions
     double Run(int, int, double dOmega = 1.0, double dLambda = 0.0);
- 
+
 
     private:
 
     // Variables
-    int iStates;
-    int iParticles;
+    int    iStates;
+    int    iParticles;
+    int    iM;
+    int    iMs;
+    double d1PFac;
+    double d2PFac;
 
     // Objects
     System    *oSystem;
