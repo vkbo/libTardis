@@ -91,6 +91,7 @@ int Basis::BuildBasis() {
         //~ cout << "NMax: "    << iNMax << endl;
         //~ cout << "NTotMax: " << iNTotMax << endl;
         //~ cout << "SPMin: "   << iSPMin << endl;
+        if(iParticles == 2) iEMax = iShells - 1;
         ssOut << "Energy Cut-off: 2·max(N) + max(|M|) <= " << iEMax << endl;
     }
 
