@@ -75,23 +75,23 @@ int Basis::BuildBasis() {
 
     // Calculate energy cut-off is bEnergyCut=true
     if(bEnergyCut && !bEnergyCutSet) {
-        int iMin = 0;
-        int iFull = 0;
-        while(iFull < iParticles) {
-            iMin++;
-            iFull = iMin*(iMin+1);
-        }
+        //~ int iMin = 0;
+        //~ int iFull = 0;
+        //~ while(iFull < iParticles) {
+            //~ iMin++;
+            //~ iFull = iMin*(iMin+1);
+        //~ }
         //~ iMin--;
         //~ int iSPMin = iParticles - iMin*(iMin+1) - 2;
         //~ if(abs(iSPMin%2) == 1) iSPMin++;
-        int iNMax = iShells - iMin;
+        int iNMax = floor((iStates - iParticles)/2);
         //~ int iNTotMax = iSPMin + 2 + iNMax;
         //~ iEMax = iNTotMax - iSPMin;
         iEMax = iNMax + 2;
-        //~ cout << "NMax: "    << iNMax << endl;
+        cout << "NMax: "    << iNMax << endl;
         //~ cout << "NTotMax: " << iNTotMax << endl;
         //~ cout << "SPMin: "   << iSPMin << endl;
-        if(iParticles == 2) iEMax = iShells - 1;
+        //~ if(iParticles == 2) iEMax = iShells - 1;
         ssOut << "Energy Cut-off: 2·max(N) + max(|M|) <= " << iEMax << endl;
     }
 
