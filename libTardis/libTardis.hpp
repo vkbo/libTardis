@@ -105,4 +105,7 @@
 #include "System/classBasis.hpp"
 #include "System/classSlater.hpp"
 
+// Physics Classes
+#include "Physics/classDensity.hpp"
+
 #endif

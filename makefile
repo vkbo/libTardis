@@ -15,6 +15,7 @@ LIBROOT     = libTardis
 LIBSYS      = $(LIBROOT)/System
 LIBCISD     = $(LIBROOT)/CISD
 LIBPOT      = $(LIBROOT)/Potential
+LIBPHYS     = $(LIBROOT)/Physics
 LIBFCI      = $(LIBROOT)/OpenFCI
 NODE        = Test
 COMPILE     = tempCompile
@@ -28,6 +29,7 @@ MAIN        = main.cpp
 SYSOBJECTS  = classLog.o classSystem.o classSlater.o classBasis.o
 CISDOBJECTS = classLanczos.o classDiag.o
 POTOBJECTS  = classQDot2D.o
+PHYSOBJECTS = classDensity.o
 
 # OpenFCI Files
 OFCIOBJECTS = modGaussTools.o classRadialPotential.o classQDotInteraction.o
@@ -35,7 +37,7 @@ OFCIINCLUDE = incLinalg.hpp incSimpleLinalg.hpp incSimpleMatrix.hpp incSimpleVec
 OFCIHEADERS = $(addprefix $(LIBFCI)/,$(OFCIINCLUDE))
 
 # Combine Objects
-OBJECTS     = $(addprefix $(OUTPUT)/,$(SYSOBJECTS) $(CISDOBJECTS) $(POTOBJECTS) $(OFCIOBJECTS))
+OBJECTS     = $(addprefix $(OUTPUT)/,$(SYSOBJECTS) $(CISDOBJECTS) $(POTOBJECTS) $(PHYSOBJECTS) $(OFCIOBJECTS))
 
 ##
 ## Compile
@@ -80,6 +82,11 @@ $(OUTPUT)/classDiag.o : $(LIBCISD)/classDiag.cpp $(LIBCISD)/classDiag.hpp
 
 $(OUTPUT)/classLanczos.o : $(LIBCISD)/classLanczos.cpp $(LIBCISD)/classLanczos.hpp $(LIBROOT)/config.hpp
 	$(CC) $(CFLAGS) $(LIBCISD)/classLanczos.cpp -o $@
+
+# Physics Classes
+
+$(OUTPUT)/classDensity.o : $(LIBPHYS)/classDensity.cpp $(LIBPHYS)/classDensity.hpp
+	$(CC) $(CFLAGS) $(LIBPHYS)/classDensity.cpp -o $@
 
 # OpenFCI
 
