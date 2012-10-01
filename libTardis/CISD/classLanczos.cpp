@@ -57,9 +57,16 @@ double Lanczos::Run() {
     ** Initializing Lanczos
     */
 
+    #ifdef OPENMP
+        int iMaxThreads = omp_get_max_threads();
+    #else
+        int iMaxThreads = 1;
+    #endif
+
     // Lanczos vectors
     if(LANCZOS_SEED) srand(time(NULL));
-    Col<double> mT;
+    vector<Col<double> > vT(iMaxThreads);
+    //~ Col<double> mT;
     Col<double> mV;
     Col<double> mW;
     mV.zeros(iBasisDim);
@@ -99,10 +106,14 @@ double Lanczos::Run() {
         }
 
         // Applying the Hamiltonian
-        mT.zeros(iBasisDim);
-        fMatrixVector(mW,mT,d1PFac,d2PFac);
-        mV += mT;
-        mT.clear();
+        //~ mT.zeros(iBasisDim);
+        //~ fMatrixVector(mW,mT,d1PFac,d2PFac);
+        for(i=0; i<iMaxThreads; i++) vT[i].zeros(iBasisDim);
+        fMatrixVector(mW,vT,d1PFac,d2PFac);
+        for(i=0; i<iMaxThreads; i++) mV += vT[i];
+        for(i=0; i<iMaxThreads; i++) vT[i].clear();
+        //~ mV += mT;
+        //~ mT.clear();
 
         // Prepare next iteration
         k++;
@@ -189,7 +200,8 @@ double Lanczos::Run() {
 ** Matrix-Vector multiplication section of the Lanczos algorithm
 */
 
-void Lanczos::fMatrixVector(Col<double> &mInput, Col<double> &mReturn, double d1PFac, double d2PFac) {
+//~ void Lanczos::fMatrixVector(Col<double> &mInput, Col<double> &mReturn, double d1PFac, double d2PFac) {
+void Lanczos::fMatrixVector(Col<double> &mInput, vector<Col<double> > &vReturn, double d1PFac, double d2PFac) {
 
     int    i, p, q, r, s;
     int    iS1, iS2, iS3, iS4, iL=0;
@@ -221,10 +233,8 @@ void Lanczos::fMatrixVector(Col<double> &mInput, Col<double> &mReturn, double d1
                             dV = 0.0;
                             if(p == r && q == s) dV += oPot->Get1PElement(p,s)*d1PFac; // 1-particle interaction
                             dV += oPot->Get2PElement(p,q,r,s)*d2PFac;                  // 2-particle interaction
-                            #ifdef OPENMP
-                                #pragma omp critical
-                            #endif
-                            mReturn(iL) += iS1*iS2*iS3*iS4*dV*mInput(i);
+                            //~ mReturn(iL) += iS1*iS2*iS3*iS4*dV*mInput(i);
+                            vReturn[omp_get_thread_num()](iL) += iS1*iS2*iS3*iS4*dV*mInput(i);
                         }
                     }
                 }

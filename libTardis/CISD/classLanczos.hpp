@@ -57,7 +57,8 @@ class Lanczos
     Log       *oOut;
 
     // Functions
-    void fMatrixVector(arma::Col<double>&, arma::Col<double>&, double, double);
+    //~ void fMatrixVector(arma::Col<double>&, arma::Col<double>&, double, double);
+    void fMatrixVector(arma::Col<double>&, std::vector<arma::Col<double> >&, double, double);
 
 };
 
