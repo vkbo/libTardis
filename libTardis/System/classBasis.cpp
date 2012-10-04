@@ -88,7 +88,7 @@ int Basis::BuildBasis() {
         //~ int iNTotMax = iSPMin + 2 + iNMax;
         //~ iEMax = iNTotMax - iSPMin;
         iEMax = iNMax + 2;
-        cout << "NMax: "    << iNMax << endl;
+        //~ cout << "NMax: "    << iNMax << endl;
         //~ cout << "NTotMax: " << iNTotMax << endl;
         //~ cout << "SPMin: "   << iSPMin << endl;
         //~ if(iParticles == 2) iEMax = iShells - 1;

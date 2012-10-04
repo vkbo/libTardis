@@ -18,9 +18,9 @@
     #include "omp.h"
 #endif
 
-#ifdef OPENMPI
-    #include "mpi.h"
-#endif
+//~ #ifdef OPENMPI
+    //~ #include "mpi.h"
+//~ #endif
 
 namespace tardis {
 
@@ -32,10 +32,18 @@ class Lanczos
     Lanczos(System*);
     ~Lanczos() {};
 
-    // Public Functions
+    // One-Node Lanczos Functions
     double Run();
 
-    // Getters, Setters and Output
+    // Multi-Node Lanczos Functions
+    int  RunInit();
+    int  RunSlave(arma::Col<double>&, std::vector<double>&, int, int);
+    int  RunMaster();
+    
+    // Getters
+    arma::Col<double> *GetLanczosVectorV() {return &mLzV;};
+    arma::Col<double> *GetLanczosVectorW() {return &mLzW;};
+    arma::Col<double> *GetEnergies()       {return &mEnergy;};
 
 
     private:
@@ -46,6 +54,16 @@ class Lanczos
     int    iBasisDim;
     double d1PFac;
     double d2PFac;
+    
+    // Lanczos Variables
+    int               iLzIt;   // Lanczos iteration
+    arma::Col<double> mLzV;    // Lanczos vector V
+    arma::Col<double> mLzW;    // Lanczos vectoe W
+    arma::Row<double> mLzA;    // Lanczos tridiagonal vector Alpha
+    arma::Row<double> mLzB;    // Lanczos tridiagonal vector Beta
+    arma::Row<double> mLzC;    // Lanczos first eigenvalue convergence
+    arma::Row<double> mLzE;    // Lanczos eigenvalues
+    arma::Col<double> mEnergy; // Energy eigenvalues
 
     // Other Variables
     std::stringstream ssOut;
@@ -57,8 +75,7 @@ class Lanczos
     Log       *oOut;
 
     // Functions
-    //~ void fMatrixVector(arma::Col<double>&, arma::Col<double>&, double, double);
-    void fMatrixVector(arma::Col<double>&, std::vector<arma::Col<double> >&, double, double);
+    void fMatrixVector(arma::Col<double>&, std::vector<std::vector<double> >&, double, double, int, int);
 
 };
 

@@ -11,6 +11,7 @@ using namespace tardis;
 
 Log::Log(const char* cLogFile) {
     SetFile(cLogFile);
+    bSilent = false;
     return;
 }
 
@@ -21,9 +22,14 @@ void Log::SetFile(const char* cLogFile) {
     return;
 }
 
-void Log::Output(stringstream *ssOut) {
+void Log::SetSilent(bool bSetSilent) {
+    bSilent = bSetSilent;
+    return;
+}
 
-    cout << ssOut->str();
+void Log::Output(stringstream *ssOut) {
+    
+    if(!bSilent) cout << ssOut->str();
 
     if(bOutput) {
         ofstream oFile;

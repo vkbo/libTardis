@@ -26,6 +26,7 @@ Lanczos::Lanczos(System *oSys) {
     iBasisDim  = oBasis->GetSize();
     d1PFac     = oSystem->GetVariable(VAR_1PFAC);
     d2PFac     = oSystem->GetVariable(VAR_2PFAC);
+    d1PFac    *= 1.0/(iParticles-1);
 
     return;
 }
@@ -50,9 +51,6 @@ double Lanczos::Run() {
         return -1.0;
     }
 
-    // 1-Particle Hamiltonian scale factor
-    d1PFac *= 1.0/(iParticles-1);
-
     /*
     ** Initializing Lanczos
     */
@@ -65,28 +63,20 @@ double Lanczos::Run() {
 
     // Lanczos vectors
     if(LANCZOS_SEED) srand(time(NULL));
-    vector<Col<double> > vT(iMaxThreads);
-    //~ Col<double> mT;
-    Col<double> mV;
-    Col<double> mW;
-    mV.zeros(iBasisDim);
-    mW.randu(iBasisDim);
-    mW = mW/norm(mW,2);
+    vector<vector<double> > vT(iMaxThreads);
+    mLzV.zeros(iBasisDim);
+    mLzW.randu(iBasisDim);
+    mLzW = mLzW/norm(mLzW,2);
 
     // Runtime variables
-    int    i, k=0;
     double dTemp, dO, dConv=1.0, dConvPrev=1.0;
-    Row<double> mA;
-    Row<double> mB;
-    Row<double> mE;
-    mA.ones(1);
-    mB.ones(1);
-    mE.zeros(1);
+    mLzA.ones(1);
+    mLzB.ones(1);
+    mLzE.zeros(1);
 
     // Eigenvector variables
     Mat<double>    mTemp;
     Mat<double>    mHDiag;
-    Col<double>    mEnergy;
     Col<cx_double> mHEigVal;
     Mat<cx_double> mHEigVec;
 
@@ -95,41 +85,38 @@ double Lanczos::Run() {
     ** Source: Golub/Van Loan - Matrix Computations Third Edition, Page 480
     */
 
-    while(abs(mB(k)) > LANCZOS_ZERO && k < iBasisDim && k < LANCZOS_MAX_IT) {
+    iLzIt = 0;
+    while(abs(mLzB(iLzIt)) > LANCZOS_ZERO && iLzIt < iBasisDim && iLzIt < LANCZOS_MAX_IT) {
 
-        if(k > 0) {
-            for(i=0; i<iBasisDim; i++) {
-                dTemp = mW(i);
-                mW(i) = mV(i)/mB(k);
-                mV(i) = -mB(k)*dTemp;
+        if(iLzIt > 0) {
+            for(int i=0; i<iBasisDim; i++) {
+                dTemp   = mLzW(i);
+                mLzW(i) = mLzV(i)/mLzB(iLzIt);
+                mLzV(i) = -mLzB(iLzIt)*dTemp;
             }
         }
 
         // Applying the Hamiltonian
-        //~ mT.zeros(iBasisDim);
-        //~ fMatrixVector(mW,mT,d1PFac,d2PFac);
-        for(i=0; i<iMaxThreads; i++) vT[i].zeros(iBasisDim);
-        fMatrixVector(mW,vT,d1PFac,d2PFac);
-        for(i=0; i<iMaxThreads; i++) mV += vT[i];
-        for(i=0; i<iMaxThreads; i++) vT[i].clear();
-        //~ mV += mT;
-        //~ mT.clear();
+        for(int i=0; i<iMaxThreads; i++) vT[i].resize(iBasisDim,0);
+        fMatrixVector(mLzW, vT, d1PFac, d2PFac, 0, iBasisDim);
+        for(int i=0; i<iMaxThreads; i++) mLzV += conv_to< colvec >::from(vT[i]);
+        for(int i=0; i<iMaxThreads; i++) vT[i].clear();
 
         // Prepare next iteration
-        k++;
-        mA.insert_cols(k,1);
-        mB.insert_cols(k,1);
-        mE.insert_cols(k,1);
-        mA(k) = dot(mW,mV);
-        mV   -= mA(k)*mW;
-        mB(k) = norm(mV,2);
+        iLzIt++;
+        mLzA.insert_cols(iLzIt,1);
+        mLzB.insert_cols(iLzIt,1);
+        mLzE.insert_cols(iLzIt,1);
+        mLzA(iLzIt) = dot(mLzW,mLzV);
+        mLzV       -= mLzA(iLzIt)*mLzW;
+        mLzB(iLzIt) = norm(mLzV,2);
 
         // Re-ortonomalization of the Lanczos vectors
-        dO = dot(mV,mW);
+        dO = dot(mLzV,mLzW);
         if(abs(dO) > 2e-13) {
-            mV -= (dO/dot(mW,mW))*mW;
-            mV/norm(mV,2);
-            mW/norm(mW,2);
+            mLzV -= (dO/dot(mLzW,mLzW))*mLzW;
+            mLzV/norm(mLzV,2);
+            mLzW/norm(mLzW,2);
             #ifndef MINIMAL
                 cout  << "\r                         \r";
                 ssOut << "Re-ortonormalizing. V·W = " << setprecision(3) << dO << endl;
@@ -138,12 +125,12 @@ double Lanczos::Run() {
         }
 
         // Building the tri-diagonal matrix
-        mTemp.zeros(k,k);
-        for(i=0; i<k; i++) {
-            mTemp(i,i) = mA(i+1);
-            if(i<k-1) {
-                mTemp(i,i+1) = mB(i+1);
-                mTemp(i+1,i) = mB(i+1);
+        mTemp.zeros(iLzIt,iLzIt);
+        for(int i=0; i<iLzIt; i++) {
+            mTemp(i,i) = mLzA(i+1);
+            if(i<iLzIt-1) {
+                mTemp(i,i+1) = mLzB(i+1);
+                mTemp(i+1,i) = mLzB(i+1);
             }
         }
 
@@ -151,29 +138,29 @@ double Lanczos::Run() {
         eig_gen(mHEigVal, mHEigVec, mTemp);
         mHDiag  = real(inv(mHEigVec)*mTemp*mHEigVec);
         mEnergy = sort(mHDiag.diag());
-        mE(k) = mEnergy(0);
+        mLzE(iLzIt) = mEnergy(0);
 
         // Checking for energy convergence
         dConvPrev = dConv;
-        dConv     = abs(abs(mE(k-1)/mE(k))-1);
+        dConv     = abs(abs(mLzE(iLzIt-1)/mLzE(iLzIt))-1);
 
         #ifndef MINIMAL
             fflush(stdout);
             cout  << "\r                              \r";
-            ssOut << "Lanczos Iteration " << setw(2) << k;
-            ssOut << " : Energy = " << showpoint << setw(11) << setprecision(10) << mE(k);
+            ssOut << "Lanczos Iteration " << setw(2) << iLzIt;
+            ssOut << " : Energy = " << showpoint << setw(11) << setprecision(10) << mLzE(iLzIt);
             ssOut << " : Convergence = " << setprecision(3) << dConv << endl;
             oOut->Output(&ssOut);
         #else
             fflush(stdout);
             cout << "\r                                                                        \r";
-            cout << "Lanczos Iteration " << setw(2) << k;
-            cout << " : Energy = " << showpoint << setw(11) << setprecision(10) << mE(k);
+            cout << "Lanczos Iteration " << setw(2) << iLzIt;
+            cout << " : Energy = " << showpoint << setw(11) << setprecision(10) << mLzE(iLzIt);
             cout << " : Convergence = " << setprecision(3) << dConv;
         #endif
 
         if(dConv < LANCZOS_CONVERGE) break;
-        if(LANCZOS_STRICT && k > 1 && dConv > dConvPrev && abs(dConv/dConvPrev) > LANCZOS_DIVERGE) {
+        if(LANCZOS_STRICT && iLzIt > 1 && dConv > dConvPrev && abs(dConv/dConvPrev) > LANCZOS_DIVERGE) {
             ssOut << "Warning: Lanczos Divergence > " << floor(LANCZOS_DIVERGE*100) << "%. Breaking ..." << endl;
             oOut->Output(&ssOut);
             break;
@@ -189,19 +176,183 @@ double Lanczos::Run() {
         cout << endl;
     #endif
 
-    mW.clear();
-    oBasis->SetCoefficients(mV);
-    mV.clear();
+    mLzW.clear();
+    oBasis->SetCoefficients(mLzV);
+    mLzV.clear();
 
     return mEnergy(0);
+}
+
+int Lanczos::RunSlave(Col<double> &mInput, vector<double> &vReturn, int iLStart, int iLStop) {
+
+    #ifdef OPENMP
+        int iMaxThreads = omp_get_max_threads();
+    #else
+        int iMaxThreads = 1;
+    #endif
+    for(int i=0; i<iBasisDim; i++) vReturn[i] = 0.0;
+
+    vector<vector<double> > vT(iMaxThreads);
+    for(int i=0; i<iMaxThreads; i++) vT[i].resize(iBasisDim,0);
+
+    fMatrixVector(mInput, vT, d1PFac, d2PFac, iLStart, iLStop);
+
+    for(int i=0; i<iMaxThreads; i++) {
+        for(int j=0; j<iBasisDim; j++) vReturn[j] += vT[i][j];
+    }
+    for(int i=0; i<iMaxThreads; i++) vT[i].clear();
+    
+    return 0;
+}
+
+int Lanczos::RunInit() {
+
+    // Check for illegal values
+
+    if(iBasisDim == 0) {
+        ssOut << "Basis has dimension 0 ..." << endl;
+        oOut->Output(&ssOut);
+        return -1.0;
+    }
+
+    if(iStates > SLATER_WORD) {
+        ssOut << "Error: SLATER_WORD in libTardis.hpp too small, must be at least " << (ceil(iStates/64.0)*64) << " ..." << endl;
+        oOut->Output(&ssOut);
+        return -1.0;
+    }
+    
+    // Init Lanczos Variables
+    if(LANCZOS_SEED) srand(time(NULL));
+    mLzV.zeros(iBasisDim);
+    mLzW.randu(iBasisDim);
+    mLzW = mLzW/norm(mLzW,2);
+    mLzA.ones(1);
+    mLzB.ones(1);
+    mLzC.ones(1);
+    mLzE.zeros(1);
+    
+    iLzIt = 0;
+    
+    return 0;
+}
+
+int Lanczos::RunMaster() {
+    
+    // Runtime variables
+    bool           bDone = false;
+    double         dTemp, dO;
+    Mat<double>    mTemp;
+    Mat<double>    mHDiag;
+    Col<cx_double> mHEigVal;
+    Mat<cx_double> mHEigVec;
+
+    // Prepare next iteration
+    iLzIt++;
+    mLzA.insert_cols(iLzIt,1);
+    mLzB.insert_cols(iLzIt,1);
+    mLzC.insert_cols(iLzIt,1);
+    mLzE.insert_cols(iLzIt,1);
+    mLzA(iLzIt) = dot(mLzW,mLzV);
+    mLzV       -= mLzA(iLzIt)*mLzW;
+    mLzB(iLzIt) = norm(mLzV,2);
+
+    // Re-ortonomalization of the Lanczos vectors
+    dO = dot(mLzV,mLzW);
+    if(abs(dO) > 2e-13) {
+        mLzV -= (dO/dot(mLzW,mLzW))*mLzW;
+        mLzV/norm(mLzV,2);
+        mLzW/norm(mLzW,2);
+        #ifndef MINIMAL
+            #ifdef PROGRESS
+                cout  << "\r                         \r";
+            #endif
+            ssOut << "Re-ortonormalizing. V·W = " << setprecision(3) << dO << endl;
+            oOut->Output(&ssOut);
+        #endif
+    }
+
+    // Building the tri-diagonal matrix
+    mTemp.zeros(iLzIt,iLzIt);
+    for(int i=0; i<iLzIt; i++) {
+        mTemp(i,i) = mLzA(i+1);
+        if(i<iLzIt-1) {
+            mTemp(i,i+1) = mLzB(i+1);
+            mTemp(i+1,i) = mLzB(i+1);
+        }
+    }
+
+    // Calculating eigenvalues
+    eig_gen(mHEigVal, mHEigVec, mTemp);
+    mHDiag  = real(inv(mHEigVec)*mTemp*mHEigVec);
+    mEnergy = sort(mHDiag.diag());
+    mLzE(iLzIt) = mEnergy(0);
+
+    // Checking for energy convergence
+    mLzC(iLzIt) = abs(abs(mLzE(iLzIt-1)/mLzE(iLzIt))-1);
+
+    #ifndef MINIMAL
+        #ifdef PROGRESS
+            fflush(stdout);
+            cout  << "\r                              \r";
+        #endif
+        ssOut << "Lanczos Iteration " << setw(2) << iLzIt;
+        ssOut << " : Energy = " << showpoint << setw(11) << setprecision(10) << mLzE(iLzIt);
+        ssOut << " : Convergence = " << setprecision(3) << mLzC(iLzIt) << endl;
+        oOut->Output(&ssOut);
+    #else
+        #ifdef PROGRESS
+            fflush(stdout);
+            cout << "\r                                                                        \r";
+            cout << "Lanczos Iteration " << setw(2) << iLzIt;
+            cout << " : Energy = " << showpoint << setw(11) << setprecision(10) << mLzE(iLzIt);
+            cout << " : Convergence = " << setprecision(3) << mLzC(iLzIt);
+        #endif
+    #endif
+
+    // Stop if converged
+    if(mLzC(iLzIt) < LANCZOS_CONVERGE) bDone = true;
+
+    // Stop if diverging
+    if(LANCZOS_STRICT && iLzIt > 1 && mLzC(iLzIt) > mLzC(iLzIt-1) && abs(mLzC(iLzIt)/mLzC(iLzIt-1)) > LANCZOS_DIVERGE) {
+        ssOut << "Warning: Lanczos Divergence > " << floor(LANCZOS_DIVERGE*100) << "%. Breaking ..." << endl;
+        oOut->Output(&ssOut);
+        bDone = true;
+    }
+    
+    // Stop if Dim(Lanczos) >= Dim(Basis)
+    if(iLzIt >= iBasisDim) {
+        ssOut << "Warning: Dim(Lanczos) >= Dim(Basis). Breaking ..." << endl;
+        oOut->Output(&ssOut);
+        bDone = true;
+    }
+
+    // Stop if reached max iterations
+    if(iLzIt >= LANCZOS_MAX_IT) {
+        ssOut << "Warning: Reached maximum number of Lanczos iterations. Breaking ..." << endl;
+        oOut->Output(&ssOut);
+        bDone = true;
+    }
+    
+    if(bDone) {
+        mLzW.clear();
+        oBasis->SetCoefficients(mLzV);
+        mLzV.clear();
+        return 1;
+    } else {
+        for(int i=0; i<iBasisDim; i++) {
+            dTemp   = mLzW(i);
+            mLzW(i) = mLzV(i)/mLzB(iLzIt);
+            mLzV(i) = -mLzB(iLzIt)*dTemp;
+        }
+        return 0;
+    }
 }
 
 /*
 ** Matrix-Vector multiplication section of the Lanczos algorithm
 */
 
-//~ void Lanczos::fMatrixVector(Col<double> &mInput, Col<double> &mReturn, double d1PFac, double d2PFac) {
-void Lanczos::fMatrixVector(Col<double> &mInput, vector<Col<double> > &vReturn, double d1PFac, double d2PFac) {
+void Lanczos::fMatrixVector(Col<double> &mInput, vector<vector<double> > &vReturn, double d1PFac, double d2PFac, int iStart, int iStop) {
 
     int    i, p, q, r, s;
     int    iS1, iS2, iS3, iS4, iL=0;
@@ -211,7 +362,7 @@ void Lanczos::fMatrixVector(Col<double> &mInput, vector<Col<double> > &vReturn, 
     #ifdef OPENMP
         #pragma omp parallel for private(p,q,r,s,iS1,iS2,iS3,iS4,sdPhiPQRS,sdPhiQRS,sdPhiSR,sdPhiR,iL,dV) schedule(dynamic,1)
     #endif
-    for(i=0; i<iBasisDim; i++) {
+    for(i=iStart; i<iStop; i++) {
         for(r=0; r<iStates; r++) {
             sdPhiR = oBasis->GetSlater(i);
             iS1 = sdPhiR.Annihilate(r);
@@ -233,8 +384,11 @@ void Lanczos::fMatrixVector(Col<double> &mInput, vector<Col<double> > &vReturn, 
                             dV = 0.0;
                             if(p == r && q == s) dV += oPot->Get1PElement(p,s)*d1PFac; // 1-particle interaction
                             dV += oPot->Get2PElement(p,q,r,s)*d2PFac;                  // 2-particle interaction
-                            //~ mReturn(iL) += iS1*iS2*iS3*iS4*dV*mInput(i);
-                            vReturn[omp_get_thread_num()](iL) += iS1*iS2*iS3*iS4*dV*mInput(i);
+                            #ifdef OPENMP
+                                vReturn[omp_get_thread_num()][iL] += iS1*iS2*iS3*iS4*dV*mInput(i);
+                            #else
+                                vReturn[0][iL] += iS1*iS2*iS3*iS4*dV*mInput(i);
+                            #endif
                         }
                     }
                 }

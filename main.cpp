@@ -1,123 +1,70 @@
-/*
-  Test libTardis
-*/
+//# Threads : 1
 
 #include <cstdlib>
 #include <iostream>
-#include <iomanip>
-#include <cmath>
-#include <ctime>
-#include <string>
+#include <fstream>
 #include "libTardis/libTardis.hpp"
 
 using namespace std;
 using namespace tardis;
 
-int main() {
+int main(int argc, char* argv[]) {
 
-    clock_t tStart, tFinish;
-    tStart = clock();
+    stringstream ssOut;
 
-    string sTemp;
-    int    iShell, iPartInt, iM, iMs;
-    double dOmega, dLambda;
+    int    iShells    = 6;
+    int    iParticles = 4;
+    int    iM         = 0;
+    int    iMs        = 0;
+    bool   bEnergyCut = false;
 
-    cout << endl;
-    cout << "Input" << endl;
-    cout << "*****" << endl;
-
-    cout << "Shells [2]: ";
-    getline(cin, sTemp);
-    if(sTemp == "") {iShell = 2;} else {iShell = atoi(sTemp.c_str());}
-
-    cout << "Particles [2]: ";
-    getline(cin, sTemp);
-    if(sTemp == "") {iPartInt = 2;} else {iPartInt = atoi(sTemp.c_str());}
-
-    cout << "Total M [0]: ";
-    getline(cin, sTemp);
-    if(sTemp == "") {iM = 0;} else {iM = atoi(sTemp.c_str());}
-
-    cout << "Total Ms [0]: ";
-    getline(cin, sTemp);
-    if(sTemp == "") {iMs = 0;} else {iMs = atoi(sTemp.c_str());}
-
-    cout << "Omega [1.0]: ";
-    getline(cin, sTemp);
-    if(sTemp == "") {dOmega = 1.0;} else {dOmega = atof(sTemp.c_str());}
-
-    cout << "Lambda [0.0]: ";
-    getline(cin, sTemp);
-    if(sTemp == "") {dLambda = 0.0;} else {dLambda = atof(sTemp.c_str());}
-
-    cout << endl;
+    double dOmega     = 0.0;
+    double dLambda    = 6.0;
 
     System *oSystem = new System();
-    //~ oSystem->SetPotential(iShell, QDOT2D, Q2D_ANALYTIC);
-    //~ oSystem->SetPotential(iShell, QDOT2D, Q2D_NORMAL);
-    oSystem->SetPotential(iShell, QDOT2D, Q2D_EFFECTIVE);
-    oSystem->SetParticles(iPartInt);
+    if(argc > 1) oSystem->SetLogFile(argv[1]);
+
+    ofstream oOutput;
+    oOutput.open("tempQueue/output.txt");
+
+    ssOut << endl;
+    ssOut << "System Config:" << endl;
+    ssOut << endl;
+    ssOut << "Shells:     " << iShells << endl;
+    ssOut << "Particles:  " << iParticles << endl;
+    ssOut << "Total M:    " << iM << endl;
+    ssOut << "Total Spin: " << iMs << endl;
+    ssOut << "Omega:      " << dOmega << endl;
+    ssOut << "Lambda:     " << dLambda << endl;
+    ssOut << endl;
+    oSystem->GetLog()->Output(&ssOut);
+
+    oSystem->SetPotential(iShells, QDOT2D, Q2D_NORMAL);
+    oSystem->SetParticles(iParticles);
     oSystem->SetQNumber(QN_M, iM);
     oSystem->SetQNumber(QN_MS, iMs);
-    oSystem->SetQNumber(QN_EMAX, iShell);
     oSystem->SetVariable(VAR_LAMBDA, dLambda);
-    oSystem->SetVariable(VAR_OMEGA,  dOmega);
-    oSystem->EnableEnergyCut(true);
-    //oSystem->SetCache("/scratch/Temp/arma_cache/");
+    oSystem->SetVariable(VAR_OMEGA, dOmega);
+    oSystem->EnableEnergyCut(bEnergyCut);
     oSystem->BuildPotential();
     oSystem->BuildBasis();
-    //oSystem->GetBasis()->Output();
 
     Lanczos oLanczos(oSystem);
     double dEnergy = oLanczos.Run();
-    cout << "Energy: " << setprecision(8) << dEnergy << endl;
-/*
-    Potential *oPot;
-    const arma::Mat<int>    *mConf;
-    const arma::Mat<double> *mHam1;
-    const arma::Mat<double> *mHam2;
 
-    // Test Matrix-elements
-    oSystem->SetPotential(iShell, QDOT2D, Q2D_ANALYTIC);
-    oSystem->BuildPotential();
-    oPot = oSystem->GetPotential();
-    mHam1 = oPot->Get2PHam(0,0);
-    mConf = oPot->GetConfig(0,0);
+    cout << "Energy: " << setprecision(10) << setw(11) << dEnergy << endl;
+    oOutput << "P 4, ";
+    oOutput << "Sh 6, ";
+    oOutput << "M 0, ";
+    oOutput << "Ms 0, ";
+    oOutput << "Om 0.0, ";
+    oOutput << "Lm 6.0, ";
+    oOutput << "NoECut, ";
+    oOutput << "Vstd, ";
+    oOutput << "Lz";
+    oOutput << "\t | Energy: " << setprecision(10) << setw(11) << dEnergy << endl;
 
-    oSystem->SetPotential(iShell, QDOT2D, Q2D_NORMAL);
-    oSystem->BuildPotential();
-    oPot = oSystem->GetPotential();
-    mHam2 = oPot->Get2PHam(0,0);
-
-    //cout << *mConf << endl;
-    for(int i=0; i<mConf->n_cols; i++) {
-        cout << "|" << mConf->at(0,i) << " " << mConf->at(1,i) << ">\t    ";
-        cout << "|";
-        cout << oPot->GetState(mConf->at(0,i),0) << " ";
-        cout << oPot->GetState(mConf->at(0,i),1) << " ";
-        cout << oPot->GetState(mConf->at(0,i),2) << ">\t";
-        cout << "|";
-        cout << oPot->GetState(mConf->at(1,i),0) << " ";
-        cout << oPot->GetState(mConf->at(1,i),1) << " ";
-        cout << oPot->GetState(mConf->at(1,i),2) << ">" << endl;
-    }
-    cout << endl;
-    cout << *mHam1 << endl;
-    cout << *mHam2 << endl;
-    cout << (*mHam2-*mHam1) << endl;
-
-    //oSystem->SetPotential(iShell, QDOT2D, Q2D_EFFECTIVE);
-    //oSystem->BuildPotential();
-    //oPot = oSystem->GetPotential();
-    //mHam = oPot->Get2PHam(0,0);
-    //cout << *mHam << endl;
-*/
-
-    //Diag oDiag(oSystem);
-    //cout << "Energy: " << oDiag.Run(iM, iMs, dOmega, dLambda) << endl;
-
-    tFinish = clock();
-    cout << endl << "Computation time: " << setprecision(5) << double(tFinish-tStart)/CLOCKS_PER_SEC << " seconds" << endl << endl;
+    oOutput.close();
 
     return 0;
 }

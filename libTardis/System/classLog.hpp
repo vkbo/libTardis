@@ -18,10 +18,12 @@ class Log
 
     std::stringstream ssOutput; // Logfile
     bool              bOutput;  // True if Logfile is set
+    bool              bSilent;  // No output to stdout
 
     Log(const char *cLogFile = "");
     ~Log() {};
     void SetFile(const char*);
+    void SetSilent(bool);
     void Output(std::stringstream*);
 
 };
