@@ -9,18 +9,12 @@
 #define CLASS_LANCZOS_HPP
 #include "../libTardis.hpp"
 #include "../System/classSystem.hpp"
-//#include "../System/classBasis.hpp"
-//#include "../System/classLog.hpp"
 #include <iostream>
 #include <fstream>
 
 #ifdef OPENMP
     #include "omp.h"
 #endif
-
-//~ #ifdef OPENMPI
-    //~ #include "mpi.h"
-//~ #endif
 
 namespace tardis {
 
@@ -40,7 +34,7 @@ class Lanczos
     int  RunSlave(arma::Col<double>&, std::vector<double>&, int, int);
     int  RunMaster();
     
-    // Getters
+    // Getters, Setters and Output
     arma::Col<double> *GetLanczosVectorV() {return &mLzV;};
     arma::Col<double> *GetLanczosVectorW() {return &mLzW;};
     arma::Col<double> *GetEnergies()       {return &mEnergy;};
