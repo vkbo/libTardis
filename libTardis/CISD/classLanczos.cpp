@@ -118,7 +118,9 @@ double Lanczos::Run() {
             mLzV/norm(mLzV,2);
             mLzW/norm(mLzW,2);
             #ifndef MINIMAL
-                cout  << "\r                         \r";
+                #ifdef PROGRESS
+                    cout  << "\r                         \r";
+                #endif
                 ssOut << "Re-ortonormalizing. V·W = " << setprecision(3) << dO << endl;
                 oOut->Output(&ssOut);
             #endif
@@ -146,14 +148,18 @@ double Lanczos::Run() {
 
         #ifndef MINIMAL
             fflush(stdout);
-            cout  << "\r                              \r";
+            #ifdef PROGRESS
+                cout  << "\r                              \r";
+            #endif
             ssOut << "Lanczos Iteration " << setw(2) << iLzIt;
             ssOut << " : Energy = " << showpoint << setw(11) << setprecision(10) << mLzE(iLzIt);
             ssOut << " : Convergence = " << setprecision(3) << dConv << endl;
             oOut->Output(&ssOut);
         #else
             fflush(stdout);
-            cout << "\r                                                                        \r";
+            #ifdef PROGRESS
+                cout << "\r                                                                        \r";
+            #endif
             cout << "Lanczos Iteration " << setw(2) << iLzIt;
             cout << " : Energy = " << showpoint << setw(11) << setprecision(10) << mLzE(iLzIt);
             cout << " : Convergence = " << setprecision(3) << dConv;

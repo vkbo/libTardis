@@ -1,9 +1,9 @@
-//# Nodes : 4
+//# Nodes : 2
 
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
-#include "../libTardis/libTardis.hpp"
+#include "libTardis/libTardis.hpp"
 #include "mpi.h"
 
 using namespace std;
@@ -74,8 +74,9 @@ int main(int argc, char* argv[]) {
 
     int  iReady=0;
     int  iBasisDim = oSystem->GetBasis()->GetSize();
-    int  iChunkSize = ceil(iBasisDim/(double)(iProc-1));
-    int  iChunks = ceil(iBasisDim/(double)iChunkSize);
+    int  iChunks = iProc-1;
+    int  iChunkSize = ceil(iBasisDim/(double)iChunks);
+    cout << iChunkSize << endl;
     int  iDone = 0;
 
     vector<int> vJobs(iChunks+1);
@@ -101,7 +102,7 @@ int main(int argc, char* argv[]) {
             oSystem->GetLog()->Output(&ssOut);
 
             for(int i=0; i<=iChunks; i++) vJobs[i] = iChunkSize*i;
-            if(vJobs[iChunks+1] > iBasisDim) vJobs[iChunks+1] = iBasisDim;
+            if(vJobs[iChunks] > iBasisDim) vJobs[iChunks] = iBasisDim;
             MPI_Bcast(&vJobs[0], iChunks+1, MPI_INT, 0, MPI_COMM_WORLD);
 
             oLanczos.RunInit();
@@ -133,6 +134,12 @@ int main(int argc, char* argv[]) {
             }
             
             dEnergy = mEnergy->at(0);
+
+            ssOut << endl;
+            ssOut << "Eigenvalues:" << endl;
+            ssOut << *mEnergy << endl;
+            ssOut << endl;
+            oSystem->GetLog()->Output(&ssOut);
 
         } else {
 

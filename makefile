@@ -10,7 +10,7 @@ LIBADD =
 ifeq ($(NODE),Abel)
 	LIBINTEL = -L$(MKLROOT)/lib/intel64 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -liomp5 -lpthread -lm
 	LIBARMA  = -L$(HOME)/usr/lib64 -larmadillo
-	LIBFLAGS = $(LIBINTEL) $(LIBARMA) $(LIBADD)
+	LIBFLAGS = $(LIBINTEL) $(LIBARMA) -lmpi $(LIBADD)
 	CFLAGS   = $(DEBUG) -O2 -c -openmp -DMKL_LP64 -I$(MKLROOT)/include -I$(HOME)/usr/include
 	LFLAGS   = $(DEBUG) -openmp
 else
