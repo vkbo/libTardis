@@ -3,12 +3,22 @@
 ###
 
 # Default Compiler Options
-CC          = g++
-DEBUG       = -g -Wall
-LIBADD      =
-LIBFLAGS    = -llapack -lblas -larmadillo $(LIBADD)
-CFLAGS      = $(DEBUG) -O2 -c -fopenmp
-LFLAGS      = $(DEBUG) -fopenmp
+CC     = g++
+DEBUG  = -g -Wall
+LIBADD =
+
+ifeq ($(NODE),Abel)
+	LIBINTEL = -L$(MKLROOT)/lib/intel64 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -liomp5 -lpthread -lm
+	LIBARMA  = -L$(HOME)/usr/lib64 -larmadillo
+	LIBFLAGS = $(LIBINTEL) $(LIBARMA) $(LIBADD)
+	CFLAGS   = $(DEBUG) -O2 -c -openmp -DMKL_LP64 -I$(MKLROOT)/include -I$(HOME)/usr/include
+	LFLAGS   = $(DEBUG) -openmp
+else
+	LIBFLAGS = -llapack -lblas -larmadillo $(LIBADD)
+	CFLAGS   = $(DEBUG) -O2 -c -fopenmp
+	LFLAGS   = $(DEBUG) -fopenmp
+endif
+
 
 # Path Settings
 LIBROOT     = libTardis
