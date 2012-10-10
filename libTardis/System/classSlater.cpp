@@ -105,6 +105,13 @@ int Slater::GetFirst() {
 }
 
 /*
+** Shek if particle i exists
+*/
+int Slater::IsSet(int i) {
+    return Word.test(i);
+}
+
+/*
 ** Formatted output of the SD
 */
 void Slater::Output(int iLen) {

@@ -53,7 +53,8 @@ class System
     // System Functions
     bool BuildPotential();
     bool BuildPotentialBlock();
-    bool BuildBasis();
+    bool BuildBasis(bool bOutputConfigs=false);
+    bool LoadBasis(const char*);
 
 
     private:

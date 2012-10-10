@@ -34,6 +34,7 @@ int main(int argc, char* argv[]) {
 
     stringstream ssOut;
     ofstream     oOutput;
+    time_t       tTime;
     double       dEnergy = 0.0;
     int          iProc, iRank;
 
@@ -68,15 +69,23 @@ int main(int argc, char* argv[]) {
     oSystem->SetVariable(VAR_OMEGA, dOmega);
     oSystem->EnableEnergyCut(bEnergyCut);
     oSystem->BuildPotential();
+
+    if(iRank == 0)  {
+        time(&tTime);
+        cout << "Starting building basis: " << ctime(&tTime);
+    }
     oSystem->BuildBasis();
     
+    if(iRank == 0)  {
+        time(&tTime);
+        cout << "Starting Lanczos: " << ctime(&tTime);
+    }
     Lanczos oLanczos(oSystem);
 
     int  iReady=0;
     int  iBasisDim = oSystem->GetBasis()->GetSize();
     int  iChunks = iProc-1;
     int  iChunkSize = ceil(iBasisDim/(double)iChunks);
-    cout << iChunkSize << endl;
     int  iDone = 0;
 
     vector<int> vJobs(iChunks+1);
@@ -121,16 +130,27 @@ int main(int argc, char* argv[]) {
             mEnergy = oLanczos.GetEnergies();
 
             while(iDone == 0) {
+                time(&tTime);
+                cout << "Starting new iterations: " << ctime(&tTime);
+
                 vLzW = conv_to< vector<double> >::from(*mLzW);
                 MPI_Bcast(&vLzW[0], iBasisDim, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+                time(&tTime);
+                cout << "Done broadcatsing      : " << ctime(&tTime);
 
                 for(int i=1; i<iProc; i++) {
                     MPI_Recv(&vReturn[0], iBasisDim, MPI_DOUBLE, MPI_ANY_SOURCE, 501, MPI_COMM_WORLD, &mpiStatus);
                     for(int j=0; j<iBasisDim; j++) mLzV->at(j) += vReturn[j];
                 }
                 
+                time(&tTime);
+                cout << "Done receiving         : " << ctime(&tTime) << endl;
+
                 iDone = oLanczos.RunMaster();
                 MPI_Bcast(&iDone, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
+                cout << endl;
             }
             
             dEnergy = mEnergy->at(0);
@@ -167,6 +187,10 @@ int main(int argc, char* argv[]) {
             MPI_Bcast(&vLzW[0], iBasisDim, MPI_DOUBLE, 0, MPI_COMM_WORLD);
             mLzW = conv_to< colvec >::from(vLzW);
             oLanczos.RunSlave(mLzW, vReturn, vJobs[iRank-1], vJobs[iRank]);
+            if(iRank == 1) {
+                time(&tTime);
+                cout << "Done calculating       : " << ctime(&tTime);
+            }
             MPI_Send(&vReturn[0], iBasisDim, MPI_DOUBLE, 0, 501, MPI_COMM_WORLD);
             MPI_Bcast(&iDone, 1, MPI_INT, 0, MPI_COMM_WORLD);
         }

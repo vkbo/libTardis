@@ -32,6 +32,7 @@ class Slater
     int  CountOdd();
     int  CountEven();
     int  GetFirst();
+    int  IsSet(int);
     void Output(int);
 };
 

@@ -110,7 +110,7 @@ bool System::BuildPotentialBlock() {
     return true;
 }
 
-bool System::BuildBasis() {
+bool System::BuildBasis(bool bOutputConfigs) {
 
     if(bBasisBuilt) {
         ssOut << "Basis already built. Nothing to do." << endl;
@@ -136,7 +136,36 @@ bool System::BuildBasis() {
     oBasis->SetQNumber(QN_MS, iMs);
     if(bEnergyCutSet) oBasis->SetQNumber(QN_EMAX, iEMax);
     oBasis->EnableEnergyCut(bEnergyCut);
-    oBasis->BuildBasis();
+    oBasis->BuildBasis(bOutputConfigs);
+
+    return true;
+}
+
+bool System::LoadBasis(const char *cPath) {
+
+    if(bBasisBuilt) {
+        ssOut << "Basis already present. Nothing to do." << endl;
+        oOut->Output(&ssOut);
+        return false;
+    }
+
+    if(!bPotBuilt) {
+        ssOut << "Error: Potential missing." << endl;
+        ssOut << "       Run System->BuildPotential() first." << endl;
+        oOut->Output(&ssOut);
+        return false;
+    }
+
+    if(iParticles < 1) {
+        ssOut << "Error: Too few particles in system." << endl;
+        oOut->Output(&ssOut);
+        return false;
+    }
+
+    oBasis = new Basis(oPot, oOut, iParticles, iShells);
+    oBasis->SetQNumber(QN_M, iM);
+    oBasis->SetQNumber(QN_MS, iMs);
+    oBasis->LoadBasis(cPath);
 
     return true;
 }

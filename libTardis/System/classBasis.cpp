@@ -41,6 +41,8 @@ Basis::Basis(Potential *oPotential, Log *oLog, int iNumParticles, int iNumShells
         mIndex.set_size(iStates+1,2);
         mIndex.fill(-1);
     #endif
+    
+    mConfigMap.zeros((iShells-1)*iParticles+1,iParticles+1);
 
     return;
 }
@@ -62,7 +64,7 @@ Basis::Basis(Potential *oPotential, Log *oLog, int iNumParticles, int iNumShells
 **   - Defines the initial interval for the binary search
 */
 
-int Basis::BuildBasis() {
+int Basis::BuildBasis(bool bOutputConfigs) {
 
     Slater sdTest;
     int    iBasisDim = 0;
@@ -75,23 +77,8 @@ int Basis::BuildBasis() {
 
     // Calculate energy cut-off is bEnergyCut=true
     if(bEnergyCut && !bEnergyCutSet) {
-        //~ int iMin = 0;
-        //~ int iFull = 0;
-        //~ while(iFull < iParticles) {
-            //~ iMin++;
-            //~ iFull = iMin*(iMin+1);
-        //~ }
-        //~ iMin--;
-        //~ int iSPMin = iParticles - iMin*(iMin+1) - 2;
-        //~ if(abs(iSPMin%2) == 1) iSPMin++;
         int iNMax = floor((iStates - iParticles)/2);
-        //~ int iNTotMax = iSPMin + 2 + iNMax;
-        //~ iEMax = iNTotMax - iSPMin;
         iEMax = iNMax + 2;
-        //~ cout << "NMax: "    << iNMax << endl;
-        //~ cout << "NTotMax: " << iNTotMax << endl;
-        //~ cout << "SPMin: "   << iSPMin << endl;
-        //~ if(iParticles == 2) iEMax = iShells - 1;
         ssOut << "Energy Cut-off: 2·max(N) + max(|M|) <= " << iEMax << endl;
     }
 
@@ -138,13 +125,10 @@ int Basis::BuildBasis() {
     // Setting and checking lowest particle states (|0>, |1>, ... , |Np>)
     for(int i=0; i<iParticles; i++) vTemp[i] = i;
 
-    if(fCheckQDot2D(vTemp)) {
+    if(fCheckQDot2D(vTemp, bOutputConfigs)) {
         sdTest.Zero();
         for(i=0; i<iParticles; i++) sdTest.Create(vTemp[i]);
         vBasis.push_back(sdTest);
-        //~ sdTest.Output(iStates);
-        //~ for(i=0; i<iParticles; i++) cout << vTemp[i] << ", ";
-        //~ cout << iTMs << ", " << iTM << endl;
         #ifndef INDEX_BASIS
             if(vTemp[0] != iPrev) {
                 if(iPrev >= 0) mIndex(iPrev,1)  = vBasis.size()-2;
@@ -168,13 +152,10 @@ int Basis::BuildBasis() {
                 break;
             }
         }
-        if(fCheckQDot2D(vTemp)) {
+        if(fCheckQDot2D(vTemp, bOutputConfigs)) {
             sdTest.Zero();
             for(i=0; i<iParticles; i++) sdTest.Create(vTemp[i]);
             vBasis.push_back(sdTest);
-            //~ sdTest.Output(iStates);
-            //~ for(i=0; i<iParticles; i++) cout << vTemp[i] << ", ";
-            //~ cout << iTMs << ", " << iTM << endl;
             #ifndef INDEX_BASIS
                 if(vTemp[0] != iPrev) {
                     if(iPrev >= 0) mIndex(iPrev,1) = vBasis.size()-2;
@@ -280,7 +261,77 @@ int Basis::BuildBasis() {
     ssOut << endl;
     oOut->Output(&ssOut);
 
+    if(bOutputConfigs) {
+        ssOut << "Configurations" << endl;
+        for(unsigned int m=0; m<mConfigMap.n_rows; m++) {
+            for(unsigned int n=0; n<mConfigMap.n_cols; n++) {
+                if(mConfigMap(m,n) > 0) {
+                    ssOut << "M=" << m << ", ";
+                    ssOut << "2s=" << n << " : ";
+                    ssOut << mConfigMap(m,n) << endl;
+                }
+            }
+        }
+        ssOut << endl;
+        oOut->Output(&ssOut);
+    }
+
     return iBasisDim;
+}
+
+/*
+**  Load the Basis
+** ================
+**
+**  Loads a basis saved with Save("filename", 1)
+**   - Checks that number of particles is correct
+**   - Otherwise assumes the basis is the correct one for the running system
+*/
+
+bool Basis::LoadBasis(const char *cPath) {
+    
+    Mat<int> mBasis;
+    Slater   sdTemp;
+    int      iPrev = -1;
+    int      iExp, iBasisDim;
+    
+    ssOut << "Loading basis from file." << endl;
+    oOut->Output(&ssOut);
+
+    #ifdef INDEX_BASIS
+        ssOut << "Cannot load indexed basises." << endl;
+        oOut->Output(&ssOut);
+        return false;
+    #endif
+
+    mBasis.load(cPath);
+    iBasisDim = mBasis.n_rows;
+    
+    iExp = floor(log10(iBasisDim));
+    ssOut << "Dimension of Basis: " << iBasisDim;
+    if(iBasisDim > 0) ssOut << " (~" << round(iBasisDim/pow(10,iExp)) << "e" << iExp << ")";
+    ssOut << endl;
+
+    if(mBasis.n_cols != (unsigned int)iParticles) {
+        ssOut << "Basis contains the wrong number of particles." << endl;
+        oOut->Output(&ssOut);
+        return false;
+    }
+
+    vBasis.clear();
+    for(int i=0; i<iBasisDim; i++) {
+        sdTemp.Zero();
+        for(int j=0; j<iParticles; j++) sdTemp.Create(mBasis(i,j));
+        vBasis.push_back(sdTemp);
+        if(mBasis(i,0) != iPrev) {
+            if(iPrev >= 0) mIndex(iPrev,1) = vBasis.size()-2;
+            mIndex(mBasis(i,0),0) = vBasis.size()-1;
+            iPrev = mBasis(i,0);
+        }
+        mIndex(mBasis(i,0),1) = vBasis.size()-1;
+    }
+    
+    return true;
 }
 
 /*
@@ -360,33 +411,56 @@ bool Basis::SetCoefficients(Col<double> &mInput) {
 
 bool Basis::Save(const char *cPath, int iMode) {
 
-    ofstream oOutput;
-    oOutput.open(cPath);
+    // Save Basis in ASCII mode with all coefficients
+    if(iMode == 0) {
 
-    oOutput << "#  States:" << endl;
-    oOutput << "# ---------" << endl;
-    oOutput << "# State   N   M  2*Spin" << endl;
-    for(int i=0; i<iStates; i++) {
-        oOutput << "|" << setw(3) << i << ">  ";
-        oOutput << setw(4) << oPot->GetState(i,0);
-        oOutput << setw(4) << oPot->GetState(i,1);
-        oOutput << setw(4) << oPot->GetState(i,2);
-        oOutput << endl;
-    }
+        ofstream oOutput;
+        oOutput.open(cPath);
 
-    oOutput << endl;
-    oOutput << "#  Basis:" << endl;
-    oOutput << "# --------" << endl;
-
-    for(unsigned int i=0; i<vBasis.size(); i++) {
-        oOutput << setprecision(12) << setw(18) << mCoefficients[i] << " |";
-        for(int j=0; j<iStates; j++) {
-            oOutput << vBasis[i].Word[j];
+        oOutput << "#  States:" << endl;
+        oOutput << "# ---------" << endl;
+        oOutput << "# State   N   M  2*Spin" << endl;
+        for(int i=0; i<iStates; i++) {
+            oOutput << "|" << setw(3) << i << ">  ";
+            oOutput << setw(4) << oPot->GetState(i,0);
+            oOutput << setw(4) << oPot->GetState(i,1);
+            oOutput << setw(4) << oPot->GetState(i,2);
+            oOutput << endl;
         }
-        oOutput << ">" << endl;
+
+        oOutput << endl;
+        oOutput << "#  Basis:" << endl;
+        oOutput << "# --------" << endl;
+
+        for(unsigned int i=0; i<vBasis.size(); i++) {
+            oOutput << setprecision(12) << setw(18) << mCoefficients[i] << " |";
+            for(int j=0; j<iStates; j++) {
+                oOutput << vBasis[i].Word[j];
+            }
+            oOutput << ">" << endl;
+        }
+
+        oOutput.close();
     }
 
-    oOutput.close();
+    // Save Basis as binary files for later reloading
+    if(iMode == 1) {
+
+        int      iP;
+        Mat<int> mBasis;
+
+        mBasis.zeros(vBasis.size(),iParticles);
+        for(unsigned int i=0; i<vBasis.size(); i++) {
+            iP = 0;
+            for(int j=0; j<iStates; j++) {
+                if(vBasis[i].IsSet(j)) {
+                    mBasis(i,iP)=j;
+                    iP++;
+                }
+            }
+        }
+        mBasis.save(cPath);
+    }
 
     return true;
 }
@@ -395,7 +469,7 @@ bool Basis::Save(const char *cPath, int iMode) {
 ** Private :: Basis selction functions
 */
 
-bool Basis::fCheckQDot2D(const vector<int> &vTemp) {
+bool Basis::fCheckQDot2D(const vector<int> &vTemp, bool bOutputConfigs) {
 
     int iTotM   = 0;
     int iTotMs  = 0;
@@ -417,9 +491,14 @@ bool Basis::fCheckQDot2D(const vector<int> &vTemp) {
         }
     }
 
+    if(bOutputConfigs) {
+        if(iTotM >= 0 && iTotMs >= 0) {
+            mConfigMap(iTotM,iTotMs)++;
+        }
+    }
+
     if(iTotMs == iMs && iTotM == iM) {
         if(bEnergyCut && iEnergy > iEMax) {
-            //~ cout << "Cut: " << iEnergy << " > " << iEMax << endl;
             iEnergyCuts++;
             return false;
         }

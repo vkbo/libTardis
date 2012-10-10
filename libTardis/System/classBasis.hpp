@@ -27,15 +27,16 @@ class Basis
     ~Basis() {};
 
     // Public Functions
-    int BuildBasis();
-    int FindSlater(tardis::Slater, int p=0, int q=0);
+    int  BuildBasis(bool bOutputConfigs=false);
+    bool LoadBasis(const char*);
+    int  FindSlater(tardis::Slater, int p=0, int q=0);
 
     // Getters, Setters and Output
     int    GetSize()        {return vBasis.size();};
     Slater GetSlater(int i) {return vBasis.at(i);};
     bool   SetCoefficients(arma::Col<double>&);
     void   Output();
-    bool   Save(const char*, int iMode = 0);
+    bool   Save(const char*, int iMode=0);
 
     // System Configuration
     bool SetQNumber(int, int);
@@ -69,6 +70,7 @@ class Basis
     // Vectors
     std::vector<tardis::Slater> vBasis;
     arma::Col<double>           mCoefficients;
+    arma::Mat<int>              mConfigMap;
     #ifdef INDEX_BASIS
         std::vector<std::vector<short> > vIndex;
     #else
@@ -76,7 +78,7 @@ class Basis
     #endif
 
     // Basis selection functions
-    bool fCheckQDot2D(const std::vector<int>&);
+    bool fCheckQDot2D(const std::vector<int>&, bool);
 };
 
 } // End namespace tardis
