@@ -50,7 +50,6 @@ class Basis
     int  iParticles;     // Number of particles
     int  iStates;        // Number of quantum states
     int  iShells;        // Number of shells
-    //~ bool b3PIndex;
     bool bEnergyCut;     // Use Energy Cut?
     bool bEnergyCutSet;  // Is Energy Cut set manually?
     int  iEnergyCuts;    // Number of energy cuts done.

@@ -85,6 +85,9 @@
 #define OUTPUTF(p) showpoint << setw((p+2)) << setprecision((p))
 #define OUTPUTN(p) noshowpoint << setw((p+2)) << setprecision((p))
 
+#define SAVE_BASIS_ASC  0
+#define SAVE_BASIS_ARMA 1
+#define SAVE_COEFF_ARMA 2
 
 /*
 **  Classes and Includes

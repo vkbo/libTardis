@@ -18,8 +18,8 @@ int main(int argc, char* argv[]) {
 
     int    iShells      = 6;
     int    iParticles   = 4;
-    int    iM           = 0;
-    int    iMs          = 0;
+    int    iM           = 2;
+    int    iMs          = 4;
     bool   bEnergyCut   = false;
 
     double dOmega       = 0.0;
@@ -83,28 +83,23 @@ int main(int argc, char* argv[]) {
     Lanczos oLanczos(oSystem);
 
     int  iReady=0;
+    int  iNodes=0;
     int  iBasisDim = oSystem->GetBasis()->GetSize();
     int  iChunks = iProc-1;
     int  iChunkSize = ceil(iBasisDim/(double)iChunks);
     int  iDone = 0;
 
-    vector<int> vJobs(iChunks+1);
+    vector<int>     vJobs(iChunks+1);
+    vector<double>  vReturn(iBasisDim);
+    vector<double>  vSend(iBasisDim);
 
     // Master Node
     if(iRank == 0)  {
 
-        MPI_Status mpiStatus;
-        Row<int>   mReady;
+        iReady = 1;
+        MPI_Reduce(&iReady, &iNodes, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
         
-        mReady.zeros(iProc);
-        mReady(0) = 1;
-
-        for(int i=1; i<iProc; i++) {
-            MPI_Recv(&iReady, 1, MPI_INT, MPI_ANY_SOURCE, 500, MPI_COMM_WORLD, &mpiStatus);
-            if(iReady == 1) mReady(i) = 1;
-        }
-
-        if(sum(mReady) == iProc) {
+        if(iNodes == iProc) {
 
             ssOut << endl;
             ssOut << iProc << " nodes are ready ..." << endl;
@@ -123,7 +118,6 @@ int main(int argc, char* argv[]) {
             Col<double>    *mLzW;
             Col<double>    *mEnergy;
             vector<double>  vLzW;
-            vector<double>  vReturn(iBasisDim);
 
             mLzV    = oLanczos.GetLanczosVectorV();
             mLzW    = oLanczos.GetLanczosVectorW();
@@ -131,21 +125,19 @@ int main(int argc, char* argv[]) {
 
             while(iDone == 0) {
                 time(&tTime);
-                cout << "Starting new iterations: " << ctime(&tTime);
+                cout << "Starting new iterations : " << ctime(&tTime);
 
                 vLzW = conv_to< vector<double> >::from(*mLzW);
                 MPI_Bcast(&vLzW[0], iBasisDim, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
                 time(&tTime);
-                cout << "Done broadcatsing      : " << ctime(&tTime);
+                cout << "Done broadcasting       : " << ctime(&tTime);
 
-                for(int i=1; i<iProc; i++) {
-                    MPI_Recv(&vReturn[0], iBasisDim, MPI_DOUBLE, MPI_ANY_SOURCE, 501, MPI_COMM_WORLD, &mpiStatus);
-                    for(int j=0; j<iBasisDim; j++) mLzV->at(j) += vReturn[j];
-                }
+                MPI_Reduce(&vSend[0], &vReturn[0], iBasisDim, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
+                for(int j=0; j<iBasisDim; j++) mLzV->at(j) += vReturn[j];
                 
                 time(&tTime);
-                cout << "Done receiving         : " << ctime(&tTime) << endl;
+                cout << "Done receiving          : " << ctime(&tTime) << endl;
 
                 iDone = oLanczos.RunMaster();
                 MPI_Bcast(&iDone, 1, MPI_INT, 0, MPI_COMM_WORLD);
@@ -168,30 +160,32 @@ int main(int argc, char* argv[]) {
             ssOut << endl;
             oSystem->GetLog()->Output(&ssOut);
 
+            MPI_Finalize();
+            return 0;
+
         }
 
     // Slave Nodes
     } else {
         
         iReady = 1;
-        MPI_Send(&iReady, 1, MPI_INT, 0, 500, MPI_COMM_WORLD);
+        MPI_Reduce(&iReady, &iNodes, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 
         MPI_Bcast(&vJobs[0], iChunks+1, MPI_INT, 0, MPI_COMM_WORLD);
 
         Col<double>    mLzW;
         vector<double> vLzW(iBasisDim);
         vector<double> vLzV(iBasisDim);
-        vector<double> vReturn(iBasisDim);
 
         while(iDone == 0) {
             MPI_Bcast(&vLzW[0], iBasisDim, MPI_DOUBLE, 0, MPI_COMM_WORLD);
             mLzW = conv_to< colvec >::from(vLzW);
-            oLanczos.RunSlave(mLzW, vReturn, vJobs[iRank-1], vJobs[iRank]);
+            oLanczos.RunSlave(mLzW, vSend, vJobs[iRank-1], vJobs[iRank]);
             if(iRank == 1) {
                 time(&tTime);
-                cout << "Done calculating       : " << ctime(&tTime);
+                cout << "Done calculating        : " << ctime(&tTime);
             }
-            MPI_Send(&vReturn[0], iBasisDim, MPI_DOUBLE, 0, 501, MPI_COMM_WORLD);
+            MPI_Reduce(&vSend[0], &vReturn[0], iBasisDim, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
             MPI_Bcast(&iDone, 1, MPI_INT, 0, MPI_COMM_WORLD);
         }
 

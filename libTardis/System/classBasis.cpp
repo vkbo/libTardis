@@ -412,7 +412,7 @@ bool Basis::SetCoefficients(Col<double> &mInput) {
 bool Basis::Save(const char *cPath, int iMode) {
 
     // Save Basis in ASCII mode with all coefficients
-    if(iMode == 0) {
+    if(iMode == SAVE_BASIS_ASC) {
 
         ofstream oOutput;
         oOutput.open(cPath);
@@ -444,7 +444,7 @@ bool Basis::Save(const char *cPath, int iMode) {
     }
 
     // Save Basis as binary files for later reloading
-    if(iMode == 1) {
+    if(iMode == SAVE_BASIS_ARMA) {
 
         int      iP;
         Mat<int> mBasis;
@@ -460,6 +460,11 @@ bool Basis::Save(const char *cPath, int iMode) {
             }
         }
         mBasis.save(cPath);
+    }
+
+    // Save Coefficients as binary files for later reloading
+    if(iMode == SAVE_COEFF_ARMA) {
+        mCoefficients.save(cPath);
     }
 
     return true;
