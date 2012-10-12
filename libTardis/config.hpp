@@ -11,7 +11,7 @@
 #define LANCZOS_DIVERGE  2.0    // How much divergence to allow if LANCZOS_STRICT is set
 
 // Size of Slater Determinant
-#define SLATER_WORD 64
+#define SLATER_WORD 256
 
 // Enable Progress Output
 #define PROGRESS

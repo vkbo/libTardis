@@ -152,6 +152,7 @@ int main(int argc, char* argv[]) {
             ssOut << *mEnergy << endl;
             ssOut << endl;
             oSystem->GetLog()->Output(&ssOut);
+            oSystem->GetBasis()->Save("Coeff.arma", SAVE_COEFF_ARMA);
 
         } else {
 
