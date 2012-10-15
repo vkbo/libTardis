@@ -10,7 +10,6 @@ using namespace std;
 using namespace tardis;
 using namespace arma;
 
-int main(int argc, char* argv[]) {
 
     //
     // Job Configurastion
@@ -109,19 +108,43 @@ int main(int argc, char* argv[]) {
             if(vJobs[iChunks] > iBasisDim) vJobs[iChunks] = iBasisDim;
             MPI_Bcast(&vJobs[0], iChunks+1, MPI_INT, 0, MPI_COMM_WORLD);
 
-            oLanczos.RunInit();
-            ssOut << "Master node initiated ..." << endl;
-            ssOut << endl;
-            oSystem->GetLog()->Output(&ssOut);
-            
             Col<double>    *mLzV;
             Col<double>    *mLzW;
+            Row<double>    *mLzA;
+            Row<double>    *mLzB;
+            Row<double>    *mLzC;
+            Row<double>    *mLzE;
             Col<double>    *mEnergy;
+            Col<int>        mItt;
             vector<double>  vLzW;
 
             mLzV    = oLanczos.GetLanczosVectorV();
             mLzW    = oLanczos.GetLanczosVectorW();
+            mLzA    = oLanczos.GetLanczosVectorA();
+            mLzB    = oLanczos.GetLanczosVectorB();
+            mLzC    = oLanczos.GetLanczosVectorC();
+            mLzE    = oLanczos.GetLanczosVectorE();
             mEnergy = oLanczos.GetEnergies();
+            
+            
+            mItt.quiet_load("LanczosItt.arma");
+            cout << mItt << endl;
+            if(mItt.n_rows == 0) {
+                oLanczos.RunInit();
+                ssOut << "Master node initiated ..." << endl;
+                ssOut << endl;
+                oSystem->GetLog()->Output(&ssOut);
+                mItt.zeros(1);
+            } else {
+                mLzV->quiet_load("LanczosV.arma");
+                mLzW->quiet_load("LanczosW.arma");
+                mLzA->quiet_load("LanczosA.arma");
+                mLzB->quiet_load("LanczosB.arma");
+                mLzC->quiet_load("LanczosC.arma");
+                mLzE->quiet_load("LanczosE.arma");
+                oLanczos.SetLanczosItt(mItt(0));
+            }
+            
 
             while(iDone == 0) {
                 time(&tTime);
@@ -131,7 +154,7 @@ int main(int argc, char* argv[]) {
                 MPI_Bcast(&vLzW[0], iBasisDim, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
                 time(&tTime);
-                cout << "Done broadcasting       : " << ctime(&tTime);
+                cout << "Done broadcatsing       : " << ctime(&tTime);
 
                 MPI_Reduce(&vSend[0], &vReturn[0], iBasisDim, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
                 for(int j=0; j<iBasisDim; j++) mLzV->at(j) += vReturn[j];
@@ -140,6 +163,17 @@ int main(int argc, char* argv[]) {
                 cout << "Done receiving          : " << ctime(&tTime) << endl;
 
                 iDone = oLanczos.RunMaster();
+
+                mLzV->save("LanczosV.arma");
+                mLzW->save("LanczosW.arma");
+                mLzA->save("LanczosA.arma");
+                mLzB->save("LanczosB.arma");
+                mLzC->save("LanczosC.arma");
+                mLzE->save("LanczosE.arma");
+
+                mItt(0) = oLanczos.GetLanczosItt();
+                mItt.save("LanczosItt.arma",arma_ascii);
+
                 MPI_Bcast(&iDone, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
                 cout << endl;
@@ -152,7 +186,6 @@ int main(int argc, char* argv[]) {
             ssOut << *mEnergy << endl;
             ssOut << endl;
             oSystem->GetLog()->Output(&ssOut);
-            oSystem->GetBasis()->Save("Coeff.arma", SAVE_COEFF_ARMA);
 
         } else {
 

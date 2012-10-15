@@ -40,9 +40,10 @@ class Lanczos
 
     arma::Col<double> *GetLanczosVectorV() {return &mLzV;};
     arma::Col<double> *GetLanczosVectorW() {return &mLzW;};
-    arma::Col<double> *GetLanczosVectorA() {return &mLzA;};
-    arma::Col<double> *GetLanczosVectorB() {return &mLzB;};
-    arma::Col<double> *GetLanczosVectorC() {return &mLzC;};
+    arma::Row<double> *GetLanczosVectorA() {return &mLzA;};
+    arma::Row<double> *GetLanczosVectorB() {return &mLzB;};
+    arma::Row<double> *GetLanczosVectorC() {return &mLzC;};
+    arma::Row<double> *GetLanczosVectorE() {return &mLzE;};
     arma::Col<double> *GetEnergies()       {return &mEnergy;};
 
 
