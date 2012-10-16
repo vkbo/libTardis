@@ -10,6 +10,7 @@ using namespace std;
 using namespace tardis;
 using namespace arma;
 
+int main(int argc, char* argv[]) {
 
     //
     // Job Configurastion
@@ -84,11 +85,12 @@ using namespace arma;
     int  iReady=0;
     int  iNodes=0;
     int  iBasisDim = oSystem->GetBasis()->GetSize();
-    int  iChunks = iProc-1;
-    int  iChunkSize = ceil(iBasisDim/(double)iChunks);
+    //~ int  iChunks = iProc-1;
+    //~ int  iChunkSize = ceil(iBasisDim/(double)iChunks);
+    double dChunkSize = iBasisDim/(double)iProc;
     int  iDone = 0;
 
-    vector<int>     vJobs(iChunks+1);
+    vector<int>     vJobs(iProc+1);
     vector<double>  vReturn(iBasisDim);
     vector<double>  vSend(iBasisDim);
 
@@ -104,9 +106,14 @@ using namespace arma;
             ssOut << iProc << " nodes are ready ..." << endl;
             oSystem->GetLog()->Output(&ssOut);
 
-            for(int i=0; i<=iChunks; i++) vJobs[i] = iChunkSize*i;
-            if(vJobs[iChunks] > iBasisDim) vJobs[iChunks] = iBasisDim;
-            MPI_Bcast(&vJobs[0], iChunks+1, MPI_INT, 0, MPI_COMM_WORLD);
+            for(int i=0; i<=iProc; i++) vJobs[i] = ceil(dChunkSize*i);
+            if(vJobs[iProc] > iBasisDim) vJobs[iProc] = iBasisDim;
+            MPI_Bcast(&vJobs[0], iProc+1, MPI_INT, 0, MPI_COMM_WORLD);
+            for(int i=0; i<=iProc-1; i++) {
+                ssOut << "Node " << i << " running interval " << vJobs[i] << " - " << vJobs[i+1] << endl;
+            }
+            ssOut << endl;
+            oSystem->GetLog()->Output(&ssOut);
 
             Col<double>    *mLzV;
             Col<double>    *mLzW;
@@ -125,13 +132,11 @@ using namespace arma;
             mLzC    = oLanczos.GetLanczosVectorC();
             mLzE    = oLanczos.GetLanczosVectorE();
             mEnergy = oLanczos.GetEnergies();
-            
-            
+
             mItt.quiet_load("LanczosItt.arma");
-            cout << mItt << endl;
             if(mItt.n_rows == 0) {
                 oLanczos.RunInit();
-                ssOut << "Master node initiated ..." << endl;
+                ssOut << "Master node initialised ..." << endl;
                 ssOut << endl;
                 oSystem->GetLog()->Output(&ssOut);
                 mItt.zeros(1);
@@ -144,7 +149,6 @@ using namespace arma;
                 mLzE->quiet_load("LanczosE.arma");
                 oLanczos.SetLanczosItt(mItt(0));
             }
-            
 
             while(iDone == 0) {
                 time(&tTime);
@@ -155,6 +159,11 @@ using namespace arma;
 
                 time(&tTime);
                 cout << "Done broadcatsing       : " << ctime(&tTime);
+
+                oLanczos.RunSlave(*mLzW, vSend, vJobs[iRank], vJobs[iRank+1]);
+
+                time(&tTime);
+                cout << "Done calculating        : " << ctime(&tTime);
 
                 MPI_Reduce(&vSend[0], &vReturn[0], iBasisDim, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
                 for(int j=0; j<iBasisDim; j++) mLzV->at(j) += vReturn[j];
@@ -205,7 +214,7 @@ using namespace arma;
         iReady = 1;
         MPI_Reduce(&iReady, &iNodes, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 
-        MPI_Bcast(&vJobs[0], iChunks+1, MPI_INT, 0, MPI_COMM_WORLD);
+        MPI_Bcast(&vJobs[0], iProc+1, MPI_INT, 0, MPI_COMM_WORLD);
 
         Col<double>    mLzW;
         vector<double> vLzW(iBasisDim);
@@ -214,11 +223,7 @@ using namespace arma;
         while(iDone == 0) {
             MPI_Bcast(&vLzW[0], iBasisDim, MPI_DOUBLE, 0, MPI_COMM_WORLD);
             mLzW = conv_to< colvec >::from(vLzW);
-            oLanczos.RunSlave(mLzW, vSend, vJobs[iRank-1], vJobs[iRank]);
-            if(iRank == 1) {
-                time(&tTime);
-                cout << "Done calculating        : " << ctime(&tTime);
-            }
+            oLanczos.RunSlave(mLzW, vSend, vJobs[iRank], vJobs[iRank+1]);
             MPI_Reduce(&vSend[0], &vReturn[0], iBasisDim, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
             MPI_Bcast(&iDone, 1, MPI_INT, 0, MPI_COMM_WORLD);
         }
