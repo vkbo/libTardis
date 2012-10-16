@@ -1,9 +1,9 @@
-//# Nodes : 2
+//# Nodes : 4
 
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
-#include "libTardis/libTardis.hpp"
+#include "../libTardis/libTardis.hpp"
 #include "mpi.h"
 
 using namespace std;
