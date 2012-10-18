@@ -156,7 +156,7 @@ int main(int argc, char* argv[]) {
                 MPI_Bcast(&vLzW[0], iBasisDim, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
                 time(&tTime);
-                cout << "Done broadcatsing       : " << ctime(&tTime);
+                cout << "Done broadcasting       : " << ctime(&tTime);
 
                 oLanczos.RunSlave(*mLzW, vSend, vJobs[iRank], vJobs[iRank+1]);
 
@@ -179,7 +179,7 @@ int main(int argc, char* argv[]) {
                 mLzE->save("LanczosE.arma");
 
                 mItt(0) = oLanczos.GetLanczosItt();
-                mItt.save("LanczosItt.arma",arma_ascii);
+                mItt.save("LanczosItt.arma");
 
                 MPI_Bcast(&iDone, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
@@ -193,6 +193,7 @@ int main(int argc, char* argv[]) {
             ssOut << *mEnergy << endl;
             ssOut << endl;
             oSystem->GetLog()->Output(&ssOut);
+            oSystem->GetBasis()->Save("Coeff.arma", SAVE_COEFF_ARMA);
 
         } else {
 
