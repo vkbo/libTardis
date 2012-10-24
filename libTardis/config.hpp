@@ -10,9 +10,6 @@
 #define LANCZOS_STRICT   false  // If true, will break the Lanczos if convergence increase
 #define LANCZOS_DIVERGE  2.0    // How much divergence to allow if LANCZOS_STRICT is set
 
-// Size of Slater Determinant
-#define SLATER_WORD 128
-
 // Enable Progress Output
 #define PROGRESS
 //~ #define MINIMAL

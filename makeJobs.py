@@ -10,10 +10,10 @@
 
 from   incFunctions import *
 
-aShells    = [4]
-aParticles = [11,13]
-aM         = [2]
-aMs        = [1]
+aShells    = [2,3,4,5,6,7,8,9,10]
+aParticles = [2]
+aM         = [0]
+aMs        = [0]
 aOmega     = [0.1]
 aLambda    = [0.0]
 aEnergyCut = [False]

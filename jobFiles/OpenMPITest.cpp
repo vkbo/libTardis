@@ -117,6 +117,7 @@ int main(int argc, char* argv[]) {
             Row<double>    *mLzE;
             Col<double>    *mEnergy;
             Col<int>        mLzI;
+            Col<int>        mLzN;
             vector<double>  vLzW;
             vector<int>     vPrev(iProc);
 
@@ -145,7 +146,13 @@ int main(int argc, char* argv[]) {
                 mLzB->quiet_load("LanczosB.arma");
                 mLzC->quiet_load("LanczosC.arma");
                 mLzE->quiet_load("LanczosE.arma");
+
+                mLzN.quiet_load("LanczosN.arma");
                 oLanczos.SetLanczosIt(mLzI(0));
+                
+                if(mLzN.n_elem == iProc+1) {
+                    vChunk = conv_to< vector<int> >::from(mLzN);
+                }
             }
 
             while(iDone == 0) {
@@ -209,6 +216,9 @@ int main(int argc, char* argv[]) {
                 mLzI(0) = oLanczos.GetLanczosIt();
                 mLzI.save("LanczosI.arma");
 
+                mLzN = conv_to< Col<int> >::from(vChunk);
+                mLzN.save("LanczosN.arma");
+
                 MPI_Bcast(&iDone, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
                 cout << endl;
@@ -248,7 +258,7 @@ int main(int argc, char* argv[]) {
         while(iDone == 0) {
             MPI_Bcast(&vChunk[0], iProc+1, MPI_INT, 0, MPI_COMM_WORLD);
             MPI_Bcast(&vLzW[0], iBasisDim, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-            mLzW = conv_to< colvec >::from(vLzW);
+            mLzW = conv_to< Col<double> >::from(vLzW);
             dTStart = MPI_Wtime();
             oLanczos.RunSlave(mLzW, vSend, vChunk[iRank], vChunk[iRank+1]);
             dTStop  = MPI_Wtime()-dTStart;

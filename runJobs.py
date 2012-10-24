@@ -99,9 +99,10 @@ for sFile in aJobs:
     aOptions = fReadJobFile("jobQueue/"+sFile)
     fEcho("",sOutFile)
 
-    #~ file = open("libTardis/logfile.hpp", 'w')
-    #~ file.write("#define LOGFILE "+chr(34)+sOutFile+chr(34)+"\n")
-    #~ file.close()
+    iSlater = fGetOption("Slater", aOptions, "64")
+    oFile = open("libTardis/slaterword.hpp", 'w')
+    oFile.write("#define SLATER_WORD "+iSlater+"\n")
+    oFile.close()
 
 
     # Compiler

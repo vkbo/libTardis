@@ -8,7 +8,6 @@
 
 #define CLASS_LANCZOS_HPP
 #include "../libTardis.hpp"
-#include "../System/classSystem.hpp"
 #include <iostream>
 #include <fstream>
 

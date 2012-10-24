@@ -27,7 +27,7 @@
 #include <armadillo>
 
 #include "config.hpp"
-
+#include "slaterword.hpp"
 
 /*
 **  System Variables

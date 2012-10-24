@@ -7,6 +7,7 @@
 ##
 
 import os
+from math import ceil
 
 #
 #  Function for reading job files
@@ -83,6 +84,7 @@ def fEcho(sOutput, sFile):
 
 def fJobFile(iShells, iParticles, iM, iMs, dOmega, dLambda, bEnergyCut, bEffective, iMethod):
     sOutput  = "//# Threads : 1\n"
+    sOutput += "//# Slater : "+str(int((1+ceil(iShells*(iShells+1)/64))*64))+"\n"
     sOutput += "\n"
     sOutput += "#include <cstdlib>\n"
     sOutput += "#include <iostream>\n"
