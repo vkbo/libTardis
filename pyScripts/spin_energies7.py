@@ -24,145 +24,145 @@ aDSpin7 = zeros(28,float)
 
 # Omega = 0.01 Values
 
-aASpin1[0]  = 0
-aASpin3[0]  = 0
-aASpin5[0]  = 0
-aASpin7[0]  = 0
+aASpin1[0]  = 0.9775619864
+aASpin3[0]  = 0.9775600449
+aASpin5[0]  = 0.9775598385
+aASpin7[0]  = 0.9775586582
 
-aASpin1[1]  = 0
-aASpin3[1]  = 0
-aASpin5[1]  = 0
-aASpin7[1]  = 0
+aASpin1[1]  = 0.9785480233
+aASpin3[1]  = 0.9785624696
+aASpin5[1]  = 0.9785420035
+aASpin7[1]  = 0.9937886455
 
-aASpin1[2]  = 0
-aASpin3[2]  = 0
-aASpin5[2]  = 0
-aASpin7[2]  = 0
+aASpin1[2]  = 0.9784954077
+aASpin3[2]  = 0.9784926278
+aASpin5[2]  = 0.9784933454
+aASpin7[2]  = 0.9902286946
 
-aASpin1[3]  = 0
-aASpin3[3]  = 0
-aASpin5[3]  = 0
-aASpin7[3]  = 0
+aASpin1[3]  = 0.9798078708
+aASpin3[3]  = 0.980650058
+aASpin5[3]  = 0.9806677804
+aASpin7[3]  = 0.988968315
 
-aASpin1[4]  = 0
-aASpin3[4]  = 0
-aASpin5[4]  = 0
-aASpin7[4]  = 0
+aASpin1[4]  = 0.9800575616
+aASpin3[4]  = 0.981394487
+aASpin5[4]  = 0.9813965928
+aASpin7[4]  = 0.9950269077
 
-aASpin1[5]  = 0
-aASpin3[5]  = 0
-aASpin5[5]  = 0
-aASpin7[5]  = 0
+aASpin1[5]  = 0.9820116737
+aASpin3[5]  = 0.9818749282
+aASpin5[5]  = 0.9850305137
+aASpin7[5]  = 1.00035392
 
-aASpin1[6]  = 0
-aASpin3[6]  = 0
-aASpin5[6]  = 0
-aASpin7[6]  = 0
+aASpin1[6]  = 0.9828236418
+aASpin3[6]  = 0.9829248569
+aASpin5[6]  = 0.9859161448
+aASpin7[6]  = 0.9932939241
 
-aASpin1[7]  = 0
-aASpin3[7]  = 0
-aASpin5[7]  = 0
-aASpin7[7]  = 0
+aASpin1[7]  = 0.9848987301
+aASpin3[7]  = 0.9862953944
+aASpin5[7]  = 0.990121561
+aASpin7[7]  = 0.9901194526
 
-aASpin1[8]  = 0
-aASpin3[8]  = 0
-aASpin5[8]  = 0
-aASpin7[8]  = 0
+aASpin1[8]  = 0.9866275056
+aASpin3[8]  = 0.9868489436
+aASpin5[8]  = 0.9904073475
+aASpin7[8]  = 0.9931840239
 
-aASpin1[9]  = 0
-aASpin3[9]  = 0
-aASpin5[9]  = 0
-aASpin7[9]  = 0
+aASpin1[9]  = 0.9892337952
+aASpin3[9]  = 0.9892331648
+aASpin5[9]  = 0.9923234102
+aASpin7[9]  = 1.003307461
 
-aASpin1[10] = 0
-aASpin3[10] = 0
-aASpin5[10] = 0
-aASpin7[10] = 0
+aASpin1[10] = 0.9914281288
+aASpin3[10] = 0.9914258451
+aASpin5[10] = 0.99295587
+aASpin7[10] = 1.005949661
 
-aASpin1[11] = 0
-aASpin3[11] = 0
-aASpin5[11] = 0
-aASpin7[11] = 0
+aASpin1[11] = 0.9950694877
+aASpin3[11] = 0.995381215
+aASpin5[11] = 0.9954672428
+aASpin7[11] = 1.011814121
 
-aASpin1[12] = 0
-aASpin3[12] = 0
-aASpin5[12] = 0
-aASpin7[12] = 0
+aASpin1[12] = 0.9971870853
+aASpin3[12] = 0.9971856547
+aASpin5[12] = 0.9971807681
+aASpin7[12] = 1.012715216
 
-aASpin1[13] = 0
-aASpin3[13] = 0
-aASpin5[13] = 0
-aASpin7[13] = 0
+aASpin1[13] = 1.000661634
+aASpin3[13] = 1.00066075
+aASpin5[13] = 1.000659341
+aASpin7[13] = 1.018116458
 
-aASpin1[14] = 0
-aASpin3[14] = 0
-aASpin5[14] = 0
-aASpin7[14] = 0
+aASpin1[14] = 1.00336714
+aASpin3[14] = 1.003366628
+aASpin5[14] = 1.003362956
+aASpin7[14] = 1.00336232
 
-aASpin1[15] = 0
-aASpin3[15] = 0
-aASpin5[15] = 0
-aASpin7[15] = 0
+aASpin1[15] = 1.007852175
+aASpin3[15] = 1.007996615
+aASpin5[15] = 1.008049636
+aASpin7[15] = 1.028738538
 
-aASpin1[16] = 0
-aASpin3[16] = 0
-aASpin5[16] = 0
-aASpin7[16] = 0
+aASpin1[16] = 1.011254005
+aASpin3[16] = 1.01125335
+aASpin5[16] = 1.011252013
+aASpin7[16] = 1.031504921
 
-aASpin1[17] = 0
-aASpin3[17] = 0
-aASpin5[17] = 0
-aASpin7[17] = 0
+aASpin1[17] = 1.015451491
+aASpin3[17] = 1.016412578
+aASpin5[17] = 1.017331589
+aASpin7[17] = 1.040483945
 
-aASpin1[18] = 0
-aASpin3[18] = 0
-aASpin5[18] = 0
-aASpin7[18] = 0
+aASpin1[18] = 1.019915362
+aASpin3[18] = 1.019914645
+aASpin5[18] = 1.020357244
+aASpin7[18] = 1.042437603
 
-aASpin1[19] = 0
-aASpin3[19] = 0
-aASpin5[19] = 0
-aASpin7[19] = 0
+aASpin1[19] = 1.024369022
+aASpin3[19] = 1.024366584
+aASpin5[19] = 1.029040006
+aASpin7[19] = 1.071969874
 
-aASpin1[20] = 0
-aASpin3[20] = 0
-aASpin5[20] = 0
-aASpin7[20] = 0
+aASpin1[20] = 1.028851288
+aASpin3[20] = 1.029777241
+aASpin5[20] = 1.030724299
+aASpin7[20] = 1.082072083
 
-aASpin1[21] = 0
-aASpin3[21] = 0
-aASpin5[21] = 0
-aASpin7[21] = 0
+aASpin1[21] = 1.033642352
+aASpin3[21] = 1.0347789
+aASpin5[21] = 1.054551879
+aASpin7[21] = -1
 
-aASpin1[22] = 0
-aASpin3[22] = 0
-aASpin5[22] = 0
-aASpin7[22] = 0
+aASpin1[22] = 1.039395558
+aASpin3[22] = 1.040419152
+aASpin5[22] = 1.065686616
+aASpin7[22] = -1
 
-aASpin1[23] = 0
-aASpin3[23] = 0
-aASpin5[23] = 0
-aASpin7[23] = 0
+aASpin1[23] = 1.043195847
+aASpin3[23] = 1.043194161
+aASpin5[23] = 1.067538506
+aASpin7[23] = -1
 
-aASpin1[24] = 0
-aASpin3[24] = 0
-aASpin5[24] = 0
-aASpin7[24] = 0
+aASpin1[24] = 1.051209862
+aASpin3[24] = 1.053312472
+aASpin5[24] = 1.112898474
+aASpin7[24] = -1
 
-aASpin1[25] = 0
-aASpin3[25] = 0
-aASpin5[25] = 0
-aASpin7[25] = 0
+aASpin1[25] = 1.057429953
+aASpin3[25] = 1.08019931
+aASpin5[25] = -1
+aASpin7[25] = -1
 
-aASpin1[26] = 0
-aASpin3[26] = 0
-aASpin5[26] = 0
-aASpin7[26] = 0
+aASpin1[26] = 1.063469032
+aASpin3[26] = 1.094722572
+aASpin5[26] = -1
+aASpin7[26] = -1
 
-aASpin1[27] = 0
-aASpin3[27] = 0
-aASpin5[27] = 0
-aASpin7[27] = 0
+aASpin1[27] = 1.09599983
+aASpin3[27] = -1
+aASpin5[27] = -1
+aASpin7[27] = -1
 
 # Omega = 0.1 Values
 
@@ -605,11 +605,11 @@ plot0.plot(aASpin5, ' ', marker='+', markersize=8, mfc='white', mec='black', lab
 plot0.plot(aASpin7, ' ', marker='o', markersize=8, mfc='white', mec='black', label='Total Spin 7/2')
 plot0.legend(bbox_to_anchor=(0.05, 0.95), loc=2, ncol=1, borderaxespad=0.)
 plot0.set_xlim((-1, 28))
-plot0.set_ylim((4.7, 6.4))
+plot0.set_ylim((0.975, 1.1))
 xax = plot0.xaxis
 yax = plot0.yaxis
 xax.set_ticks(linspace(0, 26, 14))
-yax.set_ticks(linspace(4.7, 6.3, 9))
+yax.set_ticks(linspace(0.98, 1.1, 13))
 
 plot1 = fig0.add_subplot(122)
 plot1.set_title("7 electrons, $\omega = 0.1$")

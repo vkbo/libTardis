@@ -1,4 +1,4 @@
-//# Nodes : 4
+//# Nodes : 8
 
 #include <cstdlib>
 #include <iostream>
@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
     // Job Configurastion
     //
 
-    int    iShells      = 6;
+    int    iShells      = 8;
     int    iParticles   = 4;
     int    iM           = 0;
     int    iMs          = 0;
@@ -85,12 +85,15 @@ int main(int argc, char* argv[]) {
     int    iReady=0;
     int    iNodes=0;
     int    iBasisDim = oSystem->GetBasis()->GetSize();
-    double dChunkSize = iBasisDim/(double)iProc;
     int    iDone = 0;
+    double dTStart, dTStop;
 
-    vector<int>     vJobs(iProc+1);
+    vector<int>     vChunk(iProc+1);
+    vector<double>  vTime(iProc);
     vector<double>  vReturn(iBasisDim);
     vector<double>  vSend(iBasisDim);
+
+    for(int i=0; i<iProc; i++)  vTime[i]  = 1;
 
     // Master Node
     if(iRank == 0)  {
@@ -104,15 +107,8 @@ int main(int argc, char* argv[]) {
             ssOut << iProc << " nodes are ready ..." << endl;
             oSystem->GetLog()->Output(&ssOut);
 
-            for(int i=0; i<=iProc; i++) vJobs[i] = ceil(dChunkSize*i);
-            if(vJobs[iProc] > iBasisDim) vJobs[iProc] = iBasisDim;
-            MPI_Bcast(&vJobs[0], iProc+1, MPI_INT, 0, MPI_COMM_WORLD);
-            for(int i=0; i<=iProc-1; i++) {
-                ssOut << "Node " << i << " running interval " << vJobs[i] << " - " << vJobs[i+1] << endl;
-            }
-            ssOut << endl;
-            oSystem->GetLog()->Output(&ssOut);
-
+            double dTAvg;
+            
             Col<double>    *mLzV;
             Col<double>    *mLzW;
             Row<double>    *mLzA;
@@ -120,8 +116,12 @@ int main(int argc, char* argv[]) {
             Row<double>    *mLzC;
             Row<double>    *mLzE;
             Col<double>    *mEnergy;
-            Col<int>        mItt;
+            Col<int>        mLzI;
             vector<double>  vLzW;
+            vector<int>     vPrev(iProc);
+
+            for(int i=0; i<=iProc; i++) vChunk[i] = ceil(i*iBasisDim/(double)iProc);
+            if(vChunk[iProc] > iBasisDim) vChunk[iProc] = iBasisDim;
 
             mLzV    = oLanczos.GetLanczosVectorV();
             mLzW    = oLanczos.GetLanczosVectorW();
@@ -131,13 +131,13 @@ int main(int argc, char* argv[]) {
             mLzE    = oLanczos.GetLanczosVectorE();
             mEnergy = oLanczos.GetEnergies();
 
-            mItt.quiet_load("LanczosItt.arma");
-            if(mItt.n_rows == 0) {
+            mLzI.quiet_load("LanczosI.arma");
+            if(mLzI.n_rows == 0) {
                 oLanczos.RunInit();
                 ssOut << "Master node initialised ..." << endl;
                 ssOut << endl;
                 oSystem->GetLog()->Output(&ssOut);
-                mItt.zeros(1);
+                mLzI.zeros(1);
             } else {
                 mLzV->quiet_load("LanczosV.arma");
                 mLzW->quiet_load("LanczosW.arma");
@@ -145,10 +145,31 @@ int main(int argc, char* argv[]) {
                 mLzB->quiet_load("LanczosB.arma");
                 mLzC->quiet_load("LanczosC.arma");
                 mLzE->quiet_load("LanczosE.arma");
-                oLanczos.SetLanczosItt(mItt(0));
+                oLanczos.SetLanczosIt(mLzI(0));
             }
 
             while(iDone == 0) {
+                
+                dTAvg = 0.0;
+                for(int i=0; i<iProc; i++) {
+                    dTAvg += vTime[i];
+                    vPrev[i] = vChunk[i+1]-vChunk[i];
+                }
+                dTAvg /= iProc;
+                vChunk[0] = 0;
+                for(int i=0; i<iProc; i++) {
+                    vChunk[i+1] = vChunk[i] + ceil(vPrev[i]*dTAvg/vTime[i]);
+                    if(vChunk[i+1] > iBasisDim) vChunk[i+1] = iBasisDim;
+                }
+
+                ssOut << "Loads: 0:" << vChunk[1]-vChunk[0];
+                for(int i=1; i<iProc; i++) ssOut << ", " << i << ":" << vChunk[i+1]-vChunk[i];
+                ssOut << endl;
+
+                oSystem->GetLog()->Output(&ssOut);
+
+                MPI_Bcast(&vChunk[0], iProc+1, MPI_INT, 0, MPI_COMM_WORLD);
+
                 time(&tTime);
                 cout << "Starting new iterations : " << ctime(&tTime);
 
@@ -157,8 +178,15 @@ int main(int argc, char* argv[]) {
 
                 time(&tTime);
                 cout << "Done broadcasting       : " << ctime(&tTime);
+                
+                dTStart = MPI_Wtime();
+                oLanczos.RunSlave(*mLzW, vSend, vChunk[iRank], vChunk[iRank+1]);
+                dTStop  = MPI_Wtime()-dTStart;
+                MPI_Gather(&dTStop, 1, MPI_DOUBLE, &vTime[0], 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
-                oLanczos.RunSlave(*mLzW, vSend, vJobs[iRank], vJobs[iRank+1]);
+                ssOut << "Times: 0:" << ceil(vTime[0]);
+                for(int i=1; i<iProc; i++) ssOut << ", " << i << ":" << ceil(vTime[i]);
+                ssOut << endl;
 
                 time(&tTime);
                 cout << "Done calculating        : " << ctime(&tTime);
@@ -178,8 +206,8 @@ int main(int argc, char* argv[]) {
                 mLzC->save("LanczosC.arma");
                 mLzE->save("LanczosE.arma");
 
-                mItt(0) = oLanczos.GetLanczosItt();
-                mItt.save("LanczosItt.arma");
+                mLzI(0) = oLanczos.GetLanczosIt();
+                mLzI.save("LanczosI.arma");
 
                 MPI_Bcast(&iDone, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
@@ -213,16 +241,18 @@ int main(int argc, char* argv[]) {
         iReady = 1;
         MPI_Reduce(&iReady, &iNodes, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
 
-        MPI_Bcast(&vJobs[0], iProc+1, MPI_INT, 0, MPI_COMM_WORLD);
-
         Col<double>    mLzW;
         vector<double> vLzW(iBasisDim);
         vector<double> vLzV(iBasisDim);
 
         while(iDone == 0) {
+            MPI_Bcast(&vChunk[0], iProc+1, MPI_INT, 0, MPI_COMM_WORLD);
             MPI_Bcast(&vLzW[0], iBasisDim, MPI_DOUBLE, 0, MPI_COMM_WORLD);
             mLzW = conv_to< colvec >::from(vLzW);
-            oLanczos.RunSlave(mLzW, vSend, vJobs[iRank], vJobs[iRank+1]);
+            dTStart = MPI_Wtime();
+            oLanczos.RunSlave(mLzW, vSend, vChunk[iRank], vChunk[iRank+1]);
+            dTStop  = MPI_Wtime()-dTStart;
+            MPI_Gather(&dTStop, 1, MPI_DOUBLE, &vTime[0], 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
             MPI_Reduce(&vSend[0], &vReturn[0], iBasisDim, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
             MPI_Bcast(&iDone, 1, MPI_INT, 0, MPI_COMM_WORLD);
         }

@@ -57,6 +57,9 @@ double Lanczos::Run() {
 
     #ifdef OPENMP
         int iMaxThreads = omp_get_max_threads();
+        #ifdef OPENMPLOWMEM
+            iMaxThreads = ceil(iMaxThreads/2.0);
+        #endif
     #else
         int iMaxThreads = 1;
     #endif
@@ -193,6 +196,9 @@ int Lanczos::RunSlave(Col<double> &mInput, vector<double> &vReturn, int iLStart,
 
     #ifdef OPENMP
         int iMaxThreads = omp_get_max_threads();
+        #ifdef OPENMPLOWMEM
+            iMaxThreads = ceil(iMaxThreads/2.0);
+        #endif
     #else
         int iMaxThreads = 1;
     #endif
@@ -391,7 +397,12 @@ void Lanczos::fMatrixVector(Col<double> &mInput, vector<vector<double> > &vRetur
                             if(p == r && q == s) dV += oPot->Get1PElement(p,s)*d1PFac; // 1-particle interaction
                             dV += oPot->Get2PElement(p,q,r,s)*d2PFac;                  // 2-particle interaction
                             #ifdef OPENMP
-                                vReturn[omp_get_thread_num()][iL] += iS1*iS2*iS3*iS4*dV*mInput(i);
+                                #ifdef OPENMPLOWMEM
+                                    #pragma omp critical
+                                    vReturn[floor(omp_get_thread_num()/2.0)][iL] += iS1*iS2*iS3*iS4*dV*mInput(i);
+                                #else
+                                    vReturn[omp_get_thread_num()][iL] += iS1*iS2*iS3*iS4*dV*mInput(i);
+                                #endif
                             #else
                                 vReturn[0][iL] += iS1*iS2*iS3*iS4*dV*mInput(i);
                             #endif

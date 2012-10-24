@@ -11,7 +11,7 @@
 #define LANCZOS_DIVERGE  2.0    // How much divergence to allow if LANCZOS_STRICT is set
 
 // Size of Slater Determinant
-#define SLATER_WORD 64
+#define SLATER_WORD 128
 
 // Enable Progress Output
 #define PROGRESS
@@ -19,6 +19,7 @@
 
 // Enable OpenMP
 #define OPENMP
+//~ #define OPENMPLOWMEM
 
 // Use index-based basis search?
 //  - Only useful for small basises.

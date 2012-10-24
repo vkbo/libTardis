@@ -35,8 +35,8 @@ class Lanczos
     int  RunMaster();
     
     // Getters, Setters and Output
-    int  GetLanczosItt()         {return iLzIt;};
-    void SetLanczosItt(int iItt) {iLzIt = iItt;};
+    int  GetLanczosIt()        {return iLzIt;};
+    void SetLanczosIt(int iIt) {iLzIt = iIt;};
 
     arma::Col<double> *GetLanczosVectorV() {return &mLzV;};
     arma::Col<double> *GetLanczosVectorW() {return &mLzW;};

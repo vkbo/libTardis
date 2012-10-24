@@ -404,29 +404,29 @@ aBSpin8[30] = 0
 
 # Omega = 1.0 Values
 
-aCSpin0[0]  = 0
-aCSpin2[0]  = 0
-aCSpin4[0]  = 0
-aCSpin6[0]  = 0
-aCSpin8[0]  = 0
+aCSpin0[0]  = 33.33816518
+aCSpin2[0]  = 33.33815067
+aCSpin4[0]  = 34.23188617
+aCSpin6[0]  = 35.25781309
+aCSpin8[0]  = 36.07832883
 
-aCSpin0[1]  = 0
-aCSpin2[1]  = 0
-aCSpin4[1]  = 0
-aCSpin6[1]  = 0
-aCSpin8[1]  = 0
+aCSpin0[1]  = 33.77857214
+aCSpin2[1]  = 33.7785457
+aCSpin4[1]  = 33.77849001
+aCSpin6[1]  = 34.88371209
+aCSpin8[1]  = 36.95458198
 
-aCSpin0[2]  = 0
-aCSpin2[2]  = 0
-aCSpin4[2]  = 0
-aCSpin6[2]  = 0
-aCSpin8[2]  = 0
+aCSpin0[2]  = 33.40811869
+aCSpin2[2]  = 33.40811364
+aCSpin4[2]  = 34.23857969
+aCSpin6[2]  = 35.19733701
+aCSpin8[2]  = 36.19527576
 
-aCSpin0[3]  = 0
-aCSpin2[3]  = 0
-aCSpin4[3]  = 0
-aCSpin6[3]  = 0
-aCSpin8[3]  = 0
+aCSpin0[3]  = 33.87501243
+aCSpin2[3]  = 33.87504223
+aCSpin4[3]  = 34.66531926
+aCSpin6[3]  = 34.6652642
+aCSpin8[3]  = 37.00780194
 
 aCSpin0[4]  = 0
 aCSpin2[4]  = 0
@@ -787,11 +787,11 @@ plot0 = fig0.add_subplot(121)
 plot0.set_title("8 electrons, $\omega = 0.01$")
 plot0.set_xlabel("Total M")
 plot0.set_ylabel("$E_0 (\hbar\omega)$")
-plot0.plot(aASpin0, ' ', marker='s', markersize=8, mfc='white', mec='black', label='Total Spin 0')
-plot0.plot(aASpin2, ' ', marker='^', markersize=8, mfc='white', mec='black', label='Total Spin 1')
-plot0.plot(aASpin4, ' ', marker='+', markersize=8, mfc='white', mec='black', label='Total Spin 2')
-plot0.plot(aASpin6, ' ', marker='x', markersize=8, mfc='white', mec='black', label='Total Spin 3')
-plot0.plot(aASpin6, ' ', marker='o', markersize=8, mfc='white', mec='black', label='Total Spin 4')
+plot0.plot(aASpin0, ' ', marker='s', markersize=8, mfc='white', mec='black', label='Total Spin 0/2')
+plot0.plot(aASpin2, ' ', marker='^', markersize=8, mfc='white', mec='black', label='Total Spin 2/2')
+plot0.plot(aASpin4, ' ', marker='+', markersize=8, mfc='white', mec='black', label='Total Spin 4/2')
+plot0.plot(aASpin6, ' ', marker='x', markersize=8, mfc='white', mec='black', label='Total Spin 6/2')
+plot0.plot(aASpin6, ' ', marker='o', markersize=8, mfc='white', mec='black', label='Total Spin 8/2')
 plot0.legend(bbox_to_anchor=(0.05, 0.95), loc=2, ncol=1, borderaxespad=0.)
 plot0.set_xlim((-1, 31))
 plot0.set_ylim((4.7, 6.4))
@@ -804,11 +804,11 @@ plot1 = fig0.add_subplot(122)
 plot1.set_title("8 electrons, $\omega = 0.1$")
 plot1.set_xlabel("Total M")
 plot1.set_ylabel("$E_0 (\hbar\omega)$")
-plot1.plot(aBSpin0, ' ', marker='s', markersize=8, mfc='white', mec='black', label='Total Spin 0')
-plot1.plot(aBSpin2, ' ', marker='^', markersize=8, mfc='white', mec='black', label='Total Spin 1')
-plot1.plot(aBSpin4, ' ', marker='+', markersize=8, mfc='white', mec='black', label='Total Spin 2')
-plot1.plot(aBSpin6, ' ', marker='x', markersize=8, mfc='white', mec='black', label='Total Spin 3')
-plot1.plot(aBSpin6, ' ', marker='o', markersize=8, mfc='white', mec='black', label='Total Spin 4')
+plot1.plot(aBSpin0, ' ', marker='s', markersize=8, mfc='white', mec='black', label='Total Spin 0/2')
+plot1.plot(aBSpin2, ' ', marker='^', markersize=8, mfc='white', mec='black', label='Total Spin 2/2')
+plot1.plot(aBSpin4, ' ', marker='+', markersize=8, mfc='white', mec='black', label='Total Spin 4/2')
+plot1.plot(aBSpin6, ' ', marker='x', markersize=8, mfc='white', mec='black', label='Total Spin 6/2')
+plot1.plot(aBSpin6, ' ', marker='o', markersize=8, mfc='white', mec='black', label='Total Spin 8/2')
 plot1.legend(bbox_to_anchor=(0.05, 0.95), loc=2, ncol=1, borderaxespad=0.)
 plot1.set_xlim((-1, 31))
 plot1.set_ylim((4.7, 6.4))
@@ -825,28 +825,28 @@ plot2 = fig1.add_subplot(121)
 plot2.set_title("8 electrons, $\omega = 1.0$")
 plot2.set_xlabel("Total M")
 plot2.set_ylabel("$E_0 (\hbar\omega)$")
-plot2.plot(aCSpin0, ' ', marker='s', markersize=8, mfc='white', mec='black', label='Total Spin 0')
-plot2.plot(aCSpin2, ' ', marker='^', markersize=8, mfc='white', mec='black', label='Total Spin 1')
-plot2.plot(aCSpin4, ' ', marker='+', markersize=8, mfc='white', mec='black', label='Total Spin 2')
-plot2.plot(aCSpin6, ' ', marker='x', markersize=8, mfc='white', mec='black', label='Total Spin 3')
-plot2.plot(aCSpin6, ' ', marker='o', markersize=8, mfc='white', mec='black', label='Total Spin 4')
+plot2.plot(aCSpin0, ' ', marker='s', markersize=8, mfc='white', mec='black', label='Total Spin 0/2')
+plot2.plot(aCSpin2, ' ', marker='^', markersize=8, mfc='white', mec='black', label='Total Spin 2/2')
+plot2.plot(aCSpin4, ' ', marker='+', markersize=8, mfc='white', mec='black', label='Total Spin 4/2')
+plot2.plot(aCSpin6, ' ', marker='x', markersize=8, mfc='white', mec='black', label='Total Spin 6/2')
+plot2.plot(aCSpin6, ' ', marker='o', markersize=8, mfc='white', mec='black', label='Total Spin 8/2')
 plot2.legend(bbox_to_anchor=(0.05, 0.95), loc=2, ncol=1, borderaxespad=0.)
 plot2.set_xlim((-1, 31))
-plot2.set_ylim((25, 47))
+plot2.set_ylim((33, 51))
 xax = plot2.xaxis
 yax = plot2.yaxis
 xax.set_ticks(linspace(0, 30, 16))
-yax.set_ticks(linspace(25, 47, 12))
+yax.set_ticks(linspace(34, 50, 9))
 
 plot3 = fig1.add_subplot(122)
 plot3.set_title("8 electrons, $\omega = 5.0$")
 plot3.set_xlabel("Total M")
 plot3.set_ylabel("$E_0 (\hbar\omega)$")
-plot3.plot(aDSpin0, ' ', marker='s', markersize=8, mfc='white', mec='black', label='Total Spin 0')
-plot3.plot(aDSpin2, ' ', marker='^', markersize=8, mfc='white', mec='black', label='Total Spin 1')
-plot3.plot(aDSpin4, ' ', marker='+', markersize=8, mfc='white', mec='black', label='Total Spin 2')
-plot3.plot(aDSpin6, ' ', marker='x', markersize=8, mfc='white', mec='black', label='Total Spin 3')
-plot3.plot(aDSpin6, ' ', marker='o', markersize=8, mfc='white', mec='black', label='Total Spin 4')
+plot3.plot(aDSpin0, ' ', marker='s', markersize=8, mfc='white', mec='black', label='Total Spin 0/2')
+plot3.plot(aDSpin2, ' ', marker='^', markersize=8, mfc='white', mec='black', label='Total Spin 2/2')
+plot3.plot(aDSpin4, ' ', marker='+', markersize=8, mfc='white', mec='black', label='Total Spin 4/2')
+plot3.plot(aDSpin6, ' ', marker='x', markersize=8, mfc='white', mec='black', label='Total Spin 6/2')
+plot3.plot(aDSpin6, ' ', marker='o', markersize=8, mfc='white', mec='black', label='Total Spin 8/2')
 plot3.legend(bbox_to_anchor=(0.05, 0.95), loc=2, ncol=1, borderaxespad=0.)
 plot3.set_xlim((-1, 31))
 plot3.set_ylim((25, 47))
