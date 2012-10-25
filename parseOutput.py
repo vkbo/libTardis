@@ -18,15 +18,13 @@ from   sys          import exit, argv
 #~ from   incFunctions import *
 
 
-if len(argv) == 3:
+if len(argv) == 2:
     sInput  = argv[1]
-    sOutput = argv[2]
 else:
-    print "Input or putput file missing ..."
+    print "Input file missing ..."
     exit()
 
 oInput  = open(sInput,  "r")
-oOutput = open(sOutput, "w")
 
 for sLine in oInput:
     if sLine[:2] == "20":
@@ -69,12 +67,7 @@ for sLine in oInput:
 
         # Generate Output
         # Alter these lines to desired format
-        sOutput = "aXSpin"+sMs+"["+sM+"] = "+sEn+"\n"
+        print "aXSpin"+sMs+"["+sM+"] = "+sEn
 
-        oOutput.write(sOutput)
-
-
-
-
-
-        
+oInput.close()
+       

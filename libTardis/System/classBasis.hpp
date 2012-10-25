@@ -30,6 +30,7 @@ class Basis
     int  BuildBasis(bool bOutputConfigs=false);
     bool LoadBasis(const char*);
     int  FindSlater(tardis::Slater, int p=0, int q=0);
+    bool SortBasis();
 
     // Getters, Setters and Output
     int    GetSize()        {return vBasis.size();};
@@ -69,6 +70,7 @@ class Basis
     // Vectors
     std::vector<tardis::Slater> vBasis;
     arma::Col<double>           mCoefficients;
+    arma::Col<unsigned int>     mCoeffOrder;
     arma::Mat<int>              mConfigMap;
     #ifdef INDEX_BASIS
         std::vector<std::vector<short> > vIndex;

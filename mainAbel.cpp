@@ -122,7 +122,7 @@ int main(int argc, char* argv[]) {
             vector<int>     vPrev(iProc);
 
             for(int i=0; i<=iProc; i++) vChunk[i] = ceil(i*iBasisDim/(double)iProc);
-            if(vChunk[iProc] > iBasisDim) vChunk[iProc] = iBasisDim;
+            vChunk[iProc] = iBasisDim;
 
             mLzV    = oLanczos.GetLanczosVectorV();
             mLzW    = oLanczos.GetLanczosVectorW();
@@ -168,6 +168,7 @@ int main(int argc, char* argv[]) {
                     vChunk[i+1] = vChunk[i] + ceil(vPrev[i]*dTAvg/vTime[i]);
                     if(vChunk[i+1] > iBasisDim) vChunk[i+1] = iBasisDim;
                 }
+                vChunk[iProc] = iBasisDim;
 
                 ssOut << "Loads: 0:" << vChunk[1]-vChunk[0];
                 for(int i=1; i<iProc; i++) ssOut << ", " << i << ":" << vChunk[i+1]-vChunk[i];

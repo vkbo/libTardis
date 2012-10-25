@@ -405,6 +405,32 @@ bool Basis::SetCoefficients(Col<double> &mInput) {
 }
 
 /*
+**  Sorting Coefficients
+** ======================
+**  After the coefficients have been returned to the basis, they can be sorted
+*/
+
+bool Basis::SortBasis() {
+
+    int iBasisDim = vBasis.size();
+
+    if((int)mCoefficients.n_elem != iBasisDim) {
+        ssOut << "Error: Coefficient not set or wrong dimension." << endl;
+        oOut->Output(&ssOut);
+        return false;
+    }
+    
+    mCoeffOrder = sort_index(abs(mCoefficients),1);
+    
+    for(int i=0; i<20; i++) {
+        cout << mCoefficients(mCoeffOrder(i)) << " : ";
+        vBasis[mCoeffOrder(i)].Output(SLATER_WORD);
+    }
+    
+    return true;
+}
+
+/*
 **  Saving Basis
 ** ==============
 */

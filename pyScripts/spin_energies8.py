@@ -428,11 +428,11 @@ aCSpin4[3]  = 34.66531926
 aCSpin6[3]  = 34.6652642
 aCSpin8[3]  = 37.00780194
 
-aCSpin0[4]  = 0
-aCSpin2[4]  = 0
-aCSpin4[4]  = 0
-aCSpin6[4]  = 0
-aCSpin8[4]  = 0
+aCSpin0[4]  = 33.42391034
+aCSpin2[4]  = 34.33446153
+aCSpin4[4]  = 34.33439985
+aCSpin6[4]  = 35.23239829
+aCSpin8[4]  = 36.17250839
 
 aCSpin0[5]  = 0
 aCSpin2[5]  = 0

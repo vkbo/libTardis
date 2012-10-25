@@ -1,1 +1,1 @@
-#define SLATER_WORD 128
+#define SLATER_WORD 64

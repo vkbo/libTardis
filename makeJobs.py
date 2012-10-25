@@ -10,8 +10,8 @@
 
 from   incFunctions import *
 
-aShells    = [2,3,4,5,6,7,8,9,10]
-aParticles = [2]
+aShells    = [6]
+aParticles = [4]
 aM         = [0]
 aMs        = [0]
 aOmega     = [0.1]

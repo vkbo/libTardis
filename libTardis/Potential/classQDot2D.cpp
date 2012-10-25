@@ -187,14 +187,14 @@ void QDot2D::Generate(int iType, bool bAll) {
     }
 
     if(iType == Q2D_NORMAL) {
-        ssOut << "Building interaction CoM Blocks ..." << endl;
+        ssOut << "Building interaction CoM blocks ..." << endl;
         oOut->Output(&ssOut);
         oOFCI->setLambda(1.0);
         oOFCI->buildInteractionComBlocks();
     }
 
     if(iType == Q2D_EFFECTIVE) {
-        ssOut << "Building effective interaction CoM Blocks ..." << endl;
+        ssOut << "Building effective interaction CoM blocks ..." << endl;
         oOut->Output(&ssOut);
         oOFCI->setLambda(dLambda);
         if(bEnergyCut) {

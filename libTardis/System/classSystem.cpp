@@ -170,6 +170,10 @@ bool System::LoadBasis(const char *cPath) {
     return true;
 }
 
+bool System::SortBasis() {
+    return oBasis->SortBasis();
+}
+
 /*
 ** Potential Configuration
 */

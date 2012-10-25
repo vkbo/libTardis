@@ -166,7 +166,7 @@ for sFile in aJobs:
         sResult.replace("\r", "")
         sLogEntry += sResult+sLogSep
         
-    os.rename("jobQueue/"+sFile, "jobQueue/Done/"+sFile)
+    #~ os.rename("jobQueue/"+sFile, "jobQueue/Done/"+sFile)
 
 
     # Timer Output

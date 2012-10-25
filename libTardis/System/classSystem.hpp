@@ -55,6 +55,7 @@ class System
     bool BuildPotentialBlock();
     bool BuildBasis(bool bOutputConfigs=false);
     bool LoadBasis(const char*);
+    bool SortBasis();
 
 
     private:
