@@ -216,17 +216,17 @@ aASpin8[30] = 0
 
 # Omega = 0.1 Values
 
-aBSpin0[0]  = 0
-aBSpin2[0]  = 0
-aBSpin4[0]  = 0
-aBSpin6[0]  = 0
-aBSpin8[0]  = 0
+aBSpin0[0]  = 6.07021703
+aBSpin2[0]  = 6.070215165
+aBSpin4[0]  = 6.098501016
+aBSpin6[0]  = 6.131079243
+aBSpin8[0]  = 6.147338152
 
-aBSpin0[1]  = 0
-aBSpin2[1]  = 0
-aBSpin4[1]  = 0
-aBSpin6[1]  = 0
-aBSpin8[1]  = 0
+aBSpin0[1]  = 6.085100567
+aBSpin2[1]  = 6.085098804
+aBSpin4[1]  = 6.095533446
+aBSpin6[1]  = 6.143403641
+aBSpin8[1]  = 6.242196965
 
 aBSpin0[2]  = 0
 aBSpin2[2]  = 0
@@ -434,19 +434,19 @@ aCSpin4[4]  = 34.33439985
 aCSpin6[4]  = 35.23239829
 aCSpin8[4]  = 36.17250839
 
-aCSpin0[5]  = 0
-aCSpin2[5]  = 0
-aCSpin4[5]  = 0
-aCSpin6[5]  = 0
-aCSpin8[5]  = 0
+aCSpin0[5]  = 33.93167755
+aCSpin2[5]  = 33.93161203
+aCSpin4[5]  = 34.87753405
+aCSpin6[5]  = 35.81995638
+aCSpin8[5]  = 37.04104369
 
-aCSpin0[6]  = 0
-aCSpin2[6]  = 0
-aCSpin4[6]  = 0
-aCSpin6[6]  = 0
-aCSpin8[6]  = 0
+aCSpin0[6]  = 34.45895104
+aCSpin2[6]  = 34.45895053
+aCSpin4[6]  = 34.45892692
+aCSpin6[6]  = 35.55787016
+aCSpin8[6]  = 37.80792648
 
-aCSpin0[7]  = 0
+aCSpin0[7]  = 35.0415908
 aCSpin2[7]  = 0
 aCSpin4[7]  = 0
 aCSpin6[7]  = 0

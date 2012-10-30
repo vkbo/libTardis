@@ -121,7 +121,7 @@ int main(int argc, char* argv[]) {
             vector<double>  vLzW;
             vector<int>     vPrev(iProc);
 
-            for(int i=0; i<=iProc; i++) vChunk[i] = ceil(i*iBasisDim/(double)iProc);
+            for(int i=0; i<=iProc; i++) vChunk[i] = ceil((iBasisDim/(double)iProc)*i);
             vChunk[iProc] = iBasisDim;
 
             mLzV    = oLanczos.GetLanczosVectorV();
