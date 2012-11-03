@@ -3,7 +3,7 @@
 */
 
 // Lanczos Settings
-#define LANCZOS_ZERO     1e-9   // Zero-condition for Beta value
+#define LANCZOS_ZERO     1e-12  // Zero-condition for Beta value
 #define LANCZOS_CONVERGE 1e-6   // Covergence condition for Lanczos iterations
 #define LANCZOS_MAX_IT   100    // Max number of iterations
 #define LANCZOS_SEED     false  // If true, seeds random generator with time(NULL)

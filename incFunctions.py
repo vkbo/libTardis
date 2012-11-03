@@ -82,7 +82,7 @@ def fEcho(sOutput, sFile):
 #  Jobfile generator
 #
 
-def fJobFile(iShells, iParticles, iM, iMs, dOmega, dLambda, bEnergyCut, bEffective, iMethod):
+def fJobFile(iShells, iParticles, iM, iMs, dOmega, dLambda, bEnergyCut, bEffective, iMethod, bCalcCoeff=False, sCoeffPath=""):
     sOutput  = "//# Threads : 1\n"
     sOutput += "//# Slater : "+str(int((1+ceil(iShells*(iShells+1)/64))*64))+"\n"
     sOutput += "\n"
@@ -148,7 +148,12 @@ def fJobFile(iShells, iParticles, iM, iMs, dOmega, dLambda, bEnergyCut, bEffecti
         sOutput += "    oSystem->BuildBasis();\n"
         sOutput += "\n"
         sOutput += "    Lanczos oLanczos(oSystem);\n"
-        sOutput += "    double dEnergy = oLanczos.Run();\n"
+        if bCalcCoeff:
+            sOutput += "    double dEnergy = oLanczos.Run(LZ_COEFF_CALC);\n"
+            sOutput += "    oSystem->SortBasis(20);\n"
+            sOutput += "    oSystem->SaveBasis("+chr(34)+sCoeffPath+chr(34)+", SAVE_COEFF_ASC);\n"
+        else:
+            sOutput += "    double dEnergy = oLanczos.Run();\n"
         sOutput += "\n"
 
     if iMethod == 1:

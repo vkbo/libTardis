@@ -26,13 +26,13 @@ class Lanczos
     ~Lanczos() {};
 
     // One-Node Lanczos Functions
-    double Run();
+    double Run(int iCoeffMode = 0);
 
     // Multi-Node Lanczos Functions
     int  RunInit();
     int  RunSlave(arma::Col<double>&, std::vector<double>&, int, int);
     int  RunMaster();
-    
+
     // Getters, Setters and Output
     int  GetLanczosIt()        {return iLzIt;};
     void SetLanczosIt(int iIt) {iLzIt = iIt;};
@@ -54,7 +54,7 @@ class Lanczos
     int    iBasisDim;
     double d1PFac;
     double d2PFac;
-    
+
     // Lanczos Variables
     int               iLzIt;   // Lanczos iteration
     arma::Col<double> mLzV;    // Lanczos vector V
@@ -64,6 +64,7 @@ class Lanczos
     arma::Row<double> mLzC;    // Lanczos first eigenvalue convergence
     arma::Row<double> mLzE;    // Lanczos eigenvalues
     arma::Col<double> mEnergy; // Energy eigenvalues
+    arma::Mat<double> mFullLz; // Full matrix of Lanczos vectors
 
     // Other Variables
     std::stringstream ssOut;

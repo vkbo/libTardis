@@ -35,7 +35,7 @@ Lanczos::Lanczos(System *oSys) {
 ** Public :: Functions
 */
 
-double Lanczos::Run() {
+double Lanczos::Run(int iCoeffMode) {
 
     // Check for illegal values
 
@@ -79,7 +79,6 @@ double Lanczos::Run() {
 
     // Eigenvector variables
     Mat<double>    mTemp;
-    Mat<double>    mHDiag;
     Col<cx_double> mHEigVal;
     Mat<cx_double> mHEigVec;
 
@@ -87,6 +86,8 @@ double Lanczos::Run() {
     ** The Lanczos algorithm
     ** Source: Golub/Van Loan - Matrix Computations Third Edition, Page 480
     */
+
+    if(iCoeffMode == LZ_COEFF_CALC || iCoeffMode == LZ_COEFF_CALC_CH) mFullLz.set_size(iBasisDim,1);
 
     iLzIt = 0;
     while(abs(mLzB(iLzIt)) > LANCZOS_ZERO && iLzIt < iBasisDim && iLzIt < LANCZOS_MAX_IT) {
@@ -97,6 +98,13 @@ double Lanczos::Run() {
                 mLzW(i) = mLzV(i)/mLzB(iLzIt);
                 mLzV(i) = -mLzB(iLzIt)*dTemp;
             }
+            if(iCoeffMode == LZ_COEFF_CALC || iCoeffMode == LZ_COEFF_CALC_CH) mFullLz.insert_cols(iLzIt,1);
+        }
+        if(iCoeffMode == LZ_COEFF_CALC  || iCoeffMode == LZ_COEFF_CALC_CH) mFullLz.col(iLzIt) = mLzW;
+        if(iCoeffMode == LZ_COEFF_CACHE || iCoeffMode == LZ_COEFF_CALC_CH) {
+            stringstream ssFile;
+            ssFile << "LanczosVec" << setfill('0') << setw(3) << iLzIt << ".arma";
+            mLzW.save(ssFile.str());
         }
 
         // Applying the Hamiltonian
@@ -141,8 +149,7 @@ double Lanczos::Run() {
 
         // Calculating eigenvalues
         eig_gen(mHEigVal, mHEigVec, mTemp);
-        mHDiag  = real(inv(mHEigVec)*mTemp*mHEigVec);
-        mEnergy = sort(mHDiag.diag());
+        mEnergy = sort(real(mHEigVal));
         mLzE(iLzIt) = mEnergy(0);
 
         // Checking for energy convergence
@@ -185,9 +192,20 @@ double Lanczos::Run() {
         cout << endl;
     #endif
 
+    if(iCoeffMode == LZ_COEFF_CALC || iCoeffMode == LZ_COEFF_CALC_CH) {
+        Col<unsigned int> mIndex = sort_index(real(mHEigVal));
+        Col<double>       mEigen = real(mHEigVec.col(mIndex(0)));
+        Col<double>       mCoeff = mFullLz*mEigen;
+        oBasis->SetCoefficients(mCoeff);
+    }
+
     mLzW.clear();
-    oBasis->SetCoefficients(mLzV);
     mLzV.clear();
+    mLzA.clear();
+    mLzB.clear();
+    mLzC.clear();
+    mLzE.clear();
+    mFullLz.clear();
 
     return mEnergy(0);
 }
@@ -213,7 +231,7 @@ int Lanczos::RunSlave(Col<double> &mInput, vector<double> &vReturn, int iLStart,
         for(int j=0; j<iBasisDim; j++) vReturn[j] += vT[i][j];
     }
     for(int i=0; i<iMaxThreads; i++) vT[i].clear();
-    
+
     return 0;
 }
 
@@ -232,7 +250,7 @@ int Lanczos::RunInit() {
         oOut->Output(&ssOut);
         return -1.0;
     }
-    
+
     // Init Lanczos Variables
     if(LANCZOS_SEED) srand(time(NULL));
     mLzV.zeros(iBasisDim);
@@ -242,19 +260,18 @@ int Lanczos::RunInit() {
     mLzB.ones(1);
     mLzC.ones(1);
     mLzE.zeros(1);
-    
+
     iLzIt = 0;
-    
+
     return 0;
 }
 
 int Lanczos::RunMaster() {
-    
+
     // Runtime variables
     bool           bDone = false;
     double         dTemp, dO;
     Mat<double>    mTemp;
-    Mat<double>    mHDiag;
     Col<cx_double> mHEigVal;
     Mat<cx_double> mHEigVec;
 
@@ -295,8 +312,7 @@ int Lanczos::RunMaster() {
 
     // Calculating eigenvalues
     eig_gen(mHEigVal, mHEigVec, mTemp);
-    mHDiag  = real(inv(mHEigVec)*mTemp*mHEigVec);
-    mEnergy = sort(mHDiag.diag());
+    mEnergy = sort(real(mHEigVal));
     mLzE(iLzIt) = mEnergy(0);
 
     // Checking for energy convergence
@@ -330,7 +346,7 @@ int Lanczos::RunMaster() {
         oOut->Output(&ssOut);
         bDone = true;
     }
-    
+
     // Stop if Dim(Lanczos) >= Dim(Basis)
     if(iLzIt >= iBasisDim) {
         ssOut << "Warning: Dim(Lanczos) >= Dim(Basis). Breaking ..." << endl;
@@ -344,7 +360,7 @@ int Lanczos::RunMaster() {
         oOut->Output(&ssOut);
         bDone = true;
     }
-    
+
     if(bDone) {
         mLzW.clear();
         oBasis->SetCoefficients(mLzV);

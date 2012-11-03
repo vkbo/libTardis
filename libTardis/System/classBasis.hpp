@@ -30,7 +30,7 @@ class Basis
     int  BuildBasis(bool bOutputConfigs=false);
     bool LoadBasis(const char*);
     int  FindSlater(tardis::Slater, int p=0, int q=0);
-    bool SortBasis();
+    bool SortBasis(int iOutput=0);
 
     // Getters, Setters and Output
     int    GetSize()        {return vBasis.size();};

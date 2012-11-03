@@ -43,7 +43,6 @@ double Diag::Run() {
 
     int                iDim;
     Mat<double>        mTemp;
-    Mat<double>        mHDiag;
     Col<double>        mEnergy;
     Col<cx_double>     mHEigVal;
     Mat<cx_double>     mHEigVec;
@@ -64,8 +63,7 @@ double Diag::Run() {
 
     // Calculating eigenvalues
     eig_gen(mHEigVal, mHEigVec, mTemp);
-    mHDiag  = real(inv(mHEigVec)*mTemp*mHEigVec);
-    mEnergy = sort(mHDiag.diag());
+    mEnergy = sort(real(mHEigVal));
 
     return mEnergy(0);
 }

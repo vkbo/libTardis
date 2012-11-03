@@ -41,7 +41,7 @@ Basis::Basis(Potential *oPotential, Log *oLog, int iNumParticles, int iNumShells
         mIndex.set_size(iStates+1,2);
         mIndex.fill(-1);
     #endif
-    
+
     mConfigMap.zeros((iShells-1)*iParticles+1,iParticles+1);
 
     return;
@@ -289,12 +289,12 @@ int Basis::BuildBasis(bool bOutputConfigs) {
 */
 
 bool Basis::LoadBasis(const char *cPath) {
-    
+
     Mat<int> mBasis;
     Slater   sdTemp;
     int      iPrev = -1;
     int      iExp, iBasisDim;
-    
+
     ssOut << "Loading basis from file." << endl;
     oOut->Output(&ssOut);
 
@@ -306,7 +306,7 @@ bool Basis::LoadBasis(const char *cPath) {
 
     mBasis.load(cPath);
     iBasisDim = mBasis.n_rows;
-    
+
     iExp = floor(log10(iBasisDim));
     ssOut << "Dimension of Basis: " << iBasisDim;
     if(iBasisDim > 0) ssOut << " (~" << round(iBasisDim/pow(10,iExp)) << "e" << iExp << ")";
@@ -330,7 +330,7 @@ bool Basis::LoadBasis(const char *cPath) {
         }
         mIndex(mBasis(i,0),1) = vBasis.size()-1;
     }
-    
+
     return true;
 }
 
@@ -410,7 +410,7 @@ bool Basis::SetCoefficients(Col<double> &mInput) {
 **  After the coefficients have been returned to the basis, they can be sorted
 */
 
-bool Basis::SortBasis() {
+bool Basis::SortBasis(int iOutput) {
 
     int iBasisDim = vBasis.size();
 
@@ -419,14 +419,32 @@ bool Basis::SortBasis() {
         oOut->Output(&ssOut);
         return false;
     }
-    
-    mCoeffOrder = sort_index(abs(mCoefficients),1);
-    
-    for(int i=0; i<20; i++) {
-        cout << mCoefficients(mCoeffOrder(i)) << " : ";
-        vBasis[mCoeffOrder(i)].Output(SLATER_WORD);
+
+    Col<double> mMagnitude = abs(mCoefficients);
+    double dNorm = sum(mMagnitude);
+    mMagnitude = mMagnitude/(dNorm/100);
+    mCoeffOrder = sort_index(abs(mMagnitude),1);
+
+    if(iOutput == 0) return true;
+
+    int iIt = iOutput;
+    if(iIt > iBasisDim) iIt = iBasisDim;
+
+    ssOut << iIt << " most significant states:" << endl;
+    for(int i=0; i<iIt; i++) {
+        ssOut << "   " << setprecision(5) << setw(6) << mMagnitude(mCoeffOrder(i)) << "% : |";
+        for(int j=0; j<iStates; j++) {
+            if(vBasis[mCoeffOrder(i)].IsSet(j)) {
+                ssOut << "1";
+            } else {
+                ssOut << "0";
+            }
+        }
+        ssOut << ">" << endl;
     }
-    
+    ssOut << endl;
+    oOut->Output(&ssOut);
+
     return true;
 }
 
@@ -486,6 +504,11 @@ bool Basis::Save(const char *cPath, int iMode) {
             }
         }
         mBasis.save(cPath);
+    }
+
+    // Save Coefficients as ascii files for later reloading
+    if(iMode == SAVE_COEFF_ASC) {
+        mCoefficients.save(cPath, arma_ascii);
     }
 
     // Save Coefficients as binary files for later reloading

@@ -99,10 +99,16 @@ for sFile in aJobs:
     aOptions = fReadJobFile("jobQueue/"+sFile)
     fEcho("",sOutFile)
 
-    iSlater = fGetOption("Slater", aOptions, "64")
-    oFile = open("libTardis/slaterword.hpp", 'w')
-    oFile.write("#define SLATER_WORD "+iSlater+"\n")
+    sNSlater = fGetOption("Slater", aOptions, "64")
+
+    oFile = open("libTardis/slaterword.hpp", 'r')
+    sPSlater = oFile.read()
     oFile.close()
+
+    if sPSlater[19:].strip() != sNSlater:
+        oFile = open("libTardis/slaterword.hpp", 'w')
+        oFile.write("#define SLATER_WORD "+iSlater+"\n")
+        oFile.close()
 
 
     # Compiler
@@ -165,7 +171,7 @@ for sFile in aJobs:
         sResult.replace("\n", " :: ")
         sResult.replace("\r", "")
         sLogEntry += sResult+sLogSep
-        
+
     #~ os.rename("jobQueue/"+sFile, "jobQueue/Done/"+sFile)
 
 
@@ -208,5 +214,5 @@ for sFile in aJobs:
     oFile.close()
 
     if iJob < iJobs:
-        print "*"*100
+        print "*"*95
         print ""

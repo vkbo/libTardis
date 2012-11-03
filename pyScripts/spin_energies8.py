@@ -228,13 +228,13 @@ aBSpin4[1]  = 6.095533446
 aBSpin6[1]  = 6.143403641
 aBSpin8[1]  = 6.242196965
 
-aBSpin0[2]  = 0
-aBSpin2[2]  = 0
-aBSpin4[2]  = 0
-aBSpin6[2]  = 0
-aBSpin8[2]  = 0
+aBSpin0[2] =  6.079782864
+aBSpin2[2] =  6.079771188
+aBSpin4[2] =  6.102718093
+aBSpin6[2] =  6.130976416
+aBSpin8[2] =  6.19739919
 
-aBSpin0[3]  = 0
+aBSpin0[3]  = 6.100743334
 aBSpin2[3]  = 0
 aBSpin4[3]  = 0
 aBSpin6[3]  = 0
@@ -447,148 +447,148 @@ aCSpin6[6]  = 35.55787016
 aCSpin8[6]  = 37.80792648
 
 aCSpin0[7]  = 35.0415908
-aCSpin2[7]  = 0
-aCSpin4[7]  = 0
-aCSpin6[7]  = 0
-aCSpin8[7]  = 0
+aCSpin2[7]  = 35.04156541
+aCSpin4[7]  = 35.04155881
+aCSpin6[7]  = 36.06735405
+aCSpin8[7]  = 36.96127165
 
-aCSpin0[8]  = 0
-aCSpin2[8]  = 0
-aCSpin4[8]  = 0
-aCSpin6[8]  = 0
-aCSpin8[8]  = 0
+aCSpin0[8]  = 34.6304214
+aCSpin2[8]  = 34.6304253
+aCSpin4[8]  = 35.59048774
+aCSpin6[8]  = 36.62801322
+aCSpin8[8]  = 37.76951361
 
-aCSpin0[9]  = 0
-aCSpin2[9]  = 0
-aCSpin4[9]  = 0
-aCSpin6[9]  = 0
-aCSpin8[9]  = 0
+aCSpin0[9]  = 35.21822004
+aCSpin2[9]  = 35.21818283
+aCSpin4[9]  = 36.19700762
+aCSpin6[9]  = 36.24641858
+aCSpin8[9]  = 38.57376569
 
-aCSpin0[10] = 0
-aCSpin2[10] = 0
-aCSpin4[10] = 0
-aCSpin6[10] = 0
-aCSpin8[10] = 0
+aCSpin0[10] = 35.83421102
+aCSpin2[10] = 35.8340835
+aCSpin4[10] = 35.93992357
+aCSpin6[10] = 36.83199133
+aCSpin8[10] = 37.78497267
 
-aCSpin0[11] = 0
-aCSpin2[11] = 0
-aCSpin4[11] = 0
-aCSpin6[11] = 0
-aCSpin8[11] = 0
+aCSpin0[11] = 36.49539739
+aCSpin2[11] = 36.49538199
+aCSpin4[11] = 36.53663775
+aCSpin6[11] = 37.45260974
+aCSpin8[11] = 38.69062017
 
-aCSpin0[12] = 0
-aCSpin2[12] = 0
-aCSpin4[12] = 0
-aCSpin6[12] = 0
-aCSpin8[12] = 0
+aCSpin0[12] = 36.03196999
+aCSpin2[12] = 37.15129466
+aCSpin4[12] = 37.1514258
+aCSpin6[12] = 38.06537997
+aCSpin8[12] = 39.46005576
 
-aCSpin0[13] = 0
-aCSpin2[13] = 0
-aCSpin4[13] = 0
-aCSpin6[13] = 0
-aCSpin8[13] = 0
+aCSpin0[13] = 36.83440998
+aCSpin2[13] = 36.83439809
+aCSpin4[13] = 37.81946526
+aCSpin6[13] = 38.75757844
+aCSpin8[13] = 40.25792524
 
-aCSpin0[14] = 0
-aCSpin2[14] = 0
-aCSpin4[14] = 0
-aCSpin6[14] = 0
-aCSpin8[14] = 0
+aCSpin0[14] = 37.45904042
+aCSpin2[14] = 37.45901316
+aCSpin4[14] = 38.4663136
+aCSpin6[14] = 38.52569626
+aCSpin8[14] = 39.38519322
 
-aCSpin0[15] = 0
-aCSpin2[15] = 0
-aCSpin4[15] = 0
-aCSpin6[15] = 0
-aCSpin8[15] = 0
+aCSpin0[15] = 38.1789573
+aCSpin2[15] = 38.17894885
+aCSpin4[15] = 39.17914405
+aCSpin6[15] = 39.24512413
+aCSpin8[15] = 40.25260952
 
-aCSpin0[16] = 0
-aCSpin2[16] = 0
-aCSpin4[16] = 0
-aCSpin6[16] = 0
-aCSpin8[16] = 0
+aCSpin0[16] = 38.89798027
+aCSpin2[16] = 38.89797518
+aCSpin4[16] = 38.89620906
+aCSpin6[16] = 39.88220376
+aCSpin8[16] = 40.9579038
 
-aCSpin0[17] = 0
-aCSpin2[17] = 0
-aCSpin4[17] = 0
-aCSpin6[17] = 0
-aCSpin8[17] = 0
+aCSpin0[17] = 39.60341135
+aCSpin2[17] = 39.63061418
+aCSpin4[17] = 39.69564654
+aCSpin6[17] = 40.62939703
+aCSpin8[17] = 42.01515813
 
-aCSpin0[18] = 0
-aCSpin2[18] = 0
-aCSpin4[18] = 0
-aCSpin6[18] = 0
-aCSpin8[18] = 0
+aCSpin0[18] = 40.32377587
+aCSpin2[18] = 40.32367459
+aCSpin4[18] = 40.3577657
+aCSpin6[18] = 41.40267233
+aCSpin8[18] = 42.7375795
 
-aCSpin0[19] = 0
-aCSpin2[19] = 0
-aCSpin4[19] = 0
-aCSpin6[19] = 0
-aCSpin8[19] = 0
+aCSpin0[19] = 41.11257136
+aCSpin2[19] = 41.11241195
+aCSpin4[19] = 41.17665108
+aCSpin6[19] = 42.22006868
+aCSpin8[19] = 43.72282173
 
-aCSpin0[20] = 0
-aCSpin2[20] = 0
-aCSpin4[20] = 0
-aCSpin6[20] = 0
-aCSpin8[20] = 0
+aCSpin0[20] = 41.84768444
+aCSpin2[20] = 41.86345441
+aCSpin4[20] = 41.89508274
+aCSpin6[20] = 43.05018908
+aCSpin8[20] = 44.64518832
 
-aCSpin0[21] = 0
-aCSpin2[21] = 0
-aCSpin4[21] = 0
-aCSpin6[21] = 0
-aCSpin8[21] = 0
+aCSpin0[21] = 42.71533213
+aCSpin2[21] = 42.70879866
+aCSpin4[21] = 42.78014797
+aCSpin6[21] = 43.92463024
+aCSpin8[21] = 46.98071726
 
-aCSpin0[22] = 0
-aCSpin2[22] = 0
-aCSpin4[22] = 0
-aCSpin6[22] = 0
-aCSpin8[22] = 0
+aCSpin0[22] = 43.48440902
+aCSpin2[22] = 43.4842941
+aCSpin4[22] = 43.50895819
+aCSpin6[22] = 44.89255511
+aCSpin8[22] = -1
 
-aCSpin0[23] = 0
-aCSpin2[23] = 0
-aCSpin4[23] = 0
-aCSpin6[23] = 0
-aCSpin8[23] = 0
+aCSpin0[23] = 44.34747308
+aCSpin2[23] = 44.34745812
+aCSpin4[23] = 44.36624848
+aCSpin6[23] = 45.84793222
+aCSpin8[23] = -1
 
-aCSpin0[24] = 0
-aCSpin2[24] = 0
-aCSpin4[24] = 0
-aCSpin6[24] = 0
-aCSpin8[24] = 0
+aCSpin0[24] = 45.17957675
+aCSpin2[24] = 45.17962322
+aCSpin4[24] = 45.17953132
+aCSpin6[24] = 48.28963144
+aCSpin8[24] = -1
 
-aCSpin0[25] = 0
-aCSpin2[25] = 0
-aCSpin4[25] = 0
-aCSpin6[25] = 0
-aCSpin8[25] = 0
+aCSpin0[25] = 46.09646468
+aCSpin2[25] = 46.09644987
+aCSpin4[25] = 47.65010365
+aCSpin6[25] = 49.23812531
+aCSpin8[25] = -1
 
-aCSpin0[26] = 0
-aCSpin2[26] = 0
-aCSpin4[26] = 0
-aCSpin6[26] = 0
-aCSpin8[26] = 0
+aCSpin0[26] = 47.02772212
+aCSpin2[26] = 47.05426118
+aCSpin4[26] = 48.62811349
+aCSpin6[26] = -1
+aCSpin8[26] = -1
 
-aCSpin0[27] = 0
-aCSpin2[27] = 0
-aCSpin4[27] = 0
-aCSpin6[27] = 0
-aCSpin8[27] = 0
+aCSpin0[27] = 48.02523632
+aCSpin2[27] = 48.02523561
+aCSpin4[27] = 49.62334582
+aCSpin6[27] = -1
+aCSpin8[27] = -1
 
-aCSpin0[28] = 0
-aCSpin2[28] = 0
-aCSpin4[28] = 0
-aCSpin6[28] = 0
-aCSpin8[28] = 0
+aCSpin0[28] = 49.06140402
+aCSpin2[28] = 50.6320279
+aCSpin4[28] = 52.25405616
+aCSpin6[28] = -1
+aCSpin8[28] = -1
 
-aCSpin0[29] = 0
-aCSpin2[29] = 0
-aCSpin4[29] = 0
-aCSpin6[29] = 0
-aCSpin8[29] = 0
+aCSpin0[29] = 51.62778758
+aCSpin2[29] = 51.62778757
+aCSpin4[29] = -1
+aCSpin6[29] = -1
+aCSpin8[29] = -1
 
-aCSpin0[30] = 0
-aCSpin2[30] = 0
-aCSpin4[30] = 0
-aCSpin6[30] = 0
-aCSpin8[30] = 0
+aCSpin0[30] = 54.40077594
+aCSpin2[30] = -1
+aCSpin4[30] = -1
+aCSpin6[30] = -1
+aCSpin8[30] = -1
 
 # Omega = 5.0 Values
 
@@ -811,11 +811,11 @@ plot1.plot(aBSpin6, ' ', marker='x', markersize=8, mfc='white', mec='black', lab
 plot1.plot(aBSpin6, ' ', marker='o', markersize=8, mfc='white', mec='black', label='Total Spin 8/2')
 plot1.legend(bbox_to_anchor=(0.05, 0.95), loc=2, ncol=1, borderaxespad=0.)
 plot1.set_xlim((-1, 31))
-plot1.set_ylim((4.7, 6.4))
+plot1.set_ylim((6.0, 8.0))
 xax = plot1.xaxis
 yax = plot1.yaxis
 xax.set_ticks(linspace(0, 30, 16))
-yax.set_ticks(linspace(4.7, 6.3, 9))
+yax.set_ticks(linspace(6.1, 7.9, 10))
 
 
 fig1 = figure(figsize=(16, 7), dpi=80)
@@ -832,11 +832,11 @@ plot2.plot(aCSpin6, ' ', marker='x', markersize=8, mfc='white', mec='black', lab
 plot2.plot(aCSpin6, ' ', marker='o', markersize=8, mfc='white', mec='black', label='Total Spin 8/2')
 plot2.legend(bbox_to_anchor=(0.05, 0.95), loc=2, ncol=1, borderaxespad=0.)
 plot2.set_xlim((-1, 31))
-plot2.set_ylim((33, 51))
+plot2.set_ylim((33, 55))
 xax = plot2.xaxis
 yax = plot2.yaxis
 xax.set_ticks(linspace(0, 30, 16))
-yax.set_ticks(linspace(34, 50, 9))
+yax.set_ticks(linspace(34, 54, 11))
 
 plot3 = fig1.add_subplot(122)
 plot3.set_title("8 electrons, $\omega = 5.0$")

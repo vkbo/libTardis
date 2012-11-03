@@ -10,15 +10,18 @@
 
 from   incFunctions import *
 
-aShells    = [6]
-aParticles = [4]
+aShells    = [3]
+aParticles = [2]
 aM         = [0]
 aMs        = [0]
-aOmega     = [0.1]
+aOmega     = [1.0]
 aLambda    = [0.0]
 aEnergyCut = [False]
-aEffective = [True]
+aEffective = [False]
 aMethod    = [0]
+
+bCalcCoeff = True
+sCoeffPath = "/scratch/Temp/Coeff/"
 
 for bEffective in aEffective:
     for bEnergyCut in aEnergyCut:
@@ -57,9 +60,10 @@ for bEffective in aEffective:
                                     else:
                                         sFile += "_Di"
 
+                                    sCoeffFile = sCoeffPath+"Coeffs-"+sFile+".out"
                                     sFile += ".cpp"
 
                                     print "Making file: jobQueue/"+sFile
                                     oFile = open("jobQueue/"+sFile, 'w')
-                                    oFile.write(fJobFile(iShells, iParticles, iM, iMs, dOmega, dLambda, bEnergyCut, bEffective, iMethod))
+                                    oFile.write(fJobFile(iShells, iParticles, iM, iMs, dOmega, dLambda, bEnergyCut, bEffective, iMethod, bCalcCoeff, sCoeffFile))
                                     oFile.close()

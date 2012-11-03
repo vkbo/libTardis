@@ -170,8 +170,13 @@ bool System::LoadBasis(const char *cPath) {
     return true;
 }
 
-bool System::SortBasis() {
-    return oBasis->SortBasis();
+bool System::SaveBasis(const char *cPath, int iMode) {
+    oBasis->Save(cPath, iMode);
+    return true;
+}
+
+bool System::SortBasis(int iOutput) {
+    return oBasis->SortBasis(iOutput);
 }
 
 /*

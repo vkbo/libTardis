@@ -87,7 +87,13 @@
 
 #define SAVE_BASIS_ASC  0
 #define SAVE_BASIS_ARMA 1
-#define SAVE_COEFF_ARMA 2
+#define SAVE_COEFF_ASC  2
+#define SAVE_COEFF_ARMA 3
+
+#define LZ_COEFF_NONE     0 // Do not calculate coefficients (default)
+#define LZ_COEFF_CACHE    1 // Cache Lanczos vectors to file
+#define LZ_COEFF_CALC     2 // Calculate coefficients on the fly
+#define LZ_COEFF_CALC_CH  3 // Calculate coefficients on the fly and save Lanczos vectors
 
 /*
 **  Classes and Includes
