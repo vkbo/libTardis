@@ -8,19 +8,20 @@
 ## o--------------------------o
 ##
 
-from   incFunctions import *
+from incFunctions import *
+fDirX("jobQueue")
 
-aShells    = [3]
-aParticles = [2]
-aM         = [0]
-aMs        = [0]
-aOmega     = [1.0]
+aShells    = [6]
+aParticles = [8]
+aM         = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]
+aMs        = [0,2,4,6,8]
+aOmega     = [5.0]
 aLambda    = [0.0]
 aEnergyCut = [False]
-aEffective = [False]
+aEffective = [True]
 aMethod    = [0]
 
-bCalcCoeff = True
+bCalcCoeff = False
 sCoeffPath = "/scratch/Temp/Coeff/"
 
 for bEffective in aEffective:

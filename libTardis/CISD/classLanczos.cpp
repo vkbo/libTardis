@@ -434,8 +434,8 @@ void Lanczos::fMatrixVector(Col<double> &mInput, vector<vector<double> > &vRetur
             #endif
                 if(iBasisDim > 100 && i%10 == 9) {
                     fflush(stdout);
-                    cout << "\r                                ";
-                    cout << "\rCalculating SD: " << i+1;
+                    cout << "\r                                              ";
+                    cout << "\rCalculating SD: " << i+1 << " of " << iBasisDim << " ";
                 }
             #ifdef OPENMP
             }

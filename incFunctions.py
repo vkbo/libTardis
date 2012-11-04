@@ -195,3 +195,29 @@ def fJobFile(iShells, iParticles, iM, iMs, dOmega, dLambda, bEnergyCut, bEffecti
     return sOutput
 
 # End fJobFile
+
+#
+#  Abel JobScript
+#
+
+def fJobScript(sJobName, sExecName, sTime):
+    sOutput  = "#!/bin/bash\n"
+    sOutput += "#SBATCH --job-name="+sJobName+"\n"
+    sOutput += "#SBATCH --account=nn2977k\n"
+    sOutput += "#SBATCH --time='"+sTime+"'\n"
+    sOutput += "#SBATCH --mem-per-cpu=3900M\n"
+    sOutput += "#SBATCH --nodes=1\n"
+    sOutput += "#SBATCH --ntasks-per-node=1\n"
+    sOutput += "#SBATCH --cpus-per-task=16\n"
+    sOutput += "#SBATCH --exclude="+chr(34)+"c[10-13]-[1-36],c[15-18]-[1-36]"+chr(34)+"\n"
+    sOutput += "source /cluster/bin/jobsetup\n"
+    sOutput += "module load intel\n"
+    sOutput += "module load openmpi.intel\n"
+    sOutput += "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usit/abel/u1/frankol/usr/lib64\n"
+    sOutput += "export OMP_NUM_THREADS=16\n"
+    sOutput += "OUTFILE=Run-"+sJobName+".out\n"
+    sOutput += "chkfile $OUTFILE\n"
+    sOutput += "mpirun "+sExecName+" > $OUTFILE\n"
+    return sOutput
+
+# End fJobScript

@@ -8,17 +8,17 @@
 ## o-------------------------o
 ##
 
-from sys import exit, argv
+from sys  import exit, argv
 from math import floor
 
 
 if len(argv) == 2:
-    sInput  = argv[1]
+    sInput = argv[1]
 else:
     print "Input file missing ..."
     exit()
 
-oInput = open(sInput,  "r")
+oInput = open(sInput, "r")
 dTime  = 0.0
 print ""
 

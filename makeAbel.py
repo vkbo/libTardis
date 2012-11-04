@@ -41,7 +41,7 @@ if os.path.exists(sOldMain):
 sExecName = sExec+"-"+sNode
 iNodes    = fGetOption("Nodes", aOptions, "1")
 if int(iNodes) > 1:
-    sCompileString = "make CC=mpicc NODE="+sNode+" MAIN="+sFile+" EXEC="+sExecName
+    sCompileString = "make CC=mpicc LIBADD=-lmpi NODE="+sNode+" MAIN="+sFile+" EXEC="+sExecName
 else:
     sCompileString = "make CC=icc NODE="+sNode+" MAIN="+sFile+" EXEC="+sExecName
         
