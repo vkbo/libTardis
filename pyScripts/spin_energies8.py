@@ -235,18 +235,18 @@ aBSpin6[2] =  6.130976416
 aBSpin8[2] =  6.19739919
 
 aBSpin0[3]  = 6.100743334
-aBSpin2[3]  = 0
-aBSpin4[3]  = 0
-aBSpin6[3]  = 0
-aBSpin8[3]  = 0
+aBSpin2[3]  = 6.100718184
+aBSpin4[3]  = 6.123598515
+aBSpin6[3]  = 6.123592284
+aBSpin8[3]  = 6.26096219
 
-aBSpin0[4]  = 0
-aBSpin2[4]  = 0
-aBSpin4[4]  = 0
-aBSpin6[4]  = 0
-aBSpin8[4]  = 0
+aBSpin0[4]  = 6.090732399
+aBSpin2[4]  = 6.113072737
+aBSpin4[4]  = 6.113080425
+aBSpin6[4]  = 6.14557743
+aBSpin8[4]  = 6.195880527
 
-aBSpin0[5]  = 0
+aBSpin0[5]  = 6.10766414
 aBSpin2[5]  = 0
 aBSpin4[5]  = 0
 aBSpin6[5]  = 0
@@ -592,191 +592,191 @@ aCSpin8[30] = -1
 
 # Omega = 5.0 Values
 
-aDSpin0[0]  = 0
-aDSpin2[0]  = 0
-aDSpin4[0]  = 0
-aDSpin6[0]  = 0
-aDSpin8[0]  = 0
+aDSpin0[0]  = 122.3331528
+aDSpin2[0]  = 122.3331174
+aDSpin4[0]  = 129.1341361
+aDSpin6[0]  = 136.3144177
+aDSpin8[0]  = 142.9644415
 
-aDSpin0[1]  = 0
-aDSpin2[1]  = 0
-aDSpin4[1]  = 0
-aDSpin6[1]  = 0
-aDSpin8[1]  = 0
+aDSpin0[1]  = 125.6679462
+aDSpin2[1]  = 125.6664351
+aDSpin4[1]  = 125.6663936
+aDSpin6[1]  = 133.0502751
+aDSpin8[1]  = 147.5717856
 
-aDSpin0[2]  = 0
-aDSpin2[2]  = 0
-aDSpin4[2]  = 0
-aDSpin6[2]  = 0
-aDSpin8[2]  = 0
+aDSpin0[2]  = 122.5349138
+aDSpin2[2]  = 122.5333866
+aDSpin4[2]  = 129.1465989
+aDSpin6[2]  = 136.1647725
+aDSpin8[2]  = 143.256606
 
-aDSpin0[3]  = 0
-aDSpin2[3]  = 0
-aDSpin4[3]  = 0
-aDSpin6[3]  = 0
-aDSpin8[3]  = 0
+aDSpin0[3]  = 125.9831325
+aDSpin2[3]  = 125.9833265
+aDSpin4[3]  = 132.45849
+aDSpin6[3]  = 132.4580536
+aDSpin8[3]  = 147.75631
 
-aDSpin0[4]  = 0
-aDSpin2[4]  = 0
-aDSpin4[4]  = 0
-aDSpin6[4]  = 0
-aDSpin8[4]  = 0
+aDSpin0[4]  = 122.5599209
+aDSpin2[4]  = 129.4387289
+aDSpin4[4]  = 129.4376723
+aDSpin6[4]  = 136.2531918
+aDSpin8[4]  = 143.192713
 
-aDSpin0[5]  = 0
-aDSpin2[5]  = 0
-aDSpin4[5]  = 0
-aDSpin6[5]  = 0
-aDSpin8[5]  = 0
+aDSpin0[5]  = 126.1544322
+aDSpin2[5]  = 126.1540719
+aDSpin4[5]  = 133.1393691
+aDSpin6[5]  = 140.0688807
+aDSpin8[5]  = 147.8028079
 
-aDSpin0[6]  = 0
-aDSpin2[6]  = 0
-aDSpin4[6]  = 0
-aDSpin6[6]  = 0
-aDSpin8[6]  = 0
+aDSpin0[6]  = 129.7693116
+aDSpin2[6]  = 129.7695298
+aDSpin4[6]  = 129.769255
+aDSpin6[6]  = 137.1671912
+aDSpin8[6]  = 152.078177
 
-aDSpin0[7]  = 0
-aDSpin2[7]  = 0
-aDSpin4[7]  = 0
-aDSpin6[7]  = 0
-aDSpin8[7]  = 0
+aDSpin0[7]  = 133.5600093
+aDSpin2[7]  = 133.5605602
+aDSpin4[7]  = 133.5596967
+aDSpin6[7]  = 140.7909835
+aDSpin8[7]  = 147.4917196
 
-aDSpin0[8]  = 0
-aDSpin2[8]  = 0
-aDSpin4[8]  = 0
-aDSpin6[8]  = 0
-aDSpin8[8]  = 0
+aDSpin0[8]  = 130.2567073
+aDSpin2[8]  = 130.2566913
+aDSpin4[8]  = 137.3288969
+aDSpin6[8]  = 144.5132025
+aDSpin8[8]  = 151.9728933
 
-aDSpin0[9]  = 0
-aDSpin2[9]  = 0
-aDSpin4[9]  = 0
-aDSpin6[9]  = 0
-aDSpin8[9]  = 0
+aDSpin0[9]  = 134.0809832
+aDSpin2[9]  = 134.0810009
+aDSpin4[9]  = 141.1321429
+aDSpin6[9]  = 141.129364
+aDSpin8[9]  = 156.4552727
 
-aDSpin0[10] = 0
-aDSpin2[10] = 0
-aDSpin4[10] = 0
-aDSpin6[10] = 0
-aDSpin8[10] = 0
+aDSpin0[10] = 137.9877784
+aDSpin2[10] = 138.1001317
+aDSpin4[10] = 138.1036517
+aDSpin6[10] = 144.9949126
+aDSpin8[10] = 152.0130251
 
-aDSpin0[11] = 0
-aDSpin2[11] = 0
-aDSpin4[11] = 0
-aDSpin6[11] = 0
-aDSpin8[11] = 0
+aDSpin0[11] = 141.9895662
+aDSpin2[11] = 141.9900458
+aDSpin4[11] = 141.9877496
+aDSpin6[11] = 148.9476452
+aDSpin8[11] = 156.7072137
 
-aDSpin0[12] = 0
-aDSpin2[12] = 0
-aDSpin4[12] = 0
-aDSpin6[12] = 0
-aDSpin8[12] = 0
+aDSpin0[12] = 138.5374703
+aDSpin2[12] = 145.929429
+aDSpin4[12] = 145.9290448
+aDSpin6[12] = 152.8869702
+aDSpin8[12] = 160.9966711
 
-aDSpin0[13] = 0
-aDSpin2[13] = 0
-aDSpin4[13] = 0
-aDSpin6[13] = 0
-aDSpin8[13] = 0
+aDSpin0[13] = 142.7543858
+aDSpin2[13] = 142.7543916
+aDSpin4[13] = 150.0140337
+aDSpin6[13] = 156.9454615
+aDSpin8[13] = 165.5217086
 
-aDSpin0[14] = 0
-aDSpin2[14] = 0
-aDSpin4[14] = 0
-aDSpin6[14] = 0
-aDSpin8[14] = 0
+aDSpin0[14] = 146.7734931
+aDSpin2[14] = 146.7734814
+aDSpin4[14] = 154.0322223
+aDSpin6[14] = 154.0309143
+aDSpin8[14] = 160.8580421
 
-aDSpin0[15] = 0
-aDSpin2[15] = 0
-aDSpin4[15] = 0
-aDSpin6[15] = 0
-aDSpin8[15] = 0
+aDSpin0[15] = 150.9294454
+aDSpin2[15] = 150.9293488
+aDSpin4[15] = 158.160573
+aDSpin6[15] = 158.2721355
+aDSpin8[15] = 165.4901743
 
-aDSpin0[16] = 0
-aDSpin2[16] = 0
-aDSpin4[16] = 0
-aDSpin6[16] = 0
-aDSpin8[16] = 0
+aDSpin0[16] = 155.0483319
+aDSpin2[16] = 155.0478012
+aDSpin4[16] = 155.0477404
+aDSpin6[16] = 162.2724623
+aDSpin8[16] = 169.7595621
 
-aDSpin0[17] = 0
-aDSpin2[17] = 0
-aDSpin4[17] = 0
-aDSpin6[17] = 0
-aDSpin8[17] = 0
+aDSpin0[17] = 159.3250802
+aDSpin2[17] = 159.3231807
+aDSpin4[17] = 159.4972882
+aDSpin6[17] = 166.5732644
+aDSpin8[17] = 174.6785229
 
-aDSpin0[18] = 0
-aDSpin2[18] = 0
-aDSpin4[18] = 0
-aDSpin6[18] = 0
-aDSpin8[18] = 0
+aDSpin0[18] = 163.4659138
+aDSpin2[18] = 163.4660307
+aDSpin4[18] = 163.5653591
+aDSpin6[18] = 170.9584931
+aDSpin8[18] = 178.9996357
 
-aDSpin0[19] = 0
-aDSpin2[19] = 0
-aDSpin4[19] = 0
-aDSpin6[19] = 0
-aDSpin8[19] = 0
+aDSpin0[19] = 167.9121632
+aDSpin2[19] = 167.911517
+aDSpin4[19] = 168.0387678
+aDSpin6[19] = 175.3988381
+aDSpin8[19] = 183.9553077
 
-aDSpin0[20] = 0
-aDSpin2[20] = 0
-aDSpin4[20] = 0
-aDSpin6[20] = 0
-aDSpin8[20] = 0
+aDSpin0[20] = 172.1319718
+aDSpin2[20] = 172.2042057
+aDSpin4[20] = 172.3140208
+aDSpin6[20] = 179.9180028
+aDSpin8[20] = 188.5600641
 
-aDSpin0[21] = 0
-aDSpin2[21] = 0
-aDSpin4[21] = 0
-aDSpin6[21] = 0
-aDSpin8[21] = 0
+aDSpin0[21] = 176.7364004
+aDSpin2[21] = 176.7217292
+aDSpin4[21] = 176.886363
+aDSpin6[21] = 184.5709072
+aDSpin8[21] = 202.0919088
 
-aDSpin0[22] = 0
-aDSpin2[22] = 0
-aDSpin4[22] = 0
-aDSpin6[22] = 0
-aDSpin8[22] = 0
+aDSpin0[22] = 181.0904542
+aDSpin2[22] = 181.0911698
+aDSpin4[22] = 181.1837193
+aDSpin6[22] = 189.3507333
+aDSpin8[22] = -1
 
-aDSpin0[23] = 0
-aDSpin2[23] = 0
-aDSpin4[23] = 0
-aDSpin6[23] = 0
-aDSpin8[23] = 0
+aDSpin0[23] = 185.6870663
+aDSpin2[23] = 185.6875357
+aDSpin4[23] = 185.8462022
+aDSpin6[23] = 194.2650901
+aDSpin8[23] = -1
 
-aDSpin0[24] = 0
-aDSpin2[24] = 0
-aDSpin4[24] = 0
-aDSpin6[24] = 0
-aDSpin8[24] = 0
+aDSpin0[24] = 190.1983866
+aDSpin2[24] = 190.1983948
+aDSpin4[24] = 190.1978691
+aDSpin6[24] = 207.9558287
+aDSpin8[24] = -1
 
-aDSpin0[25] = 0
-aDSpin2[25] = 0
-aDSpin4[25] = 0
-aDSpin6[25] = 0
-aDSpin8[25] = 0
+aDSpin0[25] = 195.0726964
+aDSpin2[25] = 195.0724264
+aDSpin4[25] = 203.9945498
+aDSpin6[25] = 212.8257539
+aDSpin8[25] = -1
 
-aDSpin0[26] = 0
-aDSpin2[26] = 0
-aDSpin4[26] = 0
-aDSpin6[26] = 0
-aDSpin8[26] = 0
+aDSpin0[26] = 200.0439117
+aDSpin2[26] = 200.0456271
+aDSpin4[26] = 208.9006572
+aDSpin6[26] = -1
+aDSpin8[26] = -1
 
-aDSpin0[27] = 0
-aDSpin2[27] = 0
-aDSpin4[27] = 0
-aDSpin6[27] = 0
-aDSpin8[27] = 0
+aDSpin0[27] = 205.0186504
+aDSpin2[27] = 205.0186608
+aDSpin4[27] = 213.8698538
+aDSpin6[27] = -1
+aDSpin8[27] = -1
 
-aDSpin0[28] = 0
-aDSpin2[28] = 0
-aDSpin4[28] = 0
-aDSpin6[28] = 0
-aDSpin8[28] = 0
+aDSpin0[28] = 210.173238
+aDSpin2[28] = 219.0147032
+aDSpin4[28] = 228.0595259
+aDSpin6[28] = -1
+aDSpin8[28] = -1
 
-aDSpin0[29] = 0
-aDSpin2[29] = 0
-aDSpin4[29] = 0
-aDSpin6[29] = 0
-aDSpin8[29] = 0
+aDSpin0[29] = 224.0794444
+aDSpin2[29] = 224.0794295
+aDSpin4[29] = -1
+aDSpin6[29] = -1
+aDSpin8[29] = -1
 
-aDSpin0[30] = 0
-aDSpin2[30] = 0
-aDSpin4[30] = 0
-aDSpin6[30] = 0
-aDSpin8[30] = 0
+aDSpin0[30] = 238.5650711
+aDSpin2[30] = -1
+aDSpin4[30] = -1
+aDSpin6[30] = -1
+aDSpin8[30] = -1
 
 # Plots
 
@@ -849,10 +849,10 @@ plot3.plot(aDSpin6, ' ', marker='x', markersize=8, mfc='white', mec='black', lab
 plot3.plot(aDSpin6, ' ', marker='o', markersize=8, mfc='white', mec='black', label='Total Spin 8/2')
 plot3.legend(bbox_to_anchor=(0.05, 0.95), loc=2, ncol=1, borderaxespad=0.)
 plot3.set_xlim((-1, 31))
-plot3.set_ylim((25, 47))
+plot3.set_ylim((118, 242))
 xax = plot3.xaxis
 yax = plot3.yaxis
 xax.set_ticks(linspace(0, 30, 16))
-yax.set_ticks(linspace(25, 47, 12))
+yax.set_ticks(linspace(120, 240, 13))
 
 show()
