@@ -132,7 +132,7 @@ double Lanczos::Run(int iCoeffMode) {
                 #ifdef PROGRESS
                     cout  << "\r                         \r";
                 #endif
-                ssOut << "Re-ortonormalizing. V·W = " << setprecision(3) << dO << endl;
+                ssOut << "Re-orthonormalizing. V·W = " << setprecision(3) << dO << endl;
                 oOut->Output(&ssOut);
             #endif
         }
@@ -295,7 +295,7 @@ int Lanczos::RunMaster() {
             #ifdef PROGRESS
                 cout  << "\r                         \r";
             #endif
-            ssOut << "Re-ortonormalizing. V·W = " << setprecision(3) << dO << endl;
+            ssOut << "Re-orthonormalizing. V·W = " << setprecision(3) << dO << endl;
             oOut->Output(&ssOut);
         #endif
     }

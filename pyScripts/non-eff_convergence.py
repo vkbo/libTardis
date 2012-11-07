@@ -59,20 +59,35 @@ aShell[i] = 22
 
 # Plots
 
-fig0 = figure()
-plot0 = fig0.add_subplot(1,1,1)
+fig0 = figure(figsize=(16, 7), dpi=80)
+fig0.suptitle('Convergence of Standard Interactions')
 
-plot0.set_title("Convergence of Standard Interactions")
+plot0 = fig0.add_subplot(1,2,1)
+plot0.set_title("4 to 20 Shells")
 plot0.set_xlabel("Shells")
 plot0.set_ylabel("$E_{0} (\hbar\omega)$")
-plot0.plot(aShell, aStd, ' ', marker='s', markersize=8, mfc='white', mec='black', label='$V_{std}$')
-plot0.plot(aShell, aEff, 'r--', label='$V_{eff}$')
-plot0.legend(bbox_to_anchor=(0.80, 0.95), loc=2, ncol=1, borderaxespad=0.)
+plot0.plot(aShell, aStd, ' ', marker='+', markersize=10, mfc='white', mec='black', label='$V_{std}$')
+plot0.plot(aShell, aEff, 'r-', label='$V_{eff}$')
+plot0.legend(bbox_to_anchor=(0.75, 0.95), loc=2, ncol=1, borderaxespad=0.)
 plot0.set_xlim((3,21))
 plot0.set_ylim((1.685,1.72))
 
 xax = plot0.xaxis
-xax.set_ticks(linspace(3, 20, 18))
+xax.set_ticks(linspace(4, 20, 17))
+
+plot1 = fig0.add_subplot(1,2,2)
+plot1.set_title("12 to 20 Shells")
+plot1.set_xlabel("Shells")
+plot1.set_ylabel("$E_{0} (\hbar\omega)$")
+plot1.plot(aShell, aStd, ' ', marker='+', markersize=10, mfc='white', mec='black', label='$V_{std}$')
+plot1.plot(aShell, aEff, 'r-', label='$V_{eff}$')
+plot1.legend(bbox_to_anchor=(0.75, 0.95), loc=2, ncol=1, borderaxespad=0.)
+plot1.set_xlim((11,21))
+plot1.set_ylim((1.68955,1.69045))
+plot1.ticklabel_format(useOffset=False, axis='y')
+
+yax = plot1.yaxis
+yax.set_ticks(linspace(1.6896, 1.6904, 9))
 
 
 show()

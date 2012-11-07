@@ -11,14 +11,14 @@
 from incFunctions import *
 fDirX("jobQueue")
 
-aShells    = [6]
-aParticles = [8]
-aM         = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]
-aMs        = [0,2,4,6,8]
-aOmega     = [5.0]
+aShells    = [8]
+aParticles = [4]
+aM         = [0]
+aMs        = [0]
+aOmega     = [0.01,0.1,1.0]
 aLambda    = [0.0]
 aEnergyCut = [False]
-aEffective = [True]
+aEffective = [True,False]
 aMethod    = [0]
 
 bCalcCoeff = False

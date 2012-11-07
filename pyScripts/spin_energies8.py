@@ -28,191 +28,191 @@ aDSpin8 = zeros(31,float)
 
 # Omega = 0.01 Values
 
-aASpin0[0]  = 0
-aASpin2[0]  = 0
-aASpin4[0]  = 0
-aASpin6[0]  = 0
-aASpin8[0]  = 0
+aASpin0[0]  = 1.266903986
+aASpin2[0]  = 1.26688268
+aASpin4[0]  = 1.266871791
+aASpin6[0]  = 1.270947627
+aASpin8[0]  = 1.279507117
 
-aASpin0[1]  = 0
-aASpin2[1]  = 0
-aASpin4[1]  = 0
-aASpin6[1]  = 0
-aASpin8[1]  = 0
+aASpin0[1]  = 1.266923007
+aASpin2[1]  = 1.266932324
+aASpin4[1]  = 1.266936034
+aASpin6[1]  = 1.266913759
+aASpin8[1]  = 1.281156304
 
-aASpin0[2]  = 0
-aASpin2[2]  = 0
-aASpin4[2]  = 0
-aASpin6[2]  = 0
-aASpin8[2]  = 0
+aASpin0[2]  = 1.26685638
+aASpin2[2]  = 1.266857782
+aASpin4[2]  = 1.266853643
+aASpin6[2]  = 1.272026591
+aASpin8[2]  = 1.281060641
 
-aASpin0[3]  = 0
-aASpin2[3]  = 0
-aASpin4[3]  = 0
-aASpin6[3]  = 0
-aASpin8[3]  = 0
+aASpin0[3]  = 1.267158775
+aASpin2[3]  = 1.267137214
+aASpin4[3]  = 1.267135331
+aASpin6[3]  = 1.268673031
+aASpin8[3]  = 1.282327955
 
-aASpin0[4]  = 0
-aASpin2[4]  = 0
-aASpin4[4]  = 0
-aASpin6[4]  = 0
-aASpin8[4]  = 0
+aASpin0[4]  = 1.268128094
+aASpin2[4]  = 1.268127218
+aASpin4[4]  = 1.269420991
+aASpin6[4]  = 1.273081119
+aASpin8[4]  = 1.274341099
 
-aASpin0[5]  = 0
-aASpin2[5]  = 0
-aASpin4[5]  = 0
-aASpin6[5]  = 0
-aASpin8[5]  = 0
+aASpin0[5]  = 1.268086908
+aASpin2[5]  = 1.268087124
+aASpin4[5]  = 1.269816305
+aASpin6[5]  = 1.271511794
+aASpin8[5]  = 1.273354422
 
-aASpin0[6]  = 0
-aASpin2[6]  = 0
-aASpin4[6]  = 0
-aASpin6[6]  = 0
-aASpin8[6]  = 0
+aASpin0[6]  = 1.269083692
+aASpin2[6]  = 1.271402607
+aASpin4[6]  = 1.271403355
+aASpin6[6]  = 1.274140371
+aASpin8[6]  = 1.287936707
 
-aASpin0[7]  = 0
-aASpin2[7]  = 0
-aASpin4[7]  = 0
-aASpin6[7]  = 0
-aASpin8[7]  = 0
+aASpin0[7]  = 1.271281813
+aASpin2[7]  = 1.271283138
+aASpin4[7]  = 1.27216965
+aASpin6[7]  = 1.274546551
+aASpin8[7]  = 1.286867802
 
-aASpin0[8]  = 0
-aASpin2[8]  = 0
-aASpin4[8]  = 0
-aASpin6[8]  = 0
-aASpin8[8]  = 0
+aASpin0[8]  = 1.272320762
+aASpin2[8]  = 1.27223939
+aASpin4[8]  = 1.275771791
+aASpin6[8]  = 1.277037903
+aASpin8[8]  = 1.295287056
 
-aASpin0[9]  = 0
-aASpin2[9]  = 0
-aASpin4[9]  = 0
-aASpin6[9]  = 0
-aASpin8[9]  = 0
+aASpin0[9]  = 1.274282625
+aASpin2[9]  = 1.274063608
+aASpin4[9]  = 1.276126912
+aASpin6[9]  = 1.277787104
+aASpin8[9]  = 1.288057481
 
-aASpin0[10] = 0
-aASpin2[10] = 0
-aASpin4[10] = 0
-aASpin6[10] = 0
-aASpin8[10] = 0
+aASpin0[10] = 1.275668006
+aASpin2[10] = 1.277618259
+aASpin4[10] = 1.277640955
+aASpin6[10] = 1.281382921
+aASpin8[10] = 1.297871875
 
-aASpin0[11] = 0
-aASpin2[11] = 0
-aASpin4[11] = 0
-aASpin6[11] = 0
-aASpin8[11] = 0
+aASpin0[11] = 1.277481209
+aASpin2[11] = 1.277479452
+aASpin4[11] = 1.279819598
+aASpin6[11] = 1.282547337
+aASpin8[11] = 1.285724681
 
-aASpin0[12] = 0
-aASpin2[12] = 0
-aASpin4[12] = 0
-aASpin6[12] = 0
-aASpin8[12] = 0
+aASpin0[12] = 1.281136827
+aASpin2[12] = 1.28112049
+aASpin4[12] = 1.28217599
+aASpin6[12] = 1.286526888
+aASpin8[12] = 1.287863762
 
-aASpin0[13] = 0
-aASpin2[13] = 0
-aASpin4[13] = 0
-aASpin6[13] = 0
-aASpin8[13] = 0
+aASpin0[13] = 1.283319357
+aASpin2[13] = 1.283318201
+aASpin4[13] = 1.283311215
+aASpin6[13] = 1.285646601
+aASpin8[13] = 1.312916312
 
-aASpin0[14] = 0
-aASpin2[14] = 0
-aASpin4[14] = 0
-aASpin6[14] = 0
-aASpin8[14] = 0
+aASpin0[14] = 1.28534837
+aASpin2[14] = 1.285346614
+aASpin4[14] = 1.285340746
+aASpin6[14] = 1.292332546
+aASpin8[14] = 1.311102313
 
-aASpin0[15] = 0
-aASpin2[15] = 0
-aASpin4[15] = 0
-aASpin6[15] = 0
-aASpin8[15] = 0
+aASpin0[15] = 1.288673544
+aASpin2[15] = 1.28867262
+aASpin4[15] = 1.289519583
+aASpin6[15] = 1.289510195
+aASpin8[15] = 1.312132323
 
-aASpin0[16] = 0
-aASpin2[16] = 0
-aASpin4[16] = 0
-aASpin6[16] = 0
-aASpin8[16] = 0
+aASpin0[16] = 1.291646487
+aASpin2[16] = 1.29164748
+aASpin4[16] = 1.292014948
+aASpin6[16] = 1.298740087
+aASpin8[16] = 1.32503532
 
-aASpin0[17] = 0
-aASpin2[17] = 0
-aASpin4[17] = 0
-aASpin6[17] = 0
-aASpin8[17] = 0
+aASpin0[17] = 1.294657239
+aASpin2[17] = 1.294672235
+aASpin4[17] = 1.29523846
+aASpin6[17] = 1.295283987
+aASpin8[17] = 1.319276839
 
-aASpin0[18] = 0
-aASpin2[18] = 0
-aASpin4[18] = 0
-aASpin6[18] = 0
-aASpin8[18] = 0
+aASpin0[18] = 1.297973846
+aASpin2[18] = 1.297997688
+aASpin4[18] = 1.298012947
+aASpin6[18] = 1.30802802
+aASpin8[18] = 1.354832286
 
-aASpin0[19] = 0
-aASpin2[19] = 0
-aASpin4[19] = 0
-aASpin6[19] = 0
-aASpin8[19] = 0
+aASpin0[19] = 1.30141646
+aASpin2[19] = 1.301473801
+aASpin4[19] = 1.302528326
+aASpin6[19] = 1.302542746
+aASpin8[19] = 1.357018036
 
-aASpin0[20] = 0
-aASpin2[20] = 0
-aASpin4[20] = 0
-aASpin6[20] = 0
-aASpin8[20] = 0
+aASpin0[20] = 1.304462501
+aASpin2[20] = 1.304465849
+aASpin4[20] = 1.306709581
+aASpin6[20] = 1.331633357
+aASpin8[20] = 1.373123766
 
-aASpin0[21] = 0
-aASpin2[21] = 0
-aASpin4[21] = 0
-aASpin6[21] = 0
-aASpin8[21] = 0
+aASpin0[21] = 1.308879756
+aASpin2[21] = 1.30887724
+aASpin4[21] = 1.310050742
+aASpin6[21] = 1.335374924
+aASpin8[21] = 1.405126587
 
-aASpin0[22] = 0
-aASpin2[22] = 0
-aASpin4[22] = 0
-aASpin6[22] = 0
-aASpin8[22] = 0
+aASpin0[22] = 1.311437124
+aASpin2[22] = 1.314535201
+aASpin4[22] = 1.314512623
+aASpin6[22] = 1.344666632
+aASpin8[22] = -1
 
-aASpin0[23] = 0
-aASpin2[23] = 0
-aASpin4[23] = 0
-aASpin6[23] = 0
-aASpin8[23] = 0
+aASpin0[23] = 1.318261732
+aASpin2[23] = 1.318266131
+aASpin4[23] = 1.318259972
+aASpin6[23] = 1.348708032
+aASpin8[23] = -1
 
-aASpin0[24] = 0
-aASpin2[24] = 0
-aASpin4[24] = 0
-aASpin6[24] = 0
-aASpin8[24] = 0
+aASpin0[24] = 1.321100163
+aASpin2[24] = 1.321099425
+aASpin4[24] = 1.334090551
+aASpin6[24] = 1.383299548
+aASpin8[24] = -1
 
-aASpin0[25] = 0
-aASpin2[25] = 0
-aASpin4[25] = 0
-aASpin6[25] = 0
-aASpin8[25] = 0
+aASpin0[25] = 1.327390455
+aASpin2[25] = 1.327394541
+aASpin4[25] = 1.355653311
+aASpin6[25] = 1.394980159
+aASpin8[25] = -1
 
-aASpin0[26] = 0
-aASpin2[26] = 0
-aASpin4[26] = 0
-aASpin6[26] = 0
-aASpin8[26] = 0
+aASpin0[26] = 1.332623749
+aASpin2[26] = 1.342889818
+aASpin4[26] = 1.359192049
+aASpin6[26] = -1
+aASpin8[26] = -1
 
-aASpin0[27] = 0
-aASpin2[27] = 0
-aASpin4[27] = 0
-aASpin6[27] = 0
-aASpin8[27] = 0
+aASpin0[27] = 1.337780822
+aASpin2[27] = 1.337780853
+aASpin4[27] = 1.373296601
+aASpin6[27] = -1
+aASpin8[27] = -1
 
-aASpin0[28] = 0
-aASpin2[28] = 0
-aASpin4[28] = 0
-aASpin6[28] = 0
-aASpin8[28] = 0
+aASpin0[28] = 1.352192999
+aASpin2[28] = 1.376399277
+aASpin4[28] = 1.431911376
+aASpin6[28] = -1
+aASpin8[28] = -1
 
-aASpin0[29] = 0
-aASpin2[29] = 0
-aASpin4[29] = 0
-aASpin6[29] = 0
-aASpin8[29] = 0
+aASpin0[29] = 1.384067692
+aASpin2[29] = 1.384067692
+aASpin4[29] = -1
+aASpin6[29] = -1
+aASpin8[29] = -1
 
-aASpin0[30] = 0
-aASpin2[30] = 0
-aASpin4[30] = 0
-aASpin6[30] = 0
-aASpin8[30] = 0
+aASpin0[30] = 1.428693193
+aASpin2[30] = -1
+aASpin4[30] = -1
+aASpin6[30] = -1
+aASpin8[30] = -1
 
 # Omega = 0.1 Values
 
@@ -247,16 +247,16 @@ aBSpin6[4]  = 6.14557743
 aBSpin8[4]  = 6.195880527
 
 aBSpin0[5]  = 6.10766414
-aBSpin2[5]  = 0
-aBSpin4[5]  = 0
-aBSpin6[5]  = 0
-aBSpin8[5]  = 0
+aBSpin2[5]  = 6.107652445
+aBSpin4[5]  = 6.143896235
+aBSpin6[5]  = 6.18634635
+aBSpin8[5]  = 6.298900368
 
-aBSpin0[6]  = 0
-aBSpin2[6]  = 0
-aBSpin4[6]  = 0
-aBSpin6[6]  = 0
-aBSpin8[6]  = 0
+aBSpin0[6]  = 6.135044862
+aBSpin2[6]  = 6.140804531
+aBSpin4[6]  = 6.1407693
+aBSpin6[6]  = 6.209126426
+aBSpin8[6]  = 6.32695564
 
 aBSpin0[7]  = 0
 aBSpin2[7]  = 0
@@ -794,11 +794,11 @@ plot0.plot(aASpin6, ' ', marker='x', markersize=8, mfc='white', mec='black', lab
 plot0.plot(aASpin6, ' ', marker='o', markersize=8, mfc='white', mec='black', label='Total Spin 8/2')
 plot0.legend(bbox_to_anchor=(0.05, 0.95), loc=2, ncol=1, borderaxespad=0.)
 plot0.set_xlim((-1, 31))
-plot0.set_ylim((4.7, 6.4))
+plot0.set_ylim((1.26, 1.44))
 xax = plot0.xaxis
 yax = plot0.yaxis
 xax.set_ticks(linspace(0, 30, 16))
-yax.set_ticks(linspace(4.7, 6.3, 9))
+yax.set_ticks(linspace(1.27, 1.43, 9))
 
 plot1 = fig0.add_subplot(122)
 plot1.set_title("8 electrons, $\omega = 0.1$")
@@ -811,11 +811,11 @@ plot1.plot(aBSpin6, ' ', marker='x', markersize=8, mfc='white', mec='black', lab
 plot1.plot(aBSpin6, ' ', marker='o', markersize=8, mfc='white', mec='black', label='Total Spin 8/2')
 plot1.legend(bbox_to_anchor=(0.05, 0.95), loc=2, ncol=1, borderaxespad=0.)
 plot1.set_xlim((-1, 31))
-plot1.set_ylim((6.0, 8.0))
+plot1.set_ylim((6.05, 6.95))
 xax = plot1.xaxis
 yax = plot1.yaxis
 xax.set_ticks(linspace(0, 30, 16))
-yax.set_ticks(linspace(6.1, 7.9, 10))
+yax.set_ticks(linspace(6.1, 6.9, 9))
 
 
 fig1 = figure(figsize=(16, 7), dpi=80)
