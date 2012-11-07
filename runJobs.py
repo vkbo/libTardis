@@ -107,7 +107,7 @@ for sFile in aJobs:
 
     if sPSlater[19:].strip() != sNSlater:
         oFile = open("libTardis/slaterword.hpp", 'w')
-        oFile.write("#define SLATER_WORD "+iSlater+"\n")
+        oFile.write("#define SLATER_WORD "+sNSlater+"\n")
         oFile.close()
 
 

@@ -385,10 +385,10 @@ void Lanczos::fMatrixVector(Col<double> &mInput, vector<vector<double> > &vRetur
     int    i, p, q, r, s;
     int    iS1, iS2, iS3, iS4, iL=0;
     double dV;
-    Slater sdPhiPQRS, sdPhiQRS, sdPhiSR, sdPhiR;
+    Slater sdPhiPQSR, sdPhiQSR, sdPhiSR, sdPhiR;
 
     #ifdef OPENMP
-        #pragma omp parallel for private(p,q,r,s,iS1,iS2,iS3,iS4,sdPhiPQRS,sdPhiQRS,sdPhiSR,sdPhiR,iL,dV) schedule(dynamic,1)
+        #pragma omp parallel for private(p,q,r,s,iS1,iS2,iS3,iS4,sdPhiPQSR,sdPhiQSR,sdPhiSR,sdPhiR,iL,dV) schedule(dynamic,1)
     #endif
     for(i=iStart; i<iStop; i++) {
         for(r=0; r<iStates; r++) {
@@ -400,14 +400,14 @@ void Lanczos::fMatrixVector(Col<double> &mInput, vector<vector<double> > &vRetur
                 iS2 = sdPhiSR.Annihilate(s);
                 if(iS2 == 0) continue;
                 for(q=0; q<iStates; q++) {
-                    sdPhiQRS = sdPhiSR;
-                    iS3 = sdPhiQRS.Create(q);
+                    sdPhiQSR = sdPhiSR;
+                    iS3 = sdPhiQSR.Create(q);
                     if(iS3 == 0) continue;
                     for(p=0; p<q; p++) {
-                        sdPhiPQRS = sdPhiQRS;
-                        iS4 = sdPhiPQRS.Create(p);
+                        sdPhiPQSR = sdPhiQSR;
+                        iS4 = sdPhiPQSR.Create(p);
                         if(iS4 == 0) continue;
-                        iL = oBasis->FindSlater(sdPhiPQRS,p,q);
+                        iL = oBasis->FindSlater(sdPhiPQSR,p,q);
                         if(iL > -1) {
                             dV = 0.0;
                             if(p == r && q == s) dV += oPot->Get1PElement(p,s)*d1PFac; // 1-particle interaction
