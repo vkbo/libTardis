@@ -363,9 +363,9 @@ int Basis::FindSlater(Slater sdFind, int p, int q) {
         int iMin = mIndex(iP,0);       // Set search range based on lowest occupied state
         int iMax = mIndex(iP,1);
 
-        if(iMin == -1) return -1;      // Returns "not found" if stae is never occupied in basis
+        if(iMin == -1) return -1;      // Returns "not found" if state is never occupied in basis
 
-        while(iMax!=iMin) {            // Otherwise do binary searchy until search interval is 1
+        while(iMax!=iMin) {            // Otherwise do binary search until search interval is 0
             iCheck = iMin+(iMax-iMin)/2;
             switch(vBasis[iCheck].Compare(sdFind)) {
                 case  0: return iCheck;

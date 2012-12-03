@@ -72,15 +72,16 @@ double Lanczos::Run(int iCoeffMode) {
     mLzW = mLzW/norm(mLzW,2);
 
     // Runtime variables
-    double dTemp, dO, dConv=1.0, dConvPrev=1.0;
+    double dTemp, dO, dConv=1.0, dConvPrev=1.0, dError;
     mLzA.ones(1);
     mLzB.ones(1);
     mLzE.zeros(1);
 
     // Eigenvector variables
-    Mat<double>    mTemp;
-    Col<cx_double> mHEigVal;
-    Mat<cx_double> mHEigVec;
+    Mat<double>       mTemp;
+    Col<unsigned int> mSort;
+    Col<cx_double>    mHEigVal;
+    Mat<cx_double>    mHEigVec;
 
     /*
     ** The Lanczos algorithm
@@ -149,12 +150,14 @@ double Lanczos::Run(int iCoeffMode) {
 
         // Calculating eigenvalues
         eig_gen(mHEigVal, mHEigVec, mTemp);
+        mSort = sort_index(real(mHEigVal));
         mEnergy = sort(real(mHEigVal));
         mLzE(iLzIt) = mEnergy(0);
 
         // Checking for energy convergence
         dConvPrev = dConv;
         dConv     = abs(abs(mLzE(iLzIt-1)/mLzE(iLzIt))-1);
+        dError    = abs(mLzB(iLzIt)*real(mHEigVec(iLzIt-1, mSort(0))));
 
         #ifndef MINIMAL
             fflush(stdout);
@@ -163,7 +166,8 @@ double Lanczos::Run(int iCoeffMode) {
             #endif
             ssOut << "Lanczos Iteration " << setw(2) << iLzIt;
             ssOut << " : Energy = " << showpoint << setw(11) << setprecision(10) << mLzE(iLzIt);
-            ssOut << " : Convergence = " << setprecision(3) << dConv << endl;
+            ssOut << " : Convergence = " << setprecision(3) << dConv;
+            ssOut << " : Error = " << setprecision(3) << dError << endl;
             oOut->Output(&ssOut);
         #else
             fflush(stdout);
@@ -173,6 +177,7 @@ double Lanczos::Run(int iCoeffMode) {
             cout << "Lanczos Iteration " << setw(2) << iLzIt;
             cout << " : Energy = " << showpoint << setw(11) << setprecision(10) << mLzE(iLzIt);
             cout << " : Convergence = " << setprecision(3) << dConv;
+            cout << " : Error = " << setprecision(3) << dError << endl;
         #endif
 
         if(dConv < LANCZOS_CONVERGE) break;
@@ -186,7 +191,13 @@ double Lanczos::Run(int iCoeffMode) {
     #ifndef MINIMAL
         ssOut << endl;
         ssOut << "Eigenvalues:" << endl;
-        ssOut << mEnergy << endl;
+        ssOut << endl;
+        for(int i=0; i<iLzIt; i++) {
+            ssOut << "E(" << setw(2) << i << ")";
+            ssOut << " = " << setw(11) << setprecision(10) << real(mHEigVal(mSort(i)));
+            ssOut << " : Error = "  << setprecision(3) << abs(mLzB(iLzIt)*real(mHEigVec(iLzIt-1, mSort(i)))) << endl;
+        }
+        ssOut << endl;
         oOut->Output(&ssOut);
     #else
         cout << endl;
