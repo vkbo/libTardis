@@ -5,6 +5,8 @@
 This is the source code for my 2012 master's thesis titled "Full Configuration Interaction Simulation of Quantum Dots"
 ([PDF](https://www.duo.uio.no/bitstream/handle/10852/34217/vkb-olsen.pdf)).
 
+**Note:** This library was written using an older version of the Armadillo library, and doesn't build with the never versions.
+
 ### The Physics
 
 The code calculates energy eigenstates of electrons in a two-dimensional harmonic oscillator potential. It uses binary

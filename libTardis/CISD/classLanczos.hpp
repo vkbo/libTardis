@@ -30,7 +30,7 @@ class Lanczos
 
     // Multi-Node Lanczos Functions
     int  RunInit();
-    int  RunSlave(arma::Col<double>&, std::vector<double>&, int, int);
+    int  RunWorker(arma::Col<double>&, std::vector<double>&, int, int);
     int  RunMaster();
 
     // Getters, Setters and Output

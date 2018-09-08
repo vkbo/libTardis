@@ -221,7 +221,7 @@ double Lanczos::Run(int iCoeffMode) {
     return mEnergy(0);
 }
 
-int Lanczos::RunSlave(Col<double> &mInput, vector<double> &vReturn, int iLStart, int iLStop) {
+int Lanczos::RunWorker(Col<double> &mInput, vector<double> &vReturn, int iLStart, int iLStop) {
 
     #ifdef OPENMP
         int iMaxThreads = omp_get_max_threads();

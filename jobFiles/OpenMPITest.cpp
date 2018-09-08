@@ -188,7 +188,7 @@ int main(int argc, char* argv[]) {
                 cout << "Done broadcasting       : " << ctime(&tTime);
                 
                 dTStart = MPI_Wtime();
-                oLanczos.RunSlave(*mLzW, vSend, vChunk[iRank], vChunk[iRank+1]);
+                oLanczos.RunWorker(*mLzW, vSend, vChunk[iRank], vChunk[iRank+1]);
                 dTStop  = MPI_Wtime()-dTStart;
                 MPI_Gather(&dTStop, 1, MPI_DOUBLE, &vTime[0], 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
@@ -246,7 +246,7 @@ int main(int argc, char* argv[]) {
 
         }
 
-    // Slave Nodes
+    // Worker Nodes
     } else {
         
         iReady = 1;
@@ -261,7 +261,7 @@ int main(int argc, char* argv[]) {
             MPI_Bcast(&vLzW[0], iBasisDim, MPI_DOUBLE, 0, MPI_COMM_WORLD);
             mLzW = conv_to< Col<double> >::from(vLzW);
             dTStart = MPI_Wtime();
-            oLanczos.RunSlave(mLzW, vSend, vChunk[iRank], vChunk[iRank+1]);
+            oLanczos.RunWorker(mLzW, vSend, vChunk[iRank], vChunk[iRank+1]);
             dTStop  = MPI_Wtime()-dTStart;
             MPI_Gather(&dTStop, 1, MPI_DOUBLE, &vTime[0], 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
             MPI_Reduce(&vSend[0], &vReturn[0], iBasisDim, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
